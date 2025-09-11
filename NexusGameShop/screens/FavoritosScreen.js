@@ -10,6 +10,13 @@ export default function FavoritosScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center" },
-  text: { fontSize: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff", // ou a cor desejada
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  text: {
+    fontSize: 20,
+  },
 });

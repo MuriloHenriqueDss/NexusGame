@@ -8,46 +8,27 @@ import {
   ScrollView,
 } from "react-native";
 
-export default function RegisterScreen({ navigation }) {
+export default function ForgotPasswordScreen({ navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Criar Conta</Text>
+        <Text style={styles.title}>Esqueceu a senha?</Text>
+        <Text style={styles.subtitle}>
+          Insira seu e-mail para recuperar a conta
+        </Text>
 
-        {/* Nome */}
-        <Text style={styles.label}>Nome:</Text>
-        <TextInput style={styles.input} placeholder="Seu nome" placeholderTextColor="#aaa" />
-
-        {/* Email */}
+        {/* Input E-mail */}
         <Text style={styles.label}>E-mail:</Text>
         <TextInput style={styles.input} placeholder="@gmail.com" placeholderTextColor="#aaa" />
 
-        {/* Senha */}
-        <Text style={styles.label}>Senha:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="*******"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-        />
-
-        {/* Confirmar Senha */}
-        <Text style={styles.label}>Confirmar Senha:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="*******"
-          placeholderTextColor="#aaa"
-          secureTextEntry
-        />
-
-        {/* Botão Criar Conta */}
+        {/* Botão Recuperar */}
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Cadastrar</Text>
+          <Text style={styles.buttonText}>Enviar</Text>
         </TouchableOpacity>
 
-        {/* Voltar para login */}
+        {/* Voltar ao login */}
         <Text style={styles.registerText}>
-          Já possui uma conta?{" "}
+          Lembrou a senha?{" "}
           <Text style={styles.registerLink} onPress={() => navigation.navigate("Login")}>
             Entrar
           </Text>
@@ -77,13 +58,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#fff",
     fontWeight: "bold",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#aaa",
+    textAlign: "center",
     marginBottom: 20,
   },
   label: {
     alignSelf: "flex-start",
     color: "#fff",
     marginBottom: 5,
-    marginTop: 10,
   },
   input: {
     width: "100%",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -15,64 +15,58 @@ import PerfilScreen from "./screens/PerfilScreen";
 import LoginScreen from "./screens/LoginScreen";
 import CadastroScreen from "./screens/CadastroScreen";
 import CarrinhoScreen from "./screens/CarrinhoScreen";
+import EsqueceuScreen from "./screens/EsqueceuScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function CustomTabBar({ state, descriptors, navigation }) {
+const icons = {
+  Home: "home",
+  Produtos: "game-controller",
+  Categorias: "grid",
+  Favoritos: "heart",
+  Perfil: "person",
+};
+
+function TabButton({ label, isFocused, onPress }) {
+  const translateY = useSharedValue(0);
+
+  useEffect(() => {
+    translateY.value = withSpring(isFocused ? -15 : 0, { damping: 10 });
+  }, [isFocused]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.tabButton} activeOpacity={0.8}>
+      <Animated.View style={[styles.iconGroup, animatedStyle]}>
+        {isFocused && <View style={styles.circle} />}
+        <Ionicons name={icons[label]} size={26} color={isFocused ? "#6A0DAD" : "#aaa"} />
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
+
+function CustomTabBar({ state, navigation }) {
   return (
     <View style={styles.tabBar}>
-      {state.routes.map((route, index) => {
-        const label = route.name;
-        const isFocused = state.index === index;
-
-        const iconName =
-          label === "Home"
-            ? "home"
-            : label === "Produtos"
-            ? "game-controller"
-            : label === "Categorias"
-            ? "grid"
-            : label === "Favoritos"
-            ? "heart"
-            : "person";
-
-        // animação do grupo (bolinha + ícone)
-        const translateY = useSharedValue(isFocused ? -15 : 0);
-        translateY.value = withSpring(isFocused ? -15 : 0);
-
-        const animatedGroup = useAnimatedStyle(() => ({
-          transform: [{ translateY: translateY.value }],
-        }));
-
-        return (
-          <TouchableOpacity
-            key={index}
-            onPress={() => navigation.navigate(route.name)}
-            style={styles.tabButton}
-            activeOpacity={0.8}
-          >
-            <Animated.View style={[styles.iconGroup, animatedGroup]}>
-              {isFocused && <View style={styles.circle} />}
-              <Ionicons
-                name={iconName}
-                size={26}
-                color={isFocused ? "#6A0DAD" : "#aaa"}
-              />
-            </Animated.View>
-          </TouchableOpacity>
-        );
-      })}
+      {state.routes.map((route, index) => (
+        <TabButton
+          key={route.key}
+          label={route.name}
+          isFocused={state.index === index}
+          onPress={() => navigation.navigate(route.name)}
+        />
+      ))}
     </View>
   );
 }
 
 function BottomTabs() {
   return (
-    <Tab.Navigator
-      screenOptions={{ headerShown: false }}
-      tabBar={(props) => <CustomTabBar {...props} />}
-    >
+    <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => <CustomTabBar {...props} />}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Produtos" component={ProdutosScreen} />
       <Tab.Screen name="Categorias" component={CategoriasScreen} />
@@ -85,22 +79,14 @@ function BottomTabs() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Cadastro"
-          component={CadastroScreen}
-          options={{ title: "Criar Conta" }}
-        />
-        <Stack.Screen
-          name="Main"
-          component={BottomTabs}
-          options={{ headerShown: false }}
-        />
+      <Stack.Navigator 
+        screenOptions={{ headerShown: false }} 
+        initialRouteName="Main"   // 🔹 Agora inicia na Home
+      >
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Cadastro" component={CadastroScreen} />
+        <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
+        <Stack.Screen name="Main" component={BottomTabs} />
         <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
