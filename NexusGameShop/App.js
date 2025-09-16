@@ -23,7 +23,6 @@ const Stack = createNativeStackNavigator();
 const icons = {
   Home: "home",
   Produtos: "game-controller",
-  Categorias: "grid",
   Favoritos: "heart",
   Perfil: "person",
 };
@@ -69,7 +68,6 @@ function BottomTabs() {
     <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => <CustomTabBar {...props} />}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Produtos" component={ProdutosScreen} />
-      <Tab.Screen name="Categorias" component={CategoriasScreen} />
       <Tab.Screen name="Favoritos" component={FavoritosScreen} />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
     </Tab.Navigator>
