@@ -69,7 +69,6 @@ function BottomTabs() {
     <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => <CustomTabBar {...props} />}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Produtos" component={ProdutosScreen} />
-      <Tab.Screen name="Categorias" component={CategoriasScreen} />
       <Tab.Screen name="Favoritos" component={FavoritosScreen} />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
     </Tab.Navigator>
@@ -81,7 +80,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator 
         screenOptions={{ headerShown: false }} 
-        initialRouteName="Main"   // 🔹 Agora inicia na Home
+        initialRouteName="Main"
       >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Cadastro" component={CadastroScreen} />
@@ -100,6 +99,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#7B009A",
     paddingVertical: 12,
+    height: 100,
   },
   tabButton: {
     flex: 1,

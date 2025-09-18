@@ -7,7 +7,6 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.nav}>
         <Image style={styles.logo_nav} source={require('../assets/img/logo_nexus.png')} />
-        <ion-icon name="notifications-outline"></ion-icon>
       </View>
       <Text style={styles.text}>Tela Home</Text>
     </View>
