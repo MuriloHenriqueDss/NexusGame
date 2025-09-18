@@ -23,6 +23,7 @@ const Stack = createNativeStackNavigator();
 const icons = {
   Home: "home",
   Produtos: "game-controller",
+  Categorias: "grid",
   Favoritos: "heart",
   Perfil: "person",
 };
@@ -42,7 +43,7 @@ function TabButton({ label, isFocused, onPress }) {
     <TouchableOpacity onPress={onPress} style={styles.tabButton} activeOpacity={0.8}>
       <Animated.View style={[styles.iconGroup, animatedStyle]}>
         {isFocused && <View style={styles.circle} />}
-        <Ionicons name={icons[label]} size={26} color={isFocused ? "#6A0DAD" : "#aaa"} />
+        <Ionicons name={icons[label]} size={26} color={isFocused ? "#FF09E6" : "#ffffff"} />
       </Animated.View>
     </TouchableOpacity>
   );
@@ -68,6 +69,7 @@ function BottomTabs() {
     <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={(props) => <CustomTabBar {...props} />}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Produtos" component={ProdutosScreen} />
+      <Tab.Screen name="Categorias" component={CategoriasScreen} />
       <Tab.Screen name="Favoritos" component={FavoritosScreen} />
       <Tab.Screen name="Perfil" component={PerfilScreen} />
     </Tab.Navigator>
@@ -96,10 +98,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "#111",
+    backgroundColor: "#7B009A",
     paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: "#222",
   },
   tabButton: {
     flex: 1,
