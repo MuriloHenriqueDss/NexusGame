@@ -16,6 +16,9 @@ import LoginScreen from "./screens/LoginScreen";
 import CadastroScreen from "./screens/CadastroScreen";
 import CarrinhoScreen from "./screens/CarrinhoScreen";
 import EsqueceuScreen from "./screens/EsqueceuScreen";
+import DetalhesProduto from "./screens/DetalhesProduto";
+import AdicionarJogoScreen from "./screens/AdicionarJogoScreen";
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -87,6 +90,9 @@ export default function App() {
         <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
         <Stack.Screen name="Main" component={BottomTabs} />
         <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
+        <Stack.Screen name="Categorias" component={CategoriasScreen} />
+        <Stack.Screen name="DetalhesProduto" component={DetalhesProduto} />
+        <Stack.Screen name="AdicionarJogo" component={AdicionarJogoScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -99,7 +105,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#7B009A",
     paddingVertical: 12,
-    height: 100,
   },
   tabButton: {
     flex: 1,
