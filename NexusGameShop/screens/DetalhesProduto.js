@@ -7,11 +7,10 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function DetalhesProdutoScreen({ route }) {
+export default function DetalhesProdutoScreen({ route, navigation }) {
   const { jogo } = route.params;
 
   const relacionados = [
@@ -20,9 +19,14 @@ export default function DetalhesProdutoScreen({ route }) {
     { id: "3", nome: "Game 3", imagem: require("../screens/assets/1.png") },
   ];
 
+  const handleAdicionarCarrinho = () => {
+    navigation.navigate("Carrinho", { jogo }); // Passando o jogo para a tela do carrinho
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Image source={jogo.imagem} style={styles.banner} />
+      
       <View style={styles.infoContainer}>
         <Text style={styles.titulo}>{jogo.nome}</Text>
         <Text style={styles.plataforma}>
@@ -30,21 +34,39 @@ export default function DetalhesProdutoScreen({ route }) {
         </Text>
         <Text style={styles.preco}>R$ {jogo.preco || "149,90"}</Text>
       </View>
+
       <View style={styles.buttons}>
-        <TouchableOpacity style={styles.carrinhoButton}>
+        <TouchableOpacity
+          style={styles.carrinhoButton}
+          onPress={handleAdicionarCarrinho} // Navegação aqui
+        >
           <Ionicons name="cart" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Adicionar ao carrinho</Text>
+          <Text style={styles.buttonText}>Adicionar ao Carrinho</Text>
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.favButton}>
           <Ionicons name="heart" size={20} color="#FF09E6" />
         </TouchableOpacity>
       </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Descrição</Text>
         <Text style={styles.descricao}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Esse jogo é incrível e
           você vai adorar cada detalhe!
         </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Relacionados</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {relacionados.map((item) => (
+            <View key={item.id} style={styles.cardRelacionado}>
+              <Image source={item.imagem} style={styles.cardImage} />
+              <Text style={styles.cardTitle}>{item.nome}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
     </ScrollView>
   );

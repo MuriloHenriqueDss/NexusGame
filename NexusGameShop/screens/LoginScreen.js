@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,19 +10,44 @@ import {
 } from "react-native";
 
 export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Função para login com Supabase
+  async function handleLogin() {
+    if (!email || !password) {
+      alert("Preencha todos os campos");
+      return;
+    }
+
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (error) {
+      alert("Erro ao logar: " + error.message);
+    } else {
+      // Login bem-sucedido, navega para a Main (Bottom Tabs)
+      navigation.navigate("Main");
+    }
+  }
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     >
-      {/* Logo + Título */}
       <View style={styles.card}>
-        <Image
-        source={require("./assets/3.png")}
-        style={styles.logo}
-        />
+        {/* Logo */}
+        <Image source={require("./assets/3.png")} style={styles.logo} />
 
-        {/* Título Entrar */}
+        {/* Título */}
         <Text style={styles.title}>Entrar</Text>
 
         {/* Input E-mail */}
@@ -31,6 +56,10 @@ export default function LoginScreen({ navigation }) {
           style={styles.input}
           placeholder="@gmail.com"
           placeholderTextColor="#aaa"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
 
         {/* Input Senha */}
@@ -40,20 +69,20 @@ export default function LoginScreen({ navigation }) {
           placeholder="*******"
           placeholderTextColor="#aaa"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
         {/* Esqueceu senha */}
-        <TouchableOpacity>
-          <Text style={styles.forgotText}
-          onPress={() => navigation.navigate("Esqueceu")}
-          >Esqueceu a senha?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Esqueceu")}>
+          <Text style={styles.forgotText}>Esqueceu a senha?</Text>
         </TouchableOpacity>
 
         {/* Botão Entrar */}
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}
-          onPress={() => navigation.navigate("Home")}>
-            Entrar</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>
+            {loading ? "Carregando..." : "Entrar"}
+          </Text>
         </TouchableOpacity>
 
         {/* Cadastro */}
@@ -61,10 +90,10 @@ export default function LoginScreen({ navigation }) {
           Não possui uma conta?{" "}
           <Text
             style={styles.registerLink}
-            onPress={() => navigation.navigate("Cadastro")}>
+            onPress={() => navigation.navigate("Cadastro")}
+          >
             Cadastre-se
           </Text>
-          <Text></Text>
         </Text>
       </View>
     </ScrollView>
@@ -74,7 +103,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#7B009A", // Roxo de fundo
+    backgroundColor: "#7B009A",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -92,13 +121,11 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom: 5,
   },
-  
   title: {
     fontSize: 20,
     color: "#fff",
     fontWeight: "bold",
     marginBottom: 20,
-
   },
   label: {
     alignSelf: "flex-start",

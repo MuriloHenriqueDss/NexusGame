@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#7B009A",
-    paddingVertical: 12,
+    paddingVertical: 30,
   },
   tabButton: {
     flex: 1,
