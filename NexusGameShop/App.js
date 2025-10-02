@@ -83,7 +83,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator 
         screenOptions={{ headerShown: false }} 
-        initialRouteName="Main"
+        initialRouteName="Login"
       >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Cadastro" component={CadastroScreen} />
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     backgroundColor: "#7B009A",
-    paddingVertical: 30,
+    paddingVertical: 15,
   },
   tabButton: {
     flex: 1,

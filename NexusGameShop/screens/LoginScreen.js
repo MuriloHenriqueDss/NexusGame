@@ -14,7 +14,6 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Função para login com Supabase
   async function handleLogin() {
     if (!email || !password) {
       alert("Preencha todos os campos");
@@ -79,7 +78,7 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
 
         {/* Botão Entrar */}
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Main")}>
           <Text style={styles.buttonText}>
             {loading ? "Carregando..." : "Entrar"}
           </Text>
