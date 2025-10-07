@@ -18,6 +18,10 @@ import CarrinhoScreen from "./screens/CarrinhoScreen";
 import EsqueceuScreen from "./screens/EsqueceuScreen";
 import DetalhesProduto from "./screens/DetalhesProduto";
 import AdicionarJogoScreen from "./screens/AdicionarJogoScreen";
+import NotificacoesScreen from "./screens/NotificacoesScreen";
+import SplashScreen from "./screens/SplashScreen";
+import EditarPerfilScreen from "./screens/EditarPerfilScreen";
+import EditarAvatarScreen from "./screens/EditarAvatarScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -83,8 +87,9 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator 
         screenOptions={{ headerShown: false }} 
-        initialRouteName="Login"
+        initialRouteName="SplashScreen"
       >
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Cadastro" component={CadastroScreen} />
         <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
@@ -93,6 +98,10 @@ export default function App() {
         <Stack.Screen name="Categorias" component={CategoriasScreen} />
         <Stack.Screen name="DetalhesProduto" component={DetalhesProduto} />
         <Stack.Screen name="AdicionarJogo" component={AdicionarJogoScreen} />
+        <Stack.Screen name="Notificacoes" component={NotificacoesScreen} />
+        <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
+        <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

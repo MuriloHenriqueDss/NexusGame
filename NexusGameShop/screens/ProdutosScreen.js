@@ -32,7 +32,7 @@ const jogosIniciais = {
     { id: "4", nome: "Dragon Age", imagem: require("../screens/assets/1.png") },
   ],
   pesquisados: [
-    { id: "5", nome: "FIFA 24", imagem: require("../screens/assets/1.png") },
+    { id: "5", nome: "FIFA 26", imagem: require("../screens/assets/fc26.png") },
     { id: "6", nome: "NBA 2K24", imagem: require("../screens/assets/1.png") },
     { id: "7", nome: "Madden 24", imagem: require("../screens/assets/1.png") },
     { id: "8", nome: "eFootball 2024", imagem: require("../screens/assets/1.png") },
@@ -44,7 +44,7 @@ const jogosIniciais = {
   ],
   promocoes: [
     { id: "12", nome: "Mario Odyssey", imagem: require("../screens/assets/1.png") },
-    { id: "13", nome: "Mario Kart", imagem: require("../screens/assets/1.png") },
+    { id: "13", nome: "Mario Kart", imagem: require("../screens/assets/supermario.png") },
     { id: "14", nome: "Smash Bros", imagem: require("../screens/assets/1.png") },
     { id: "15", nome: "Pokémon Scarlet", imagem: require("../screens/assets/1.png") },
   ],
