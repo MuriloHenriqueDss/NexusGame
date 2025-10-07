@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, StyleSheet, Image, ScrollView, Dimensions, FlatList, ImageBackground, } from "react-native";
 
 const { width } = Dimensions.get("window");
-// const { width, height } = Dimensions.get('window');
 
 const banners = [
   {
