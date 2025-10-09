@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   editarFoto: {
-    backgroundColor: "#FF00C8",
+    backgroundColor: "#FF09E6",
     borderRadius: 50,
     padding: 5,
     position: "absolute",
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   botaoSalvar: {
-    backgroundColor: "#FF00C8",
+    backgroundColor: "#FF09E6",
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 20,

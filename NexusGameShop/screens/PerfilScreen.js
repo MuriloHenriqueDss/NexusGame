@@ -57,7 +57,7 @@ export default function PerfilScreen({ navigation }) {
 
         {/* Seção de atalhos */}
         <View style={styles.opcoesContainer}>
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Favoritos')}>
             <Ionicons name="heart-outline" size={20} color="#FF09E6" />
             <Text style={styles.textoCard}>Meus favoritos</Text>
           </TouchableOpacity>
@@ -72,7 +72,7 @@ export default function PerfilScreen({ navigation }) {
             <Text style={styles.textoCard}>Meus pedidos</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusCartoes')}>
             <MaterialIcons name="credit-card" size={20} color="#FF09E6" />
             <Text style={styles.textoCard}>Meus cartões</Text>
           </TouchableOpacity>

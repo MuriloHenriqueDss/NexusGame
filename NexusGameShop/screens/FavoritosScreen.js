@@ -82,7 +82,7 @@ export default function FavoritosScreen({ navigation }) {
             <Ionicons
               name={item.favorito ? "heart" : "heart-outline"}
               size={22}
-              color="#FF00C8"
+              color="#FF09E6"
             />
           </TouchableOpacity>
         </View>
