@@ -21,7 +21,9 @@ export default function PerfilScreen({ navigation }) {
           <View style={styles.icons}>
             <Image style={styles.iconNav} source={require('../assets/img/buscar_icon.png')} />
             <Image style={styles.iconNav} source={require('../assets/img/carrinho_icon.png')} />
-            <Image style={styles.iconNav} source={require('../assets/img/notificacao_icon.png')} />
+            <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
+              <Image style={styles.iconNav} source={require('../assets/img/notificacao_icon.png')} />
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.navGlow} />
