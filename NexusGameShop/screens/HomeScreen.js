@@ -53,7 +53,7 @@ const maisVendidos = [
     title: "Ratchet Clank",
     price: "R$129,99",
   },
-    {
+  {
     id: "4",
     image: require("../screens/assets/fc26.png"),
     title: "FC 26 Ultimate Edition",
@@ -233,7 +233,7 @@ const melhorAvaliacao = [
     title: "Ratchet Clank",
     price: "R$129,99",
   },
-    {
+  {
     id: "4",
     image: require("../screens/assets/fc26.png"),
     title: "FC 26 Ultimate Edition",
@@ -262,7 +262,6 @@ export default function HomeScreen() {
       style={styles.container}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
-      {/* Navbar */}
       <View style={styles.navbar}>
         <Image
           source={require("../assets/img/logo_nexus.png")}
@@ -305,8 +304,14 @@ export default function HomeScreen() {
           <ImageBackground
             source={item.imagem}
             style={styles.bannerImage}
-            imageStyle={{ borderRadius: 10 }}
+            imageStyle={{ borderRadius: 5 }}
           >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.7)', 'transparent']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[StyleSheet.absoluteFillObject, { borderRadius: 5 }]}
+            />
             <Text style={styles.bannerTitle}>{item.titulo}</Text>
           </ImageBackground>
         )}
@@ -337,7 +342,7 @@ export default function HomeScreen() {
         }
       />
 
-            <Text style={styles.sectionTitle}>Pré-Venda</Text>
+      <Text style={styles.sectionTitle}>Pré-Venda</Text>
       <FlatList
         data={[...preVenda, { id: "verMais" }]}
         keyExtractor={(item) => item.id}
@@ -461,32 +466,60 @@ export default function HomeScreen() {
           )
         }
       />
-            
+
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingTop: 20
+  },
+
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#0a0a0a",
+    paddingHorizontal: 10,
+  },
+
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
   },
-  logo: { width: 200, height: 60, resizeMode: "contain" },
-  navIcons: { flexDirection: "row", gap: 15 },
-  icon: { width: 20, height: 20 },
-  bannerImage: {
-    width: width - 40,
-    height: 180,
-    margin: 20,
-    borderRadius: 10,
-    justifyContent: "flex-end",
-    padding: 15,
-    overflow: "hidden",
+
+  logo: {
+    width: 200,
+    height: 60,
+    resizeMode: "contain"
   },
-  bannerTitle: { color: "#fff", fontSize: 18, fontWeight: "bold" },
+
+  navIcons: {
+    flexDirection: "row",
+    gap: 15
+  },
+
+  icon: {
+    width: 20,
+    height: 20
+  },
+  bannerImage: {
+    width: width * 0.9,
+    height: 180,
+    marginHorizontal: width * 0.05,
+    justifyContent: "center",
+    padding: 20,
+  },
+  bannerTitle: { 
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    maxWidth: "70%",
+  },
+
   sectionTitle: {
     fontSize: 18,
     color: "#fff",

@@ -87,7 +87,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator 
-        screenOptions={{ headerShown: false }} 
+        screenOptions={{ cardStyle: { backgroundColor: '#7B009A' },headerShown: false }} 
         initialRouteName="SplashScreen"
       >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />

@@ -42,29 +42,32 @@ export default function MeusCartoes({ navigation }) {
 
   return (
     <View style={styles.container}>
-        <View style={styles.header}>
-            <View style={styles.nav}>
-                <Image
-                   style={styles.logoNav}
-                   source={require("../assets/img/logo_nexus.png")}
-                />
-                <View style={styles.icons}>
-                    <Image
-                    style={styles.iconNav}
-                    source={require("../assets/img/buscar_icon.png")}
-                    />
-                    <Image
-                    style={styles.iconNav}
-                    source={require("../assets/img/carrinho_icon.png")}
-                    />
-                    <Image
-                    style={styles.iconNav}
-                    source={require("../assets/img/notificacao_icon.png")}
-                    />
-                </View>
-            </View>
-            <View style={styles.navGlow} />
+      <View style={styles.navbar}>
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
+      </View>
 
       <TouchableOpacity
         onPress={() => navigation.goBack()}
@@ -109,7 +112,7 @@ export default function MeusCartoes({ navigation }) {
             </View>
           </View>
         ))}
-                {/* Botão de adicionar cartão */}
+        {/* Botão de adicionar cartão */}
         <TouchableOpacity style={styles.botaoAdicionar}>
           <Ionicons name="add" size={20} color="white" style={{ marginRight: 6 }} />
           <Text style={styles.textoBotaoAdicionar}>Adicionar cartão</Text>
@@ -124,55 +127,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
-    paddingTop: 50,
+    paddingTop: 20,
   },
-  header: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 10,
-    backgroundColor: "black",
-  },
-  nav: {
-    padding: 10,
-    width: "100%",
+  navbar: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 5,
+    alignItems: "center",
+    padding: 20,
   },
-  logoNav: {
-    height: 50,
-    width: 170,
-    marginLeft: 10,
-    marginTop: -5,
+
+  logo: {
+    width: 200,
+    height: 60,
+    resizeMode: "contain"
   },
-  icons: {
+
+  navIcons: {
     flexDirection: "row",
-    gap: 20,
-    marginRight: 5,
+    gap: 15
   },
-  iconNav: {
-    height: 20,
+
+  icon: {
     width: 20,
+    height: 20
   },
-  navGlow: {
-    height: 3,
-    width: "100%",
-    backgroundColor: "black",
-    shadowColor: "white",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
+
   voltar: {
     flexDirection: "row",
     alignItems: "center",
     marginLeft: 20,
     marginBottom: 10,
-    marginTop: 60,
+    marginTop: 30,
   },
   textoVoltar: {
     color: "white",
@@ -249,7 +234,7 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
   },
-    botaoAdicionar: {
+  botaoAdicionar: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",

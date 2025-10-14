@@ -79,12 +79,30 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Header */}
-      <View style={styles.header}>
-        <Image source={require("../screens/assets/1.png")} style={styles.logo} />
-        <View style={styles.icons}>
-          <Ionicons name="search-outline" size={22} color="#fff" style={styles.icon} />
-          <Ionicons name="cart-outline" size={22} color="#fff" style={styles.icon} />
-          <Ionicons name="person-outline" size={22} color="#fff" style={styles.icon} />
+<View style={styles.navbar}>
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -191,27 +209,18 @@ function SpecialCard({ title, cor, imagem }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#121212",
-    paddingTop: 40,
+    backgroundColor: "#000",
+    paddingTop: 20,
   },
-  header: {
+navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 12,
-    marginBottom: 10,
+    padding: 20,
   },
-  logo: {
-    width: 120,
-    height: 30,
-    resizeMode: "contain",
-  },
-  icons: {
-    flexDirection: "row",
-  },
-  icon: {
-    marginHorizontal: 6,
-  },
+  logo: { width: 200, height: 60, resizeMode: "contain" },
+  navIcons: { flexDirection: "row", gap: 15 },
+  icon: { width: 20, height: 20 },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",

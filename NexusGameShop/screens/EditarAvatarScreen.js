@@ -34,29 +34,44 @@ export default function EditAvatar({ navigation }) {
 
   return (
     <View style={styles.container}>
-        <View style={styles.header}>
-            <View style={styles.nav}>
-                <Image style={styles.logoNav} source={require('../assets/img/logo_nexus.png')} />
-                <View style={styles.icons}>
-                    <Image style={styles.iconNav} source={require('../assets/img/buscar_icon.png')} />
-                    <Image style={styles.iconNav} source={require('../assets/img/carrinho_icon.png')} />
-                    <Image style={styles.iconNav} source={require('../assets/img/notificacao_icon.png')} />
-                </View>
-            </View>
-            <View style={styles.navGlow} />
+      <View style={styles.navbar}>
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
-        <ScrollView
+      </View>
+      <ScrollView
         style={styles.body}
         contentContainerStyle={{ alignItems: "center", paddingBottom: 50 }}
-        >
+      >
 
         {/* Voltar */}
         <TouchableOpacity
-            style={styles.voltar}
-            onPress={() => navigation?.goBack && navigation.goBack()}
+          style={styles.voltar}
+          onPress={() => navigation?.goBack && navigation.goBack()}
         >
-            <Ionicons name="arrow-back" size={20} color="white" />
-            <Text style={styles.voltarTexto}>Voltar</Text>
+          <Ionicons name="arrow-back" size={20} color="white" />
+          <Text style={styles.voltarTexto}>Voltar</Text>
         </TouchableOpacity>
 
         {/* Título */}
@@ -69,91 +84,72 @@ export default function EditAvatar({ navigation }) {
 
         {/* Grade de avatares */}
         <View style={styles.grid}>
-            {avatars.map((img, index) => (
+          {avatars.map((img, index) => (
             <TouchableOpacity
-                key={index}
-                style={[
+              key={index}
+              style={[
                 styles.avatarContainer,
                 selected === index && styles.avatarSelecionadoBorda,
-                ]}
-                onPress={() => setSelected(index)}
+              ]}
+              onPress={() => setSelected(index)}
             >
-                <Image source={img} style={styles.avatar} />
-                {selected === index && (
+              <Image source={img} style={styles.avatar} />
+              {selected === index && (
                 <View style={styles.marcador}>
-                    <Ionicons name="checkmark" size={14} color="white" />
+                  <Ionicons name="checkmark" size={14} color="white" />
                 </View>
-                )}
+              )}
             </TouchableOpacity>
-            ))}
+          ))}
         </View>
 
         {/* Botão salvar */}
         <TouchableOpacity style={styles.botaoSalvar} onPress={() => alert("Avatar atualizado com sucesso!")}>
-            <Text style={styles.textoSalvar}>Salvar</Text>
+          <Text style={styles.textoSalvar}>Salvar</Text>
         </TouchableOpacity>
-        </ScrollView>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
     flex: 1,
     backgroundColor: "black",
+    paddingTop: 20,
   },
-  header: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 10,
-    backgroundColor: "black",
-  },
-  nav: {
-    padding: 10,
-    width: "100%",
+
+  navbar: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 5,
+    alignItems: "center",
+    padding: 20,
   },
-  logoNav: {
-    height: 50,
-    width: 170,
-    marginLeft: 10,
-    marginTop: -5,
+
+  logo: {
+    width: 200,
+    height: 60,
+    resizeMode: "contain"
   },
-  icons: {
+
+  navIcons: {
     flexDirection: "row",
-    gap: 20,
-    marginRight: 5,
+    gap: 15
   },
-  iconNav: {
-    height: 20,
+
+  icon: {
     width: 20,
+    height: 20
   },
-  navGlow: {
-    height: 3,
-    width: "100%",
-    backgroundColor: "black",
-    shadowColor: "white",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  body: {
-    flex: 1,
-    backgroundColor: "black",
-    paddingTop: 40,
-  },
+
   voltar: {
     flexDirection: "row",
     alignItems: "center",
     alignSelf: "flex-start",
     marginLeft: 20,
-    marginTop: 80,
+    marginTop: 10,
+    boxShadow: "0px 4px 4px #FF09E6",
+    padding: 10,
   },
   voltarTexto: {
     color: "white",
@@ -163,7 +159,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 26,
     fontWeight: "bold",
-    marginTop: 20,
+    marginTop: 50,
     marginBottom: 15,
   },
   avatarSelecionado: {

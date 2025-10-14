@@ -92,29 +92,31 @@ export default function FavoritosScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Cabeçalho */}
-      <View style={styles.header}>
-        <View style={styles.nav}>
-          <Image
-            style={styles.logoNav}
-            source={require("../assets/img/logo_nexus.png")}
-          />
-          <View style={styles.icons}>
+      <View style={styles.navbar}>
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
-              style={styles.iconNav}
               source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
             />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
             <Image
-              style={styles.iconNav}
               source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
             />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
             <Image
-              style={styles.iconNav}
               source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
             />
-          </View>
+          </TouchableOpacity>
         </View>
-        <View style={styles.navGlow} />
       </View>
 
       {/* <Text style={styles.titulo}>Favoritos</Text> */}
@@ -138,57 +140,39 @@ export default function FavoritosScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
-    alignItems: "center",
-    paddingTop: 50,
+    backgroundColor: "#000",
+    paddingTop: 20,
   },
-  header: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 10,
-    backgroundColor: "black",
-  },
-  nav: {
-    padding: 10,
-    width: "100%",
+
+  navbar: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 5,
+    alignItems: "center",
+    padding: 20,
   },
-  logoNav: {
-    height: 50,
-    width: 170,
-    marginLeft: 10,
-    marginTop: -5,
+
+  logo: { 
+    width: 200, 
+    height: 60, 
+    resizeMode: "contain" 
   },
-  icons: {
-    flexDirection: "row",
-    gap: 20,
-    marginRight: 5,
+
+  navIcons: { 
+    flexDirection: "row", 
+    gap: 15
   },
-  iconNav: {
-    height: 20,
-    width: 20,
+
+  icon: { 
+    width: 20, 
+    height: 20 
   },
-  navGlow: {
-    height: 3,
-    width: "100%",
-    backgroundColor: "black",
-    shadowColor: "white",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
+
   titulo: {
     color: "white",
     fontSize: 26,
     fontWeight: "bold",
     marginBottom: 30,
-    marginTop: 80,
+    marginTop: 30,
     textAlign: "center",
   },
   lista: {
