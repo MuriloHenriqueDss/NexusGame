@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
-    paddingTop: 20,
+    paddingTop: 5,
   },
   navbar: {
     flexDirection: "row",

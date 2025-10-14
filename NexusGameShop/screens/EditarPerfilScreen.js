@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#000",
-    paddingTop: 20,
+    paddingTop: 5,
   },
 
   navbar: {
@@ -165,8 +165,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginLeft: 20,
     marginTop: 10,
-    boxShadow: "0px 4px 4px #FF09E6",
-    padding: 10,
   },
   voltarTexto: {
     color: "white",
