@@ -13,9 +13,11 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const { width } = Dimensions.get("window");
 
+// Dados
 const banners = [
   {
     id: "1",
@@ -40,36 +42,42 @@ const maisVendidos = [
     image: require("../screens/assets/fc26.png"),
     title: "FC 26 Ultimate Edition",
     price: "R$199,99",
+    rating: 4.5,
   },
   {
     id: "2",
     image: require("../screens/assets/supermario.png"),
     title: "Super Mario World",
     price: "R$149,99",
+    rating: 4.8,
   },
   {
     id: "3",
     image: require("../screens/assets/ratchet_clank.png"),
     title: "Ratchet Clank",
     price: "R$129,99",
+    rating: 4.7,
   },
   {
     id: "4",
     image: require("../screens/assets/fc26.png"),
     title: "FC 26 Ultimate Edition",
     price: "R$199,99",
+    rating: 4.5,
   },
   {
     id: "5",
     image: require("../screens/assets/supermario.png"),
     title: "Super Mario World",
     price: "R$149,99",
+    rating: 4.8,
   },
   {
     id: "6",
     image: require("../screens/assets/ratchet_clank.png"),
     title: "Ratchet Clank",
     price: "R$129,99",
+    rating: 4.7,
   },
 ];
 
@@ -79,48 +87,21 @@ const preVenda = [
     image: require("../screens/assets/minecraftofer.png"),
     title: "Oferta 1",
     price: "R$99,99",
+    rating: 4.6,
   },
   {
     id: "2",
     image: require("../screens/assets/spiderman2.png"),
     title: "Oferta 2",
     price: "R$79,99",
+    rating: 4.9,
   },
   {
     id: "3",
     image: require("../screens/assets/the_last_of_us.png"),
     title: "Oferta 3",
     price: "R$59,99",
-  },
-  {
-    id: "4",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
-    price: "R$99,99",
-  },
-  {
-    id: "5",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
-    price: "R$79,99",
-  },
-  {
-    id: "6",
-    image: require("../screens/assets/the_last_of_us.png"),
-    title: "Oferta 3",
-    price: "R$59,99",
-  },
-  {
-    id: "7",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
-    price: "R$99,99",
-  },
-  {
-    id: "8",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
-    price: "R$79,99",
+    rating: 4.7,
   },
 ];
 
@@ -163,110 +144,118 @@ const categorias = [
   },
 ];
 
-const ofertas = [
-  {
-    id: "1",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
-    price: "R$99,99",
-  },
-  {
-    id: "2",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
-    price: "R$79,99",
-  },
-  {
-    id: "3",
-    image: require("../screens/assets/the_last_of_us.png"),
-    title: "Oferta 3",
-    price: "R$59,99",
-  },
-  {
-    id: "4",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
-    price: "R$99,99",
-  },
-  {
-    id: "5",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
-    price: "R$79,99",
-  },
-  {
-    id: "6",
-    image: require("../screens/assets/the_last_of_us.png"),
-    title: "Oferta 3",
-    price: "R$59,99",
-  },
-  {
-    id: "7",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
-    price: "R$99,99",
-  },
-  {
-    id: "8",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
-    price: "R$79,99",
-  },
-];
-
 const melhorAvaliacao = [
   {
     id: "1",
     image: require("../screens/assets/fc26.png"),
     title: "FC 26 Ultimate Edition",
     price: "R$199,99",
+    rating: 4.8,
   },
   {
     id: "2",
     image: require("../screens/assets/supermario.png"),
     title: "Super Mario World",
     price: "R$149,99",
+    rating: 4.9,
   },
   {
     id: "3",
     image: require("../screens/assets/ratchet_clank.png"),
     title: "Ratchet Clank",
     price: "R$129,99",
-  },
-  {
-    id: "4",
-    image: require("../screens/assets/fc26.png"),
-    title: "FC 26 Ultimate Edition",
-    price: "R$199,99",
-  },
-  {
-    id: "5",
-    image: require("../screens/assets/supermario.png"),
-    title: "Super Mario World",
-    price: "R$149,99",
-  },
-  {
-    id: "6",
-    image: require("../screens/assets/ratchet_clank.png"),
-    title: "Ratchet Clank",
-    price: "R$129,99",
+    rating: 4.7,
   },
 ];
+
+const ofertas = [
+  {
+    id: "1",
+    image: require("../screens/assets/minecraftofer.png"),
+    title: "Oferta 1",
+    price: "R$99,99",
+    rating: 4.5,
+  },
+  {
+    id: "2",
+    image: require("../screens/assets/spiderman2.png"),
+    title: "Oferta 2",
+    price: "R$79,99",
+    rating: 4.8,
+  },
+  {
+    id: "3",
+    image: require("../screens/assets/the_last_of_us.png"),
+    title: "Oferta 3",
+    price: "R$59,99",
+    rating: 4.6,
+  },
+];
+
+const StarRating = ({ rating }) => {
+  return (
+    <View style={styles.ratingContainer}>
+      <Icon name="star" size={14} color="#FFD700" />
+      <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
+    </View>
+  );
+}
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  const renderCard = (item, tipo) => {
+    if (item.id === "verMais") {
+      return (
+        <LinearGradient
+          colors={["#8000FF", "#FF00FF"]}
+          style={[
+            tipo === "grande" ? styles.cardVendidos : styles.card,
+            styles.verMaisCard,
+          ]}
+        >
+          <Text style={styles.verMaisText}>Ver mais</Text>
+        </LinearGradient>
+      );
+    }
+
+    if (tipo === "grande") {
+      return (
+        <View style={styles.cardVendidos}>
+          <Image source={item.image} style={styles.cardImageVendidos} />
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          {item.rating && <StarRating rating={item.rating} />}
+          <Text style={styles.cardPrice}>{item.price}</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.card}>
+          <Image source={item.image} style={styles.cardImage} />
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          {item.rating && <StarRating rating={item.rating} />}
+          <Text style={styles.cardPrice}>{item.price}</Text>
+        </View>
+      );
+    }
+  };
 
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{ paddingBottom: 20 }}
     >
+      {/* Navbar */}
       <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity />
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
@@ -298,7 +287,9 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          { useNativeDriver: false }
+          {
+            useNativeDriver: false,
+          }
         )}
         renderItem={({ item }) => (
           <ImageBackground
@@ -307,7 +298,7 @@ export default function HomeScreen() {
             imageStyle={{ borderRadius: 5 }}
           >
             <LinearGradient
-              colors={['rgba(0,0,0,0.7)', 'transparent']}
+              colors={["rgba(0,0,0,0.7)", "transparent"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={[StyleSheet.absoluteFillObject, { borderRadius: 5 }]}
@@ -324,46 +315,17 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) =>
-          item.id === "verMais" ? (
-            <LinearGradient
-              colors={["#8000FF", "#FF00FF"]}
-              style={[styles.card, styles.verMaisCard]}
-            >
-              <Text style={styles.verMaisText}>Ver mais</Text>
-            </LinearGradient>
-          ) : (
-            <View style={styles.card}>
-              <Image source={item.image} style={styles.cardImage} />
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardPrice}>{item.price}</Text>
-            </View>
-          )
-        }
+        renderItem={({ item }) => renderCard(item, "grande")}
       />
 
+      {/* Pré-Venda */}
       <Text style={styles.sectionTitle}>Pré-Venda</Text>
       <FlatList
         data={[...preVenda, { id: "verMais" }]}
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) =>
-          item.id === "verMais" ? (
-            <LinearGradient
-              colors={["#8000FF", "#FF00FF"]}
-              style={[styles.card, styles.verMaisCard]}
-            >
-              <Text style={styles.verMaisText}>Ver mais</Text>
-            </LinearGradient>
-          ) : (
-            <View style={styles.card}>
-              <Image source={item.image} style={styles.cardImage} />
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardPrice}>{item.price}</Text>
-            </View>
-          )
-        }
+        renderItem={({ item }) => renderCard(item, "pequeno")}
       />
 
       {/* Categorias */}
@@ -372,24 +334,31 @@ export default function HomeScreen() {
         {categorias.map((cat) => {
           let characterStyle = {};
           let textStyle = {};
-          if (cat.id === "4") {
-            characterStyle = styles.characterAcao;
-            textStyle = styles.overlayAcao;
-          } else if (cat.id === "5") {
-            characterStyle = styles.characterAventura;
-            textStyle = styles.overlayAventura;
-          } else if (cat.id === "6") {
-            characterStyle = styles.characterEsportes;
-            textStyle = styles.overlayEsportes;
-          } else if (cat.id === "7") {
-            characterStyle = styles.characterFPS;
-            textStyle = styles.overlayFPS;
-          } else if (cat.id === "8") {
-            characterStyle = styles.characterSimulacao;
-            textStyle = styles.overlaySimulacao;
-          } else if (cat.id === "9") {
-            characterStyle = styles.characterRPG;
-            textStyle = styles.overlayRPG;
+          switch (cat.id) {
+            case "4":
+              characterStyle = styles.characterAcao;
+              textStyle = styles.overlayAcao;
+              break;
+            case "5":
+              characterStyle = styles.characterAventura;
+              textStyle = styles.overlayAventura;
+              break;
+            case "6":
+              characterStyle = styles.characterEsportes;
+              textStyle = styles.overlayEsportes;
+              break;
+            case "7":
+              characterStyle = styles.characterFPS;
+              textStyle = styles.overlayFPS;
+              break;
+            case "8":
+              characterStyle = styles.characterSimulacao;
+              textStyle = styles.overlaySimulacao;
+              break;
+            case "9":
+              characterStyle = styles.characterRPG;
+              textStyle = styles.overlayRPG;
+              break;
           }
           return (
             <TouchableOpacity
@@ -418,28 +387,14 @@ export default function HomeScreen() {
         })}
       </View>
 
+      {/* Melhores Avaliações */}
       <Text style={styles.sectionTitle}>Melhores Avaliações</Text>
       <FlatList
         data={[...melhorAvaliacao, { id: "verMais" }]}
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) =>
-          item.id === "verMais" ? (
-            <LinearGradient
-              colors={["#8000FF", "#FF00FF"]}
-              style={[styles.card, styles.verMaisCard]}
-            >
-              <Text style={styles.verMaisText}>Ver mais</Text>
-            </LinearGradient>
-          ) : (
-            <View style={styles.card}>
-              <Image source={item.image} style={styles.cardImage} />
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardPrice}>{item.price}</Text>
-            </View>
-          )
-        }
+        renderItem={({ item }) => renderCard(item, "pequeno")}
       />
 
       {/* Ofertas */}
@@ -449,63 +404,34 @@ export default function HomeScreen() {
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) =>
-          item.id === "verMais" ? (
-            <LinearGradient
-              colors={["#8000FF", "#FF00FF"]}
-              style={[styles.card, styles.verMaisCard]}
-            >
-              <Text style={styles.verMaisText}>Ver mais</Text>
-            </LinearGradient>
-          ) : (
-            <View style={styles.card}>
-              <Image source={item.image} style={styles.cardImage} />
-              <Text style={styles.cardTitle}>{item.title}</Text>
-              <Text style={styles.cardPrice}>{item.price}</Text>
-            </View>
-          )
-        }
+        renderItem={({ item }) => renderCard(item, "grande")}
       />
-
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    paddingTop: 5,
+  container: { flex: 1, backgroundColor: "#000", paddingTop: 5 },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 4,
+    marginTop: 2,
   },
-
-  scrollView: {
-    flex: 1,
-    backgroundColor: "#0a0a0a",
-    paddingHorizontal: 10,
+  ratingText: {
+    color: '#FFD700',
+    fontSize: 12,
+    marginLeft: 4,
   },
-
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
   },
-
-  logo: {
-    width: 200,
-    height: 60,
-    resizeMode: "contain"
-  },
-
-  navIcons: {
-    flexDirection: "row",
-    gap: 15
-  },
-
-  icon: {
-    width: 20,
-    height: 20
-  },
+  logo: { width: 200, height: 60, resizeMode: "contain" },
+  navIcons: { flexDirection: "row", gap: 15 },
+  icon: { width: 20, height: 20 },
   bannerImage: {
     width: width * 0.9,
     height: 180,
@@ -513,24 +439,86 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  bannerTitle: { 
+  bannerTitle: {
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
     maxWidth: "70%",
   },
-
   sectionTitle: {
     fontSize: 18,
     color: "#fff",
     fontWeight: "bold",
     marginLeft: 20,
-    marginTop: 20,
+    marginTop: 30,
   },
-  card: { width: 130, height: 160, marginLeft: 20, marginTop: 10 },
-  cardImage: { width: 130, height: 160, borderRadius: 10 },
-  cardTitle: { color: "#fff", fontSize: 14, marginTop: 5 },
-  cardPrice: { color: "#ff0", fontWeight: "bold", fontSize: 14 },
+  card: {
+    width: 150,
+    height: 160,
+    marginLeft: 20,
+    marginTop: 10,
+    marginBottom: 40,
+    margin: 5,
+    backgroundColor: "#252525ff",
+    borderBottomEndRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    paddingBottom: 50,
+    shadowColor: "#ff00d0ff",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 20,
+  },
+
+  cardImage: {
+    width: 150,
+    height: 100,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+
+  cardVendidos: {
+    width: 140,
+    height: 230,
+    marginLeft: 20,
+    marginTop: 10,
+    marginBottom: 30,
+    backgroundColor: "#252525ff",
+    borderRadius: 10,
+    paddingBottom: 50,
+    boxShadowColor: "#86007bb3",
+    shadowColor: "#ff00d0ff",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 20,
+  },
+
+  cardImageVendidos: {
+    width: 120,
+    height: 160,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignSelf: "center",
+    marginTop: 5,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  cardTitle: { 
+    color: "#fff", 
+    fontSize: 11, 
+    marginTop: 10, 
+    paddingLeft: 4 
+  },
+
+  cardPrice: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
+    paddingLeft: 4,
+  },
   verMaisCard: {
     borderRadius: 10,
     justifyContent: "center",

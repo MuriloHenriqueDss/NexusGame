@@ -10,6 +10,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-na
 import HomeScreen from "./screens/HomeScreen";
 import ProdutosScreen from "./screens/ProdutosScreen";
 import CategoriasScreen from "./screens/CategoriasScreen";
+import CategoriaDetalhadasScreen from "./screens/CategoriaDetalhadaScreen";
 import FavoritosScreen from "./screens/FavoritosScreen";
 import PerfilScreen from "./screens/PerfilScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -103,6 +104,8 @@ export default function App() {
         <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
         <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
         <Stack.Screen name="MeusCartoes" component={MeusCartoesScreen} />
+        <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

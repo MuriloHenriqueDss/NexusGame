@@ -13,6 +13,7 @@ import {
   ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 
@@ -42,14 +43,26 @@ const jogosIniciais = {
       id: "1",
       nome: "The Witcher 3",
       imagem: require("../screens/assets/1.png"),
+      rating: 4.9
     },
-    { id: "2", nome: "Skyrim", imagem: require("../screens/assets/1.png") },
+    { 
+      id: "2", 
+      nome: "Skyrim", 
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.8
+    },
     {
       id: "3",
       nome: "Cyberpunk 2077",
       imagem: require("../screens/assets/1.png"),
+      rating: 4.5
     },
-    { id: "4", nome: "Dragon Age", imagem: require("../screens/assets/1.png") },
+    { 
+      id: "4", 
+      nome: "Dragon Age", 
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.7
+    },
   ],
   pesquisados: [
     { id: "5", nome: "FIFA 26", imagem: require("../screens/assets/fc26.png") },
@@ -197,7 +210,11 @@ export default function HomeScreen() {
             { backgroundColor: "#ffffffff", borderRadius: 100, padding: 10 },
           ]}
         >
-          <Ionicons name="logo-playstation" size={26} />
+          <Ionicons
+            name="logo-playstation"
+            size={26}
+            onPress={() => navigation.navigate("Categorias")}
+          />
         </View>
         <View
           style={[
@@ -205,7 +222,11 @@ export default function HomeScreen() {
             { backgroundColor: "#ffffffff", borderRadius: 100, padding: 10 },
           ]}
         >
-          <Ionicons name="logo-xbox" size={26} />
+          <Ionicons
+            name="logo-xbox"
+            size={26}
+            onPress={() => navigation.navigate("Categorias")}
+          />
         </View>
         <View
           style={[
@@ -213,7 +234,11 @@ export default function HomeScreen() {
             { backgroundColor: "#ffffffff", borderRadius: 100, padding: 10 },
           ]}
         >
-          <Ionicons name="game-controller-outline" size={26} />
+          <Ionicons
+            name="game-controller-outline"
+            size={26}
+            onPress={() => navigation.navigate("Categorias")}
+          />
         </View>
         <View
           style={[
@@ -221,11 +246,13 @@ export default function HomeScreen() {
             { backgroundColor: "#fff", borderRadius: 100, padding: 10 },
           ]}
         >
-          <Image
-            source={require("../screens/assets/nintendo_logo.png")}
-            style={{ width: 26, height: 26 }}
-            resizeMode="contain"
-          />
+          <TouchableOpacity onPress={() => navigation.navigate("CategoriaDetalhada")}>
+            <Image
+              source={require("../screens/assets/nintendo_logo.png")}
+              style={{ width: 26, height: 26 }}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -345,6 +372,12 @@ function Section({ title, data, onPress, onAdd }) {
               <Text style={styles.cardTitle} numberOfLines={1}>
                 {item.nome}
               </Text>
+              {item.rating && (
+                <View style={styles.ratingContainer}>
+                  <Icon name="star" size={12} color="#FFD700" />
+                  <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         )}
@@ -452,6 +485,17 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 14,
     textAlign: "center",
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+  },
+  ratingText: {
+    color: '#FFD700',
+    fontSize: 12,
+    marginLeft: 4,
   },
   specialCard: {
     height: 120,
