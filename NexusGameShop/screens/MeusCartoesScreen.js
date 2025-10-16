@@ -113,7 +113,7 @@ export default function MeusCartoes({ navigation }) {
           </View>
         ))}
         {/* Botão de adicionar cartão */}
-        <TouchableOpacity style={styles.botaoAdicionar}>
+        <TouchableOpacity style={styles.botaoAdicionar} onPress={() => navigation.navigate('AdicionarCartao')}>
           <Ionicons name="add" size={20} color="white" style={{ marginRight: 6 }} />
           <Text style={styles.textoBotaoAdicionar}>Adicionar cartão</Text>
         </TouchableOpacity>
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   padrao: {
     color: "#FF00C8",
     fontWeight: "bold",
-    marginLeft: 5,
+    marginRight: 137,
   },
   tornarPadrao: {
     color: "#FF00C8",

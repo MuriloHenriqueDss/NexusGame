@@ -79,7 +79,7 @@ export default function PerfilScreen({ navigation }) {
             <Text style={styles.textoCard}>Meu carrinho</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusPedidos')}>
             <FontAwesome5 name="gamepad" size={18} color="#FF09E6" />
             <Text style={styles.textoCard}>Meus pedidos</Text>
           </TouchableOpacity>
