@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesome } from '@expo/vector-icons';
 
 const { width } = Dimensions.get("window");
 
@@ -195,7 +195,7 @@ const ofertas = [
 const StarRating = ({ rating }) => {
   return (
     <View style={styles.ratingContainer}>
-      <Icon name="star" size={14} color="#FFD700" />
+      <FontAwesome name="star" size={14} color="#FFD700" />
       <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
     </View>
   );
@@ -225,8 +225,10 @@ export default function HomeScreen() {
         <View style={styles.cardVendidos}>
           <Image source={item.image} style={styles.cardImageVendidos} />
           <Text style={styles.cardTitle}>{item.title}</Text>
-          {item.rating && <StarRating rating={item.rating} />}
-          <Text style={styles.cardPrice}>{item.price}</Text>
+          <View style={styles.priceRatingContainer}>
+            <Text style={styles.cardPrice}>{item.price}</Text>
+            {item.rating && <StarRating rating={item.rating} />}
+          </View>
         </View>
       );
     } else {
@@ -234,8 +236,10 @@ export default function HomeScreen() {
         <View style={styles.card}>
           <Image source={item.image} style={styles.cardImage} />
           <Text style={styles.cardTitle}>{item.title}</Text>
-          {item.rating && <StarRating rating={item.rating} />}
-          <Text style={styles.cardPrice}>{item.price}</Text>
+          <View style={styles.priceRatingContainer}>
+            <Text style={styles.cardPrice}>{item.price}</Text>
+            {item.rating && <StarRating rating={item.rating} />}
+          </View>
         </View>
       );
     }
@@ -412,12 +416,19 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#000", paddingTop: 5 },
+  priceRatingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    marginTop: 4,
+  },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 4,
-    marginTop: 2,
+    gap: 4,
   },
+
   ratingText: {
     color: '#FFD700',
     fontSize: 12,

@@ -1,0 +1,81 @@
+# dependencies
+/node_modules
+node_modules/
+
+# Expo
+.expo/
+web-build/
+dist/
+expo-env.d.ts
+
+# Native
+.android/
+.ios/
+.gradle/
+.idea/
+.vscode/
+*.iml
+*.apk
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# Logs
+logs
+*.log
+debug.log
+error.log
+
+# Build output
+build/
+tmp/
+temp/
+
+# Misc
+*.swp
+*.swo
+*.tmp
+*.bak
+*.old
+*.orig
+*.lock
+
+# Coverage
+coverage/
+
+# Package files
+package-lock.json
+yarn.lock
+expo-debug.log
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace

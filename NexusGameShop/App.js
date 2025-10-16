@@ -23,7 +23,9 @@ import NotificacoesScreen from "./screens/NotificacoesScreen";
 import SplashScreen from "./screens/SplashScreen";
 import EditarPerfilScreen from "./screens/EditarPerfilScreen";
 import EditarAvatarScreen from "./screens/EditarAvatarScreen";
-import MeusCartoesScreen from "./screens/MeusCartoes";
+import MeusCartoesScreen from "./screens/MeusCartoesScreen";
+import MeusPedidosScreen from "./screens/MeusPedidosScreen";
+import AdicionarCartaoScreen from "./screens/AdicionarCartaoScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -105,6 +107,8 @@ export default function App() {
         <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
         <Stack.Screen name="MeusCartoes" component={MeusCartoesScreen} />
         <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
+        <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
+        <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>
