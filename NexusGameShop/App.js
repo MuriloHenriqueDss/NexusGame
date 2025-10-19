@@ -26,7 +26,7 @@ import EditarAvatarScreen from "./screens/EditarAvatarScreen";
 import MeusCartoesScreen from "./screens/MeusCartoesScreen";
 import MeusPedidosScreen from "./screens/MeusPedidosScreen";
 import AdicionarCartaoScreen from "./screens/AdicionarCartaoScreen";
-
+import { CartProvider } from "./screens/CartContext";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -88,30 +88,34 @@ function BottomTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator 
-        screenOptions={{ cardStyle: { backgroundColor: '#7B009A' },headerShown: false }} 
-        initialRouteName="SplashScreen"
-      >
-        <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Cadastro" component={CadastroScreen} />
-        <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
-        <Stack.Screen name="Main" component={BottomTabs} />
-        <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
-        <Stack.Screen name="Categorias" component={CategoriasScreen} />
-        <Stack.Screen name="DetalhesProduto" component={DetalhesProduto} />
-        <Stack.Screen name="AdicionarJogo" component={AdicionarJogoScreen} />
-        <Stack.Screen name="Notificacoes" component={NotificacoesScreen} />
-        <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
-        <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
-        <Stack.Screen name="MeusCartoes" component={MeusCartoesScreen} />
-        <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
-        <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
-        <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
-
-      </Stack.Navigator>
-    </NavigationContainer>
+    <CartProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            cardStyle: { backgroundColor: "#7B009A" },
+            headerShown: false,
+          }}
+          initialRouteName="SplashScreen"
+        >
+          <Stack.Screen name="SplashScreen" component={SplashScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Cadastro" component={CadastroScreen} />
+          <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
+          <Stack.Screen name="Main" component={BottomTabs} />
+          <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
+          <Stack.Screen name="Categorias" component={CategoriasScreen} />
+          <Stack.Screen name="DetalhesProduto" component={DetalhesProduto} />
+          <Stack.Screen name="AdicionarJogo" component={AdicionarJogoScreen} />
+          <Stack.Screen name="Notificacoes" component={NotificacoesScreen} />
+          <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
+          <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
+          <Stack.Screen name="MeusCartoes" component={MeusCartoesScreen} />
+          <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
+          <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
+          <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </CartProvider>
   );
 }
 

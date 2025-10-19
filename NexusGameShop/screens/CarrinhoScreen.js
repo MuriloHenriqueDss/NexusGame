@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,48 +7,35 @@ import {
   StyleSheet,
   TextInput,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function CarrinhoScreen({ navigation }) {
-  const [itens, setItens] = useState([
-    {
-      id: 1,
-      nome: "The Legend of Zelda (Nintendo Switch)",
-      preco: 349.9,
-      quantidade: 1,
-      imagem: require("../assets/img/zelda.png"),
-    },
-    {
-      id: 2,
-      nome: "Call of Duty Black Ops Cold War (Xbox Series X/S)",
-      preco: 87.99,
-      quantidade: 1,
-      imagem: require("../assets/img/cod.png"),
-    },
-  ]);
-
+export default function CarrinhoScreen({ navigation, route }) {
+  // Initialize with empty cart
+  const [cart, setCart] = useState([]);
   const [cupom, setCupom] = useState("");
   const frete = 27.61;
 
-  const subtotal = itens.reduce(
-    (acc, item) => acc + item.preco * item.quantidade,
+  // Calculate subtotal based on cart items
+  const subtotal = cart.reduce(
+    (acc, item) => acc + (item.preco || 0) * (item.quantidade || 1),
     0
   );
   const total = subtotal + frete;
 
   const aumentar = (id) => {
-    setItens((prev) =>
+    setCart((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, quantidade: item.quantidade + 1 }
+          ? { ...item, quantidade: (item.quantidade || 1) + 1 }
           : item
       )
     );
   };
 
   const diminuir = (id) => {
-    setItens((prev) =>
+    setCart((prev) =>
       prev.map((item) =>
         item.id === id && item.quantidade > 1
           ? { ...item, quantidade: item.quantidade - 1 }
@@ -57,34 +44,55 @@ export default function CarrinhoScreen({ navigation }) {
     );
   };
 
+  // Handle items coming from navigation
+  useEffect(() => {
+    if (route?.params?.item) {
+      const newItem = route.params.item;
+      setCart((prev) => {
+        const exists = prev.find(item => item.id === newItem.id);
+        if (exists) {
+          return prev.map(item => 
+            item.id === newItem.id 
+              ? {...item, quantidade: (item.quantidade || 1) + 1}
+              : item
+          );
+        }
+        return [...prev, { ...newItem, quantidade: 1 }];
+      });
+      
+      // Clear navigation params
+      navigation.setParams({ item: null });
+    }
+  }, [route?.params]);
+
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-          <Image
-            source={require("../assets/img/logo_nexus.png")}
-            style={styles.logo}
-          />
-          <View style={styles.navIcons}>
-            <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-                <Image
-                  source={require("../assets/img/buscar_icon.png")}
-                  style={styles.icon}
-                />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-              <Image
-                source={require("../assets/img/carrinho_icon.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-              <Image
-                source={require("../assets/img/notificacao_icon.png")}
-                style={styles.icon}
-                />
-            </TouchableOpacity>
-          </View>
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -92,56 +100,39 @@ export default function CarrinhoScreen({ navigation }) {
       >
         <Text style={styles.titulo}>Carrinho</Text>
 
-        {/* Lista de itens */}
-
-        {itens.map((item) => (
-          <View key={item.id} style={styles.itemContainer}>
-            <Image source={item.imagem} style={styles.imagem} />
-            <View style={styles.info}>
-              <Text style={styles.nome}>{item.nome}</Text>
-              <Text style={styles.preco}>
-                R${(item.preco * item.quantidade).toFixed(2).replace(".", ",")}
-              </Text>
-            </View>
-            <View style={styles.quantidadeContainer}>
-              <TouchableOpacity onPress={() => diminuir(item.id)}>
-                <Ionicons name="remove-circle" size={22} color="#FF00C8" />
-              </TouchableOpacity>
-              <Text style={styles.quantidade}>{item.quantidade}</Text>
-              <TouchableOpacity onPress={() => aumentar(item.id)}>
-                <Ionicons name="add-circle" size={22} color="#FF00C8" />
-              </TouchableOpacity>
-            </View>
+        {cart.length === 0 ? (
+          <View style={{ alignItems: "center", marginTop: 40 }}>
+            <Text style={{ color: "#fff", fontSize: 18 }}>
+              Seu carrinho está vazio
+            </Text>
           </View>
-        ))}
-
-
-
-
-        {/* {itens.map((item) => (
-          <View key={item.id} style={styles.itemContainer}>
-            <Image source={item.imagem} style={styles.imagem} />
-            <View style={styles.info}>
-              <Text style={styles.nome}>{item.nome}</Text>
-              <Text style={styles.preco}>
-                R${item.preco.toFixed(2).replace(".", ",")}
-              </Text>
+        ) : (
+          cart.map((item) => (
+            <View key={item.id} style={styles.itemContainer}>
+              <Image source={item.imagem} style={styles.imagem} />
+              <View style={styles.info}>
+                <Text style={styles.nome}>{item.nome}</Text>
+                <Text style={styles.preco}>
+                  R${((item.preco || 0) * (item.quantidade || 1))
+                    .toFixed(2)
+                    .replace(".", ",")}
+                </Text>
+              </View>
+              <View style={styles.quantidadeContainer}>
+                <TouchableOpacity onPress={() => diminuir(item.id)}>
+                  <Ionicons name="remove-circle" size={22} color="#FF00C8" />
+                </TouchableOpacity>
+                <Text style={styles.quantidade}>{item.quantidade || 1}</Text>
+                <TouchableOpacity onPress={() => aumentar(item.id)}>
+                  <Ionicons name="add-circle" size={22} color="#FF00C8" />
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.quantidadeContainer}>
-              <TouchableOpacity onPress={() => diminuir(item.id)}>
-                <Ionicons name="remove-circle" size={22} color="#FF00C8" />
-              </TouchableOpacity>
-              <Text style={styles.quantidade}>{item.quantidade}</Text>
-              <TouchableOpacity onPress={() => aumentar(item.id)}>
-                <Ionicons name="add-circle" size={22} color="#FF00C8" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        ))} */}
+          ))
+        )}
 
         <View style={styles.linhaDivisoria} />
 
-        {/* Resumo de valores */}
         <View style={styles.resumo}>
           <View style={styles.linhaResumo}>
             <Text style={styles.textoResumo}>Subtotal:</Text>
@@ -160,7 +151,10 @@ export default function CarrinhoScreen({ navigation }) {
                 value={cupom}
                 onChangeText={setCupom}
               />
-              <TouchableOpacity style={styles.botaoAplicar} onPress={() => alert("Desconto aplicado com sucesso!")}>
+              <TouchableOpacity
+                style={styles.botaoAplicar}
+                onPress={() => Alert.alert("Cupom aplicado com sucesso!")}
+              >
                 <Text style={styles.textoAplicar}>Aplicar</Text>
               </TouchableOpacity>
             </View>
@@ -182,9 +176,11 @@ export default function CarrinhoScreen({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* Botões inferiores */}
       <View style={styles.botoesContainer}>
-        <TouchableOpacity style={styles.botaoCinza} onPress={() => navigation.navigate("Main")}>
+        <TouchableOpacity
+          style={styles.botaoCinza}
+          onPress={() => navigation.navigate("Main")}
+        >
           <Ionicons name="cart-outline" size={18} color="white" />
           <Text style={styles.textoBotao}>Continuar compras</Text>
         </TouchableOpacity>

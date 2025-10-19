@@ -92,7 +92,7 @@ const preVenda = [
   {
     id: "2",
     image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
+    title: "Marvel Spider Man 2",
     price: "R$79,99",
     rating: 4.9,
   },
@@ -426,13 +426,14 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 5,
   },
 
   ratingText: {
     color: '#FFD700',
     fontSize: 12,
     marginLeft: 4,
+    marginRight: 4,
   },
   navbar: {
     flexDirection: "row",
@@ -457,14 +458,14 @@ const styles = StyleSheet.create({
     maxWidth: "70%",
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#fff",
     fontWeight: "bold",
     marginLeft: 20,
     marginTop: 30,
   },
   card: {
-    width: 150,
+    width: 200,
     height: 160,
     marginLeft: 20,
     marginTop: 10,
@@ -484,7 +485,7 @@ const styles = StyleSheet.create({
   },
 
   cardImage: {
-    width: 150,
+    width: 200,
     height: 100,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -492,7 +493,7 @@ const styles = StyleSheet.create({
 
   cardVendidos: {
     width: 140,
-    height: 230,
+    height: 250,
     marginLeft: 20,
     marginTop: 10,
     marginBottom: 30,
@@ -519,7 +520,8 @@ const styles = StyleSheet.create({
   },
   cardTitle: { 
     color: "#fff", 
-    fontSize: 11, 
+    fontSize: 14,
+    fontWeight: 'bold', 
     marginTop: 10, 
     paddingLeft: 4 
   },
@@ -527,7 +529,7 @@ const styles = StyleSheet.create({
   cardPrice: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 11,
     paddingLeft: 4,
   },
   verMaisCard: {
@@ -547,6 +549,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: 12,
     marginTop: 10,
+    marginBottom: 30,
   },
   gridCard3D: {
     width: width / 2 - 18,
