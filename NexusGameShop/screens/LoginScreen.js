@@ -20,21 +20,21 @@ export default function LoginScreen({ navigation }) {
       return;
     }
 
+  
+    const FIXED_EMAIL = "adm@teste.com";
+    const FIXED_PASSWORD = "123qwe";
+
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
 
-    setLoading(false);
-
-    if (error) {
-      alert("Erro ao logar: " + error.message);
-    } else {
-      // Login bem-sucedido, navega para a Main (Bottom Tabs)
-      navigation.navigate("Main");
-    }
+    setTimeout(() => {
+      setLoading(false);
+      if (email.toLowerCase() === FIXED_EMAIL && password === FIXED_PASSWORD) {
+        navigation.navigate("Main");
+      } else {
+        alert("Credenciais inválidas");
+      }
+    }, 700);
   }
 
   return (
@@ -78,7 +78,11 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
 
         {/* Botão Entrar */}
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Main")}>
+        <TouchableOpacity
+          style={[styles.button, !(email && password) ? styles.buttonDisabled : null]}
+          onPress={handleLogin}
+          disabled={!(email && password) || loading}
+        >
           <Text style={styles.buttonText}>
             {loading ? "Carregando..." : "Entrar"}
           </Text>
@@ -153,6 +157,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginTop: 10,
     alignItems: "center",
+  },
+  buttonDisabled: {
+    backgroundColor: "#8b008b",
+    opacity: 0.6,
   },
   buttonText: {
     color: "#fff",

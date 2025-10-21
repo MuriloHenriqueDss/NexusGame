@@ -15,8 +15,6 @@ import { Ionicons } from "@expo/vector-icons";
 
 const { width } = Dimensions.get("window");
 
-
-
 const categorias = [
   { id: "1", nome: "Playstation", cor: "#00439C" },
   { id: "2", nome: "Xbox", cor: "#107C10" },
@@ -39,16 +37,34 @@ const categorias = [
 export default function CategoriasScreen() {
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
-        <View style={styles.icons}>
-          <Ionicons name="search-outline" size={22} color="#fff" style={styles.icon} />
-          <Ionicons name="cart-outline" size={22} color="#fff" style={styles.icon} />
-          <Ionicons name="notifications-outline" size={22} color="#fff" style={styles.icon} />
+      <View style={styles.navbar}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -59,9 +75,23 @@ export default function CategoriasScreen() {
 
       {/* Barra de pesquisa */}
       <View style={styles.searchBar}>
-        <Ionicons name="search" size={20} color="#888" style={{ marginHorizontal: 8 }} />
-        <TextInput placeholder="Buscar jogos" placeholderTextColor="#888" style={styles.input} />
-        <Ionicons name="moon-outline" size={20} color="#888" style={{ marginRight: 8 }} />
+        <Ionicons
+          name="search"
+          size={20}
+          color="#888"
+          style={{ marginHorizontal: 8 }}
+        />
+        <TextInput
+          placeholder="Buscar jogos"
+          placeholderTextColor="#888"
+          style={styles.input}
+        />
+        <Ionicons
+          name="moon-outline"
+          size={20}
+          color="#888"
+          style={{ marginRight: 8 }}
+        />
       </View>
 
       {/* Grid de categorias */}
@@ -76,7 +106,9 @@ export default function CategoriasScreen() {
                 <Text style={styles.cardTitle}>{cat.nome}</Text>
               </View>
             )}
-            {cat.imagem && <Text style={styles.cardTitleOverlay}>{cat.nome}</Text>}
+            {cat.imagem && (
+              <Text style={styles.cardTitleOverlay}>{cat.nome}</Text>
+            )}
           </TouchableOpacity>
         ))}
       </View>
@@ -85,16 +117,20 @@ export default function CategoriasScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
-  header: {
+  container: { 
+    flex: 1, 
+    backgroundColor: "#000",
+  },
+  navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 12,
+    padding: 20,
+    marginTop: 10,
   },
-  logo: { width: 120, height: 30, resizeMode: "contain" },
-  icons: { flexDirection: "row" },
-  icon: { marginHorizontal: 6 },
+  logo: { width: 200, height: 60, resizeMode: "contain" },
+  navIcons: { flexDirection: "row", gap: 15 },
+  icon: { width: 20, height: 20 },
 
   banner: {
     backgroundColor: "#800080",
@@ -145,7 +181,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  cardCor: { flex: 1, width: "100%", justifyContent: "center", alignItems: "center" },
+  cardCor: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   cardImage: { width: "100%", height: "100%", position: "absolute" },
   cardTitleOverlay: {
     color: "#fff",

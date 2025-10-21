@@ -12,11 +12,13 @@ import {
   ImageBackground,
   Alert,
   Modal,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 const { width } = Dimensions.get("window");
 
@@ -43,7 +45,7 @@ const jogosIniciais = {
     {
       id: "1",
       nome: "The Witcher 3",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/thewicher.jpg"),
       rating: 4.9,
       preco: 79.9,
       precoAntigo: 129.9,
@@ -51,14 +53,14 @@ const jogosIniciais = {
     {
       id: "2",
       nome: "Skyrim",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/skyrim.jpg"),
       rating: 4.8,
       preco: 49.9,
     },
     {
       id: "3",
       nome: "Cyberpunk 2077",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/cyberpunk.jpg"),
       rating: 4.5,
       preco: 89.9,
       precoAntigo: 199.9,
@@ -66,14 +68,14 @@ const jogosIniciais = {
     {
       id: "4",
       nome: "Dragon Age: Inquisition",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/dragonage.jpg"),
       rating: 4.7,
       preco: 59.9,
     },
     {
       id: "5",
       nome: "Elden Ring",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/eldenring.jpg"),
       rating: 4.9,
       preco: 249.9,
       precoAntigo: 299.9,
@@ -81,7 +83,7 @@ const jogosIniciais = {
     {
       id: "6",
       nome: "God of War Ragnarök",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/godofwar.jpg"),
       rating: 4.8,
       preco: 279.9,
     },
@@ -96,31 +98,31 @@ const jogosIniciais = {
     {
       id: "8",
       nome: "NBA 2K24",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/nba2k.jpg"),
       preco: 199.9,
     },
     {
       id: "9",
       nome: "Call of Duty: Modern Warfare III",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/callofduty.jpg"),
       preco: 279.9,
     },
     {
       id: "10",
       nome: "Assassin’s Creed Mirage",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/assasinscreed.jpg"),
       preco: 199.9,
     },
     {
       id: "11",
       nome: "Forza Horizon 5",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/forzahorizon5.jpg"),
       preco: 229.9,
     },
     {
       id: "12",
       nome: "Overwatch 2",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/overwatch2.jpg"),
       preco: 159.9,
     },
   ],
@@ -128,37 +130,37 @@ const jogosIniciais = {
     {
       id: "13",
       nome: "Resident Evil 4 Remake",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/residentevil4.jpg"),
       preco: 299.9,
     },
     {
       id: "14",
       nome: "Silent Hill 2 Remake",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/silenthill.jpg"),
       preco: 179.9,
     },
     {
       id: "15",
       nome: "Starfield",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/starfield.jpg"),
       preco: 349.9,
     },
     {
       id: "16",
       nome: "Alan Wake 2",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/alanwake.jpg"),
       preco: 279.9,
     },
     {
       id: "17",
       nome: "Baldur’s Gate 3",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/baldursgate.jpg"),
       preco: 299.9,
     },
     {
       id: "18",
       nome: "Spider-Man 2",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/spiderman2.jpg"),
       preco: 349.9,
     },
   ],
@@ -166,7 +168,7 @@ const jogosIniciais = {
     {
       id: "19",
       nome: "Mario Odyssey",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/marioodyssey.jpg"),
       preco: 39.9,
       precoAntigo: 79.9,
     },
@@ -180,28 +182,28 @@ const jogosIniciais = {
     {
       id: "21",
       nome: "Cuphead",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/cuphead.png"),
       preco: 24.9,
       precoAntigo: 59.9,
     },
     {
       id: "22",
       nome: "Hollow Knight",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/hollowknight.jpg"),
       preco: 19.9,
       precoAntigo: 49.9,
     },
     {
       id: "23",
       nome: "Celeste",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/celeste.jpg"),
       preco: 19.9,
       precoAntigo: 59.9,
     },
     {
       id: "24",
       nome: "Dead Cells",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/deadcells.jpg"),
       preco: 29.9,
       precoAntigo: 69.9,
     },
@@ -210,42 +212,42 @@ const jogosIniciais = {
     {
       id: "25",
       nome: "GTA VI",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/gta6.jpg"),
       preco: 499.9,
       dataLancamento: "2025-09-17",
     },
     {
       id: "26",
       nome: "Elder Scrolls VI",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/elderscrolls.jpg"),
       preco: 449.9,
       dataLancamento: "2026-03-10",
     },
     {
       id: "27",
       nome: "Hades II",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/hadesII.jpg"),
       preco: 199.9,
       dataLancamento: "2025-04-05",
     },
     {
       id: "28",
       nome: "Avowed",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/avowed.jpg"),
       preco: 319.9,
       dataLancamento: "2025-07-01",
     },
     {
       id: "29",
       nome: "Fable Reboot",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/fable.jpg"),
       preco: 289.9,
       dataLancamento: "2025-11-12",
     },
     {
       id: "30",
       nome: "Metal Gear Solid Δ: Snake Eater",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/metalgear.jpg"),
       preco: 339.9,
       dataLancamento: "2025-05-30",
     },
@@ -254,44 +256,30 @@ const jogosIniciais = {
     {
       id: "31",
       nome: "Red Dead Redemption 2",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/reddead2.jpg"),
       rating: 4.9,
       preco: 199.9,
     },
     {
       id: "32",
       nome: "The Legend of Zelda: Tears of the Kingdom",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/zelda.jpg"),
       rating: 5.0,
       preco: 349.9,
     },
     {
       id: "33",
       nome: "Horizon Forbidden West",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/horizonforbidden.jpg"),
       rating: 4.7,
       preco: 199.9,
     },
     {
       id: "34",
       nome: "Dark Souls III",
-      imagem: require("../screens/assets/1.png"),
+      imagem: require("../screens/assets/jogos/darksouls3.jpg"),
       rating: 4.8,
       preco: 149.9,
-    },
-    {
-      id: "35",
-      nome: "Bloodborne",
-      imagem: require("../screens/assets/1.png"),
-      rating: 4.8,
-      preco: 179.9,
-    },
-    {
-      id: "36",
-      nome: "Final Fantasy VII Rebirth",
-      imagem: require("../screens/assets/1.png"),
-      rating: 4.9,
-      preco: 339.9,
     },
   ],
 };
@@ -335,7 +323,6 @@ function GameCard({ jogo, onPress }) {
     setRating(value);
     setRatingOpen(false);
     Alert.alert("Obrigado", `Você avaliou ${value} estrela(s)`);
-    // se quiser persistir a nota globalmente, passe uma função via props para atualizar o estado pai
   };
 
   return (
@@ -451,7 +438,7 @@ function SpecialCard({ title, backgroundColor, image, onPress }) {
       <ImageBackground
         source={image}
         style={styles.specialCardImage}
-        imageStyle={{ opacity: 0.7 }}
+        imageStyle={{ opacity: 0.5 }}
       >
         <View style={styles.specialCardContent}>
           <Text style={styles.specialCardTitle}>{title}</Text>
@@ -473,12 +460,6 @@ function Section({ title, data, onPress, onAdd, initialVisible = 5 }) {
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity
-            onPress={onAdd}
-            style={{ marginRight: 20, marginTop: 30 }}
-          >
-            <Ionicons name="add-circle-outline" size={24} color="#fff" />
-          </TouchableOpacity>
           <TouchableOpacity onPress={() => setExpanded((s) => !s)}>
             <Text style={styles.viewAllText}>
               {expanded ? "Ver menos" : `Ver tudo`}
@@ -511,10 +492,14 @@ export default function ProdutosScreen() {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity />
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
@@ -541,14 +526,37 @@ export default function ProdutosScreen() {
         <Ionicons
           name="search-outline"
           size={20}
-          color="#888"
-          style={{ marginLeft: 8 }}
+          color="#000"
+          style={{ marginLeft: 12 }}
         />
         <TextInput
           placeholder="Buscar jogos"
-          placeholderTextColor="#888"
+          placeholderTextColor="#666"
           style={styles.input}
         />
+      </View>
+
+      <View style={styles.platformRow}>
+        <TouchableOpacity
+          style={[styles.platformCircle, { backgroundColor: "#003791" }]}
+          onPress={() => navigation.navigate("CategoriaDetalhada")}
+        >
+          <FontAwesome5 name="playstation" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.platformCircle, { backgroundColor: "#107C10" }]}
+          onPress={() => navigation.navigate("CategoriaDetalhada")}
+        >
+          <FontAwesome5 name="xbox" size={24} color="#fff" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.platformCircle, { backgroundColor: "#ff0000ff" }]}
+          onPress={() => navigation.navigate("CategoriaDetalhada")}
+        >
+          <FontAwesome5 name="gamepad" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
 
       <FlatList
@@ -605,19 +613,19 @@ export default function ProdutosScreen() {
           title="Confira nossa seleção Nintendo!"
           backgroundColor="#E60012"
           image={require("../screens/assets/bannermario.png")}
-          onPress={() => navigation.navigate("Categorias")}
+          onPress={() => navigation.navigate("CategoriaDetalhada")}
         />
         <SpecialCard
           title="Confira nossa seleção PlayStation!"
           backgroundColor="#0070D1"
           image={require("../screens/assets/bannerkratos.png")}
-          onPress={() => navigation.navigate("Categorias")}
+          onPress={() => navigation.navigate("CategoriaDetalhada")}
         />
         <SpecialCard
           title="Confira nossa seleção Xbox!"
           backgroundColor="#107C10"
           image={require("../screens/assets/bannerhalo.png")}
-          onPress={() => navigation.navigate("Categorias")}
+          onPress={() => navigation.navigate("CategoriaDetalhada")}
         />
       </View>
 
@@ -634,6 +642,16 @@ export default function ProdutosScreen() {
         onPress={handlePress}
         onAdd={handleAddGame}
       />
+
+      <TouchableOpacity
+        style={styles.categoriesButton}
+        onPress={() => navigation.navigate("Categorias")}
+      >
+        <Ionicons name="grid-outline" size={24} color="#fff" />
+        <Text style={styles.categoriesButtonText}>Ver Todas as Categorias</Text>
+      </TouchableOpacity>
+
+      <View style={{ height: 20 }} />
     </ScrollView>
   );
 }
@@ -660,7 +678,7 @@ const styles = StyleSheet.create({
   input: { flex: 1, padding: 10, color: "#fff", fontSize: 16 },
   banner: {
     width: width * 0.9,
-    height: 180,
+    height: 160,
     marginHorizontal: width * 0.05,
     justifyContent: "center",
     padding: 20,
@@ -829,4 +847,46 @@ const styles = StyleSheet.create({
   modalStarButton: { paddingHorizontal: 6 },
   ratingCancel: { marginTop: 6 },
   ratingCancelText: { color: "#bbb" },
+
+  categoriesButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#FF09E6",
+    marginHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 20,
+    paddingVertical: 15,
+    borderRadius: 25,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  categoriesButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  platformCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 6,
+  },
+  platformRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 10,
+    gap: 20,
+  },
 });

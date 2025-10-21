@@ -8,28 +8,87 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 
 export default function AdicionarJogoScreen() {
-  const navigation = useNavigation(); // ✅ Agora funciona
+  const navigation = useNavigation();
   const [titulo, setTitulo] = useState("");
   const [plataforma, setPlataforma] = useState("Playstation");
   const [preco, setPreco] = useState("");
+  const [categorias, setCategorias] = useState([
+    "Ação",
+    "Lego",
+    "Aventura",
+    "FPS",
+    "RPG",
+    "Estratégia",
+  ]);
+  const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
 
   const handleUploadImage = () => {
     alert("Upload de imagem clicado!");
   };
 
+  const toggleCategoria = (cat) => {
+    if (categoriasSelecionadas.includes(cat)) {
+      setCategoriasSelecionadas(
+        categoriasSelecionadas.filter((c) => c !== cat)
+      );
+    } else {
+      setCategoriasSelecionadas([...categoriasSelecionadas, cat]);
+    }
+  };
+
+  const handleNovaCategoria = () => {
+    Alert.prompt(
+      "Nova Categoria",
+      "Digite o nome da nova categoria:",
+      (novaCat) => {
+        if (novaCat && novaCat.trim() !== "") {
+          setCategorias([...categorias, novaCat.trim()]);
+          setCategoriasSelecionadas([
+            ...categoriasSelecionadas,
+            novaCat.trim(),
+          ]);
+        }
+      }
+    );
+  };
+
   const handleCadastrar = () => {
-    alert("Jogo cadastrado!");
+    if (!titulo.trim()) {
+      alert("Por favor, insira o título do jogo.");
+      return;
+    }
+    if (!preco.trim()) {
+      alert("Por favor, insira o preço do jogo.");
+      return;
+    }
+    if (categoriasSelecionadas.length === 0) {
+      alert("Selecione pelo menos uma categoria.");
+      return;
+    }
+
+    // Aqui você pode adicionar a lógica real de cadastro, ex: enviar para o Firebase
+    alert(
+      `Jogo cadastrado!\nTítulo: ${titulo}\nPlataforma: ${plataforma}\nPreço: ${preco}\nCategorias: ${categoriasSelecionadas.join(
+        ", "
+      )}`
+    );
+
+    // Limpar campos
+    setTitulo("");
+    setPreco("");
+    setCategoriasSelecionadas([]);
   };
 
   return (
     <ScrollView style={styles.container}>
-      {/* 🔹 Navbar */}
+      {/* Navbar */}
       <View style={styles.navbar}>
         <Image
           source={require("../assets/img/logo_nexus.png")}
@@ -57,7 +116,7 @@ export default function AdicionarJogoScreen() {
         </View>
       </View>
 
-      {/* 🔹 Botão Voltar */}
+      {/* Botão Voltar */}
       <TouchableOpacity
         style={styles.voltar}
         activeOpacity={0.7}
@@ -67,10 +126,10 @@ export default function AdicionarJogoScreen() {
         <Text style={styles.voltarTexto}>Voltar</Text>
       </TouchableOpacity>
 
-      {/* 🔹 Título */}
+      {/* Título */}
       <Text style={styles.title}>Cadastro de jogos</Text>
 
-      {/* 🔹 Campo Título */}
+      {/* Campo Título */}
       <TextInput
         style={styles.input}
         placeholder="Título"
@@ -79,7 +138,7 @@ export default function AdicionarJogoScreen() {
         onChangeText={setTitulo}
       />
 
-      {/* 🔹 Picker */}
+      {/* Picker Plataforma */}
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={plataforma}
@@ -93,25 +152,38 @@ export default function AdicionarJogoScreen() {
         </Picker>
       </View>
 
-      {/* 🔹 Upload Imagem */}
+      {/* Upload Imagem */}
       <TouchableOpacity style={styles.uploadButton} onPress={handleUploadImage}>
         <Ionicons name="image-outline" size={24} color="#fff" />
         <Text style={styles.uploadText}>Upload Imagem</Text>
       </TouchableOpacity>
 
-      {/* 🔹 Categorias */}
+      {/* Categorias */}
       <View style={styles.categoriasContainer}>
-        {["Ação", "Lego", "Aventura", "FPS", "RPG", "Estratégia"].map((cat) => (
-          <TouchableOpacity key={cat} style={styles.categoria}>
+        {categorias.map((cat) => (
+          <TouchableOpacity
+            key={cat}
+            style={[
+              styles.categoria,
+              categoriasSelecionadas.includes(cat) && {
+                backgroundColor: "#FF09E6",
+                borderColor: "#FF09E6",
+              },
+            ]}
+            onPress={() => toggleCategoria(cat)}
+          >
             <Text style={styles.categoriaTexto}>{cat}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity style={styles.categoria}>
+        <TouchableOpacity
+          style={styles.categoria}
+          onPress={handleNovaCategoria}
+        >
           <Text style={styles.categoriaTexto}>+ Nova categoria</Text>
         </TouchableOpacity>
       </View>
 
-      {/* 🔹 Campo Preço */}
+      {/* Campo Preço */}
       <TextInput
         style={styles.input}
         placeholder="Preço"
@@ -121,8 +193,11 @@ export default function AdicionarJogoScreen() {
         onChangeText={setPreco}
       />
 
-      {/* 🔹 Botão Cadastrar */}
-      <TouchableOpacity style={styles.cadastrarButton} onPress={handleCadastrar}>
+      {/* Botão Cadastrar */}
+      <TouchableOpacity
+        style={styles.cadastrarButton}
+        onPress={handleCadastrar}
+      >
         <Text style={styles.cadastrarTexto}>Cadastrar Jogo</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -130,36 +205,17 @@ export default function AdicionarJogoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-    marginTop: 20,
-  },
-
+  container: { flex: 1, backgroundColor: "#000" },
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
+    marginTop: 10,
   },
-
-  logo: {
-    width: 200,
-    height: 60,
-    resizeMode: "contain",
-  },
-
-  navIcons: {
-    flexDirection: "row",
-    gap: 15,
-  },
-
-  icon: {
-    width: 20,
-    height: 20,
-    tintColor: "#fff",
-  },
-
+  logo: { width: 200, height: 60, resizeMode: "contain" },
+  navIcons: { flexDirection: "row", gap: 15 },
+  icon: { width: 20, height: 20, tintColor: "#fff" },
   voltar: {
     flexDirection: "row",
     alignItems: "center",
@@ -176,13 +232,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 6,
   },
-
-  voltarTexto: {
-    color: "#fff",
-    marginLeft: 6,
-    fontSize: 16,
-  },
-
+  voltarTexto: { color: "#fff", marginLeft: 6, fontSize: 16 },
   title: {
     color: "#fff",
     fontSize: 22,
@@ -191,7 +241,6 @@ const styles = StyleSheet.create({
     marginTop: 40,
     textAlign: "center",
   },
-
   input: {
     backgroundColor: "#1E1E1E",
     color: "#fff",
@@ -200,16 +249,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginHorizontal: 20,
   },
-
   pickerContainer: {
     backgroundColor: "#1E1E1E",
     borderRadius: 10,
     marginBottom: 12,
     marginHorizontal: 20,
   },
-
   picker: { color: "#fff" },
-
   uploadButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -220,20 +266,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     marginHorizontal: 20,
   },
-
-  uploadText: {
-    color: "#fff",
-    marginLeft: 8,
-    fontWeight: "600",
-  },
-
+  uploadText: { color: "#fff", marginLeft: 8, fontWeight: "600" },
   categoriasContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 12,
     marginHorizontal: 20,
   },
-
   categoria: {
     borderWidth: 1,
     borderColor: "#fff",
@@ -243,11 +282,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
-
-  categoriaTexto: {
-    color: "#fff",
-  },
-
+  categoriaTexto: { color: "#fff" },
   cadastrarButton: {
     backgroundColor: "#FF09E6",
     paddingVertical: 14,
@@ -259,10 +294,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "50%",
   },
-
-  cadastrarTexto: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  cadastrarTexto: { color: "#fff", fontWeight: "bold", fontSize: 16 },
 });

@@ -91,15 +91,7 @@ export default function ProdutosScreen() {
   const [filtro, setFiltro] = useState(categoriaRecebida);
   const [busca, setBusca] = useState("");
 
-  const categorias = [
-    "Todos",
-    "PlayStation",
-    "Xbox",
-    "Nintendo",
-    "PC",
-    "Ação",
-    "Aventura",
-  ];
+  const categorias = ["Todos", "PlayStation", "Xbox", "Nintendo"];
 
   // Atualiza filtro ao receber parâmetro
   useEffect(() => {
@@ -132,12 +124,15 @@ export default function ProdutosScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
       <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity />
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
@@ -244,12 +239,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
-    marginBottom: 10,
+    padding: 20,
   },
-  logo: { width: 180, height: 50, resizeMode: "contain" },
+  logo: { width: 200, height: 60, resizeMode: "contain" },
   navIcons: { flexDirection: "row", gap: 15 },
-  icon: { width: 24, height: 24 },
+  icon: { width: 20, height: 20 },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",

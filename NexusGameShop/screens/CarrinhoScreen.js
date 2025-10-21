@@ -8,16 +8,17 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function CarrinhoScreen({ navigation, route }) {
-  // Initialize with empty cart
   const [cart, setCart] = useState([]);
   const [cupom, setCupom] = useState("");
   const frete = 27.61;
 
-  // Calculate subtotal based on cart items
   const subtotal = cart.reduce(
     (acc, item) => acc + (item.preco || 0) * (item.quantidade || 1),
     0
@@ -44,186 +45,186 @@ export default function CarrinhoScreen({ navigation, route }) {
     );
   };
 
-  // Handle items coming from navigation
   useEffect(() => {
     if (route?.params?.item) {
       const newItem = route.params.item;
       setCart((prev) => {
-        const exists = prev.find(item => item.id === newItem.id);
+        const exists = prev.find((item) => item.id === newItem.id);
         if (exists) {
-          return prev.map(item => 
-            item.id === newItem.id 
-              ? {...item, quantidade: (item.quantidade || 1) + 1}
+          return prev.map((item) =>
+            item.id === newItem.id
+              ? { ...item, quantidade: (item.quantidade || 1) + 1 }
               : item
           );
         }
         return [...prev, { ...newItem, quantidade: 1 }];
       });
-      
-      // Clear navigation params
+
       navigation.setParams({ item: null });
     }
   }, [route?.params]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
-        <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-            <Image
-              source={require("../assets/img/buscar_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-            <Image
-              source={require("../assets/img/carrinho_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-            <Image
-              source={require("../assets/img/notificacao_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-      >
-        <Text style={styles.titulo}>Carrinho</Text>
-
-        {cart.length === 0 ? (
-          <View style={{ alignItems: "center", marginTop: 40 }}>
-            <Text style={{ color: "#fff", fontSize: 18 }}>
-              Seu carrinho está vazio
-            </Text>
-          </View>
-        ) : (
-          cart.map((item) => (
-            <View key={item.id} style={styles.itemContainer}>
-              <Image source={item.imagem} style={styles.imagem} />
-              <View style={styles.info}>
-                <Text style={styles.nome}>{item.nome}</Text>
-                <Text style={styles.preco}>
-                  R${((item.preco || 0) * (item.quantidade || 1))
-                    .toFixed(2)
-                    .replace(".", ",")}
-                </Text>
-              </View>
-              <View style={styles.quantidadeContainer}>
-                <TouchableOpacity onPress={() => diminuir(item.id)}>
-                  <Ionicons name="remove-circle" size={22} color="#FF00C8" />
-                </TouchableOpacity>
-                <Text style={styles.quantidade}>{item.quantidade || 1}</Text>
-                <TouchableOpacity onPress={() => aumentar(item.id)}>
-                  <Ionicons name="add-circle" size={22} color="#FF00C8" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))
-        )}
-
-        <View style={styles.linhaDivisoria} />
-
-        <View style={styles.resumo}>
-          <View style={styles.linhaResumo}>
-            <Text style={styles.textoResumo}>Subtotal:</Text>
-            <Text style={styles.valorResumo}>
-              R${subtotal.toFixed(2).replace(".", ",")}
-            </Text>
-          </View>
-
-          <View style={styles.linhaResumo}>
-            <Text style={styles.textoResumo}>Descontos:</Text>
-            <View style={styles.areaCupom}>
-              <TextInput
-                style={styles.inputCupom}
-                placeholder="Inserir cupom"
-                placeholderTextColor="#999"
-                value={cupom}
-                onChangeText={setCupom}
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "black" }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* Navbar */}
+        <View style={styles.navbar}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+          <View style={styles.navIcons}>
+            <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+              <Image
+                source={require("../assets/img/buscar_icon.png")}
+                style={styles.icon}
               />
-              <TouchableOpacity
-                style={styles.botaoAplicar}
-                onPress={() => Alert.alert("Cupom aplicado com sucesso!")}
-              >
-                <Text style={styles.textoAplicar}>Aplicar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.linhaResumo}>
-            <Text style={styles.textoResumo}>Frete:</Text>
-            <Text style={styles.valorResumo}>
-              R${frete.toFixed(2).replace(".", ",")}
-            </Text>
-          </View>
-
-          <View style={styles.linhaResumo}>
-            <Text style={styles.totalTexto}>Total:</Text>
-            <Text style={styles.totalValor}>
-              R${total.toFixed(2).replace(".", ",")}
-            </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+              <Image
+                source={require("../assets/img/carrinho_icon.png")}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Notificacoes")}
+            >
+              <Image
+                source={require("../assets/img/notificacao_icon.png")}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
 
-      <View style={styles.botoesContainer}>
-        <TouchableOpacity
-          style={styles.botaoCinza}
-          onPress={() => navigation.navigate("Main")}
+        {/* Conteúdo rolável */}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ alignItems: "center", paddingBottom: 150 }}
         >
-          <Ionicons name="cart-outline" size={18} color="white" />
-          <Text style={styles.textoBotao}>Continuar compras</Text>
-        </TouchableOpacity>
+          <Text style={styles.titulo}>Carrinho</Text>
 
-        <TouchableOpacity
-          style={styles.botaoRosa}
-          onPress={() => navigation.navigate("Pagamento")}
-        >
-          <Text style={styles.textoBotao}>Avançar →</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          {cart.length === 0 ? (
+            <View style={{ alignItems: "center", marginTop: 40 }}>
+              <Text style={{ color: "#fff", fontSize: 18 }}>
+                Seu carrinho está vazio
+              </Text>
+            </View>
+          ) : (
+            cart.map((item) => (
+              <View key={item.id} style={styles.itemContainer}>
+                <Image source={item.imagem} style={styles.imagem} />
+                <View style={styles.info}>
+                  <Text style={styles.nome}>{item.nome}</Text>
+                  <Text style={styles.preco}>
+                    R${((item.preco || 0) * (item.quantidade || 1))
+                      .toFixed(2)
+                      .replace(".", ",")}
+                  </Text>
+                </View>
+                <View style={styles.quantidadeContainer}>
+                  <TouchableOpacity onPress={() => diminuir(item.id)}>
+                    <Ionicons name="remove-circle" size={22} color="#FF00C8" />
+                  </TouchableOpacity>
+                  <Text style={styles.quantidade}>{item.quantidade || 1}</Text>
+                  <TouchableOpacity onPress={() => aumentar(item.id)}>
+                    <Ionicons name="add-circle" size={22} color="#FF00C8" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
+
+          <View style={styles.linhaDivisoria} />
+
+          <View style={styles.resumo}>
+            <View style={styles.linhaResumo}>
+              <Text style={styles.textoResumo}>Subtotal:</Text>
+              <Text style={styles.valorResumo}>
+                R${subtotal.toFixed(2).replace(".", ",")}
+              </Text>
+            </View>
+
+            <View style={styles.linhaResumo}>
+              <Text style={styles.textoResumo}>Descontos:</Text>
+              <View style={styles.areaCupom}>
+                <TextInput
+                  style={styles.inputCupom}
+                  placeholder="Inserir cupom"
+                  placeholderTextColor="#999"
+                  value={cupom}
+                  onChangeText={setCupom}
+                />
+                <TouchableOpacity
+                  style={styles.botaoAplicar}
+                  onPress={() => Alert.alert("Cupom aplicado com sucesso!")}
+                >
+                  <Text style={styles.textoAplicar}>Aplicar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.linhaResumo}>
+              <Text style={styles.textoResumo}>Frete:</Text>
+              <Text style={styles.valorResumo}>
+                R${frete.toFixed(2).replace(".", ",")}
+              </Text>
+            </View>
+
+            <View style={styles.linhaResumo}>
+              <Text style={styles.totalTexto}>Total:</Text>
+              <Text style={styles.totalValor}>
+                R${total.toFixed(2).replace(".", ",")}
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+
+        {/* Botões fixos embaixo */}
+        <View style={styles.botoesFixos}>
+          <TouchableOpacity
+            style={styles.botaoCinza}
+            onPress={() => navigation.navigate("Main")}
+          >
+            <Ionicons name="cart-outline" size={18} color="white" />
+            <Text style={styles.textoBotao}>Continuar compras</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.botaoRosa}
+            onPress={() => navigation.navigate("Pagamento")}
+          >
+            <Text style={styles.textoBotao}>Avançar →</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "black",
-    paddingTop: 5,
-  },
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "black",
   },
   logo: {
     width: 200,
     height: 60,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
   navIcons: {
     flexDirection: "row",
-    gap: 15
+    gap: 15,
   },
   icon: {
     width: 20,
-    height: 20
-  },
-  scroll: {
-    alignItems: "center",
-    paddingBottom: 100,
+    height: 20,
   },
   titulo: {
     color: "white",
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 8,
     paddingVertical: 5,
-    width: 210,
+    width: 150,
     fontSize: 16,
     marginRight: 2,
   },
@@ -313,6 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingVertical: 6,
     paddingHorizontal: 10,
+    marginRight: 10,
   },
   textoAplicar: {
     color: "white",
@@ -331,21 +333,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginTop: 5,
   },
-  botoesContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: "black",
+  botoesFixos: {
     position: "absolute",
     bottom: 0,
+    flexDirection: "row",
+    justifyContent: "space-between",
     width: "100%",
+    padding: 15,
+    backgroundColor: "black",
   },
   botaoCinza: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#303030",
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
   },

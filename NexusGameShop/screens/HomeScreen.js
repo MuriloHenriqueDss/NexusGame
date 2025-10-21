@@ -252,7 +252,7 @@ export default function HomeScreen() {
     >
       {/* Navbar */}
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <Image
             source={require("../assets/img/logo_nexus.png")}
             style={styles.logo}
