@@ -11,6 +11,7 @@ import {
   FlatList,
   ImageBackground,
   Alert,
+  Modal,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -20,103 +21,481 @@ import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 
 const banners = [
-  { id: "1", titulo: "Descubra novos jogos incríveis!", imagem: require("../screens/assets/minecraft.png") },
-  { id: "2", titulo: "Promoções imperdíveis!", imagem: require("../screens/assets/rematch.jpg") },
-  { id: "3", titulo: "Jogos em pré-venda", imagem: require("../screens/assets/gta6banner.jpg") },
+  {
+    id: "1",
+    titulo: "Descubra novos jogos incríveis!",
+    imagem: require("../screens/assets/minecraft.png"),
+  },
+  {
+    id: "2",
+    titulo: "Promoções imperdíveis!",
+    imagem: require("../screens/assets/rematch.jpg"),
+  },
+  {
+    id: "3",
+    titulo: "Jogos em pré-venda",
+    imagem: require("../screens/assets/gta6banner.jpg"),
+  },
 ];
 
 const jogosIniciais = {
   sugestoes: [
-    { id: "1", nome: "The Witcher 3", imagem: require("../screens/assets/1.png"), rating: 4.9, preco: 79.9, precoAntigo: 129.9 },
-    { id: "2", nome: "Skyrim", imagem: require("../screens/assets/1.png"), rating: 4.8, preco: 49.9 },
-    { id: "3", nome: "Cyberpunk 2077", imagem: require("../screens/assets/1.png"), rating: 4.5, preco: 89.9, precoAntigo: 199.9 },
-    { id: "4", nome: "Dragon Age", imagem: require("../screens/assets/1.png"), rating: 4.7, preco: 59.9 },
+    {
+      id: "1",
+      nome: "The Witcher 3",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.9,
+      preco: 79.9,
+      precoAntigo: 129.9,
+    },
+    {
+      id: "2",
+      nome: "Skyrim",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.8,
+      preco: 49.9,
+    },
+    {
+      id: "3",
+      nome: "Cyberpunk 2077",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.5,
+      preco: 89.9,
+      precoAntigo: 199.9,
+    },
+    {
+      id: "4",
+      nome: "Dragon Age: Inquisition",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.7,
+      preco: 59.9,
+    },
+    {
+      id: "5",
+      nome: "Elden Ring",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.9,
+      preco: 249.9,
+      precoAntigo: 299.9,
+    },
+    {
+      id: "6",
+      nome: "God of War Ragnarök",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.8,
+      preco: 279.9,
+    },
   ],
   pesquisados: [
-    { id: "5", nome: "FIFA 26", imagem: require("../screens/assets/fc26.png"), preco: 249.9 },
-    { id: "6", nome: "NBA 2K24", imagem: require("../screens/assets/1.png"), preco: 199.9 },
+    {
+      id: "7",
+      nome: "FIFA 26",
+      imagem: require("../screens/assets/fc26.png"),
+      preco: 249.9,
+    },
+    {
+      id: "8",
+      nome: "NBA 2K24",
+      imagem: require("../screens/assets/1.png"),
+      preco: 199.9,
+    },
+    {
+      id: "9",
+      nome: "Call of Duty: Modern Warfare III",
+      imagem: require("../screens/assets/1.png"),
+      preco: 279.9,
+    },
+    {
+      id: "10",
+      nome: "Assassin’s Creed Mirage",
+      imagem: require("../screens/assets/1.png"),
+      preco: 199.9,
+    },
+    {
+      id: "11",
+      nome: "Forza Horizon 5",
+      imagem: require("../screens/assets/1.png"),
+      preco: 229.9,
+    },
+    {
+      id: "12",
+      nome: "Overwatch 2",
+      imagem: require("../screens/assets/1.png"),
+      preco: 159.9,
+    },
   ],
   lancamentos: [
-    { id: "9", nome: "Resident Evil 4", imagem: require("../screens/assets/1.png"), preco: 299.9 },
-    { id: "10", nome: "Silent Hill 2", imagem: require("../screens/assets/1.png"), preco: 179.9 },
+    {
+      id: "13",
+      nome: "Resident Evil 4 Remake",
+      imagem: require("../screens/assets/1.png"),
+      preco: 299.9,
+    },
+    {
+      id: "14",
+      nome: "Silent Hill 2 Remake",
+      imagem: require("../screens/assets/1.png"),
+      preco: 179.9,
+    },
+    {
+      id: "15",
+      nome: "Starfield",
+      imagem: require("../screens/assets/1.png"),
+      preco: 349.9,
+    },
+    {
+      id: "16",
+      nome: "Alan Wake 2",
+      imagem: require("../screens/assets/1.png"),
+      preco: 279.9,
+    },
+    {
+      id: "17",
+      nome: "Baldur’s Gate 3",
+      imagem: require("../screens/assets/1.png"),
+      preco: 299.9,
+    },
+    {
+      id: "18",
+      nome: "Spider-Man 2",
+      imagem: require("../screens/assets/1.png"),
+      preco: 349.9,
+    },
   ],
   promocoes: [
-    { id: "12", nome: "Mario Odyssey", imagem: require("../screens/assets/1.png"), preco: 39.9, precoAntigo: 79.9 },
-    { id: "13", nome: "Mario Kart", imagem: require("../screens/assets/supermario.png"), preco: 29.9, precoAntigo: 59.9 },
+    {
+      id: "19",
+      nome: "Mario Odyssey",
+      imagem: require("../screens/assets/1.png"),
+      preco: 39.9,
+      precoAntigo: 79.9,
+    },
+    {
+      id: "20",
+      nome: "Mario Kart 8 Deluxe",
+      imagem: require("../screens/assets/supermario.png"),
+      preco: 29.9,
+      precoAntigo: 59.9,
+    },
+    {
+      id: "21",
+      nome: "Cuphead",
+      imagem: require("../screens/assets/1.png"),
+      preco: 24.9,
+      precoAntigo: 59.9,
+    },
+    {
+      id: "22",
+      nome: "Hollow Knight",
+      imagem: require("../screens/assets/1.png"),
+      preco: 19.9,
+      precoAntigo: 49.9,
+    },
+    {
+      id: "23",
+      nome: "Celeste",
+      imagem: require("../screens/assets/1.png"),
+      preco: 19.9,
+      precoAntigo: 59.9,
+    },
+    {
+      id: "24",
+      nome: "Dead Cells",
+      imagem: require("../screens/assets/1.png"),
+      preco: 29.9,
+      precoAntigo: 69.9,
+    },
+  ],
+  preVendas: [
+    {
+      id: "25",
+      nome: "GTA VI",
+      imagem: require("../screens/assets/1.png"),
+      preco: 499.9,
+      dataLancamento: "2025-09-17",
+    },
+    {
+      id: "26",
+      nome: "Elder Scrolls VI",
+      imagem: require("../screens/assets/1.png"),
+      preco: 449.9,
+      dataLancamento: "2026-03-10",
+    },
+    {
+      id: "27",
+      nome: "Hades II",
+      imagem: require("../screens/assets/1.png"),
+      preco: 199.9,
+      dataLancamento: "2025-04-05",
+    },
+    {
+      id: "28",
+      nome: "Avowed",
+      imagem: require("../screens/assets/1.png"),
+      preco: 319.9,
+      dataLancamento: "2025-07-01",
+    },
+    {
+      id: "29",
+      nome: "Fable Reboot",
+      imagem: require("../screens/assets/1.png"),
+      preco: 289.9,
+      dataLancamento: "2025-11-12",
+    },
+    {
+      id: "30",
+      nome: "Metal Gear Solid Δ: Snake Eater",
+      imagem: require("../screens/assets/1.png"),
+      preco: 339.9,
+      dataLancamento: "2025-05-30",
+    },
+  ],
+  destaques: [
+    {
+      id: "31",
+      nome: "Red Dead Redemption 2",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.9,
+      preco: 199.9,
+    },
+    {
+      id: "32",
+      nome: "The Legend of Zelda: Tears of the Kingdom",
+      imagem: require("../screens/assets/1.png"),
+      rating: 5.0,
+      preco: 349.9,
+    },
+    {
+      id: "33",
+      nome: "Horizon Forbidden West",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.7,
+      preco: 199.9,
+    },
+    {
+      id: "34",
+      nome: "Dark Souls III",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.8,
+      preco: 149.9,
+    },
+    {
+      id: "35",
+      nome: "Bloodborne",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.8,
+      preco: 179.9,
+    },
+    {
+      id: "36",
+      nome: "Final Fantasy VII Rebirth",
+      imagem: require("../screens/assets/1.png"),
+      rating: 4.9,
+      preco: 339.9,
+    },
   ],
 };
 
-const formatPrice = (value) => `R$ ${value.toFixed(2).replace(".", ",")}`;
+const formatPrice = (value) => {
+  if (typeof value !== "number") return "";
+  return `R$ ${value.toFixed(2).replace(".", ",")}`;
+};
 
-function GameCard({ jogo }) {
+function GameCard({ jogo, onPress }) {
   const navigation = useNavigation();
+  const [rating, setRating] = useState(jogo.rating ?? 0);
+  const [ratingOpen, setRatingOpen] = useState(false);
+  const [tempRating, setTempRating] = useState(rating);
 
   const handleAddToCart = () => {
-    navigation.navigate("Carrinho", { 
-      item: {
-        id: jogo.id,
-        nome: jogo.nome,
-        preco: jogo.preco,
-        imagem: jogo.imagem,
-        quantidade: 1
-      }
-    });
-    
+    navigation.navigate("Carrinho", { item: { ...jogo, quantidade: 1 } });
     Alert.alert(
       "Produto Adicionado",
       `${jogo.nome} foi adicionado ao carrinho`,
       [
-        { text: "Continuar Comprando", style: "cancel" },
-        { text: "Ver Carrinho", onPress: () => navigation.navigate("Carrinho") }
+        {
+          text: "Continuar Comprando",
+          style: "cancel",
+          onPress: () => navigation.navigate("Produtos"),
+        },
+        {
+          text: "Ver Carrinho",
+          onPress: () => navigation.navigate("Carrinho"),
+        },
       ]
     );
   };
 
+  const openRating = () => {
+    setTempRating(rating);
+    setRatingOpen(true);
+  };
+
+  const submitRating = (value) => {
+    setRating(value);
+    setRatingOpen(false);
+    Alert.alert("Obrigado", `Você avaliou ${value} estrela(s)`);
+    // se quiser persistir a nota globalmente, passe uma função via props para atualizar o estado pai
+  };
+
   return (
-    <View style={styles.card}>
-      <Image source={jogo.imagem} style={styles.cardImage} resizeMode="cover" />
-      <View style={styles.cardBody}>
-        <Text style={styles.cardTitle} numberOfLines={1}>{jogo.nome}</Text>
+    <>
+      <TouchableOpacity
+        onPress={onPress}
+        style={styles.cardWrapper}
+        activeOpacity={0.85}
+      >
+        <View style={styles.card}>
+          <Image
+            source={jogo.imagem}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.cardBody}>
+            <Text style={styles.cardTitle} numberOfLines={1}>
+              {jogo.nome}
+            </Text>
 
-        {jogo.rating && (
-          <View style={styles.ratingContainer}>
-            <Icon name="star" size={12} color="#FFD700" />
-            <Text style={styles.ratingText}>{jogo.rating.toFixed(1)}</Text>
+            {jogo.rating != null && (
+              <View style={styles.ratingContainerTop}>
+                <Icon name="star" size={12} color="#FFD700" />
+                <Text style={styles.ratingTextTop}>
+                  {(jogo.rating ?? rating).toFixed(1)}
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.priceContainer}>
+              {jogo.precoAntigo != null && (
+                <Text style={styles.oldPrice}>
+                  {formatPrice(jogo.precoAntigo)}
+                </Text>
+              )}
+              {jogo.preco != null && (
+                <Text style={styles.price}>{formatPrice(jogo.preco)}</Text>
+              )}
+              {jogo.preco == null && (
+                <Text style={styles.price}>Consultar</Text>
+              )}
+            </View>
+
+            <View style={styles.bottomRow}>
+              <TouchableOpacity style={styles.starTapArea} onPress={openRating}>
+                <Icon name="star" size={16} color="#FFD700" />
+                <Text style={styles.starText}>
+                  {rating ? rating.toFixed(1) : "0.0"}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.addCartButton}
+                onPress={handleAddToCart}
+              >
+                <Ionicons name="cart-outline" size={18} color="#fff" />
+                <Text style={styles.addCartText}>Adicionar</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        )}
-
-        <View style={styles.priceContainer}>
-          {jogo.precoAntigo && <Text style={styles.oldPrice}>{formatPrice(jogo.precoAntigo)}</Text>}
-          <Text style={styles.price}>{formatPrice(jogo.preco)}</Text>
         </View>
+      </TouchableOpacity>
 
-        <TouchableOpacity style={styles.addCartButton} onPress={handleAddToCart}>
-          <Ionicons name="cart-outline" size={18} color="#fff" />
-          <Text style={styles.addCartText}>Adicionar</Text>
+      <Modal
+        visible={ratingOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setRatingOpen(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setRatingOpen(false)}
+        >
+          <View style={styles.ratingModal}>
+            <Text style={styles.ratingModalTitle}>Avaliar</Text>
+            <View style={styles.ratingStarsRow}>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <TouchableOpacity
+                  key={n}
+                  onPress={() => submitRating(n)}
+                  onPressIn={() => setTempRating(n)}
+                  style={styles.modalStarButton}
+                  activeOpacity={0.7}
+                >
+                  <Icon
+                    name={n <= tempRating ? "star" : "star-o"}
+                    size={32}
+                    color={n <= tempRating ? "#FFD700" : "#666"}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity
+              style={styles.ratingCancel}
+              onPress={() => setRatingOpen(false)}
+            >
+              <Text style={styles.ratingCancelText}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
-      </View>
-    </View>
+      </Modal>
+    </>
   );
 }
 
-function Section({ title, data }) {
-  const navigation = useNavigation();
-  
+function SpecialCard({ title, backgroundColor, image, onPress }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.specialCard, { backgroundColor }]}
+    >
+      <ImageBackground
+        source={image}
+        style={styles.specialCardImage}
+        imageStyle={{ opacity: 0.7 }}
+      >
+        <View style={styles.specialCardContent}>
+          <Text style={styles.specialCardTitle}>{title}</Text>
+          <TouchableOpacity style={styles.specialCardButton}>
+            <Text style={styles.specialCardButtonText}>Saiba mais</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
+    </TouchableOpacity>
+  );
+}
+
+function Section({ title, data, onPress, onAdd, initialVisible = 5 }) {
+  const [expanded, setExpanded] = useState(false);
+  const visibleData = expanded ? data : data.slice(0, initialVisible);
+
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity>
-          <Text style={styles.viewAllText}>Ver tudo</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={onAdd}
+            style={{ marginRight: 20, marginTop: 30 }}
+          >
+            <Ionicons name="add-circle-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setExpanded((s) => !s)}>
+            <Text style={styles.viewAllText}>
+              {expanded ? "Ver menos" : `Ver tudo`}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
       <FlatList
-        data={data}
+        data={visibleData}
         horizontal
         keyExtractor={(item) => item.id}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 12 }}
-        renderItem={({ item }) => <GameCard jogo={item} />}
+        renderItem={({ item }) => (
+          <GameCard jogo={item} onPress={() => onPress(item)} />
+        )}
       />
     </View>
   );
@@ -125,27 +504,51 @@ function Section({ title, data }) {
 export default function ProdutosScreen() {
   const [jogos] = useState(jogosIniciais);
   const navigation = useNavigation();
+  const handlePress = (jogo) =>
+    navigation.navigate("DetalhesProduto", { jogo });
+  const handleAddGame = () => navigation.navigate("AdicionarJogo");
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.navbar}>
-        <Image source={require("../assets/img/logo_nexus.png")} style={styles.logo} />
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-            <Image source={require("../assets/img/buscar_icon.png")} style={styles.icon} />
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-            <Image source={require("../assets/img/carrinho_icon.png")} style={styles.icon} />
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-            <Image source={require("../assets/img/notificacao_icon.png")} style={styles.icon} />
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.searchBar}>
-        <Ionicons name="search-outline" size={20} color="#888" style={{ marginLeft: 8 }} />
-        <TextInput placeholder="Buscar jogos" placeholderTextColor="#888" style={styles.input} />
+        <Ionicons
+          name="search-outline"
+          size={20}
+          color="#888"
+          style={{ marginLeft: 8 }}
+        />
+        <TextInput
+          placeholder="Buscar jogos"
+          placeholderTextColor="#888"
+          style={styles.input}
+        />
       </View>
 
       <FlatList
@@ -155,27 +558,88 @@ export default function ProdutosScreen() {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <ImageBackground source={item.imagem} style={styles.banner} imageStyle={{ borderRadius: 12 }}>
-            <LinearGradient colors={["rgba(0,0,0,0.7)", "transparent"]} style={StyleSheet.absoluteFillObject} />
+          <ImageBackground
+            source={item.imagem}
+            style={styles.banner}
+            imageStyle={{ borderRadius: 12 }}
+          >
+            <LinearGradient
+              colors={["rgba(0,0,0,0.7)", "transparent"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={StyleSheet.absoluteFillObject}
+            />
             <Text style={styles.bannerTexto}>{item.titulo}</Text>
           </ImageBackground>
         )}
       />
 
-      <Section title="Sugestões para você" data={jogos.sugestoes} />
-      <Section title="Mais pesquisados" data={jogos.pesquisados} />
-      <Section title="Lançamentos" data={jogos.lancamentos} />
-      <Section title="Promoções" data={jogos.promocoes} />
+      <Section
+        title="Sugestões para você"
+        data={jogos.sugestoes}
+        onPress={handlePress}
+        onAdd={handleAddGame}
+      />
+      <Section
+        title="Mais pesquisados"
+        data={jogos.pesquisados}
+        onPress={handlePress}
+        onAdd={handleAddGame}
+      />
+      <Section
+        title="Lançamentos"
+        data={jogos.lancamentos}
+        onPress={handlePress}
+        onAdd={handleAddGame}
+        initialVisible={3}
+      />
+      <Section
+        title="Promoções"
+        data={jogos.promocoes}
+        onPress={handlePress}
+        onAdd={handleAddGame}
+      />
+
+      <View style={styles.specialCardsContainer}>
+        <SpecialCard
+          title="Confira nossa seleção Nintendo!"
+          backgroundColor="#E60012"
+          image={require("../screens/assets/bannermario.png")}
+          onPress={() => navigation.navigate("Categorias")}
+        />
+        <SpecialCard
+          title="Confira nossa seleção PlayStation!"
+          backgroundColor="#0070D1"
+          image={require("../screens/assets/bannerkratos.png")}
+          onPress={() => navigation.navigate("Categorias")}
+        />
+        <SpecialCard
+          title="Confira nossa seleção Xbox!"
+          backgroundColor="#107C10"
+          image={require("../screens/assets/bannerhalo.png")}
+          onPress={() => navigation.navigate("Categorias")}
+        />
+      </View>
+
+      <Section
+        title="Pré venda"
+        data={jogos.preVendas}
+        onPress={handlePress}
+        onAdd={handleAddGame}
+        initialVisible={3}
+      />
+      <Section
+        title="Destaques"
+        data={jogos.destaques}
+        onPress={handlePress}
+        onAdd={handleAddGame}
+      />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: "#000",
-    paddingTop: 10,
-  },
+  container: { flex: 1, backgroundColor: "#000", paddingTop: 10 },
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -193,91 +657,97 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     marginBottom: 16,
   },
-  input: {
-    flex: 1,
-    padding: 10,
-    color: "#fff",
-    fontSize: 16
-  },
+  input: { flex: 1, padding: 10, color: "#fff", fontSize: 16 },
   banner: {
     width: width * 0.9,
     height: 180,
     marginHorizontal: width * 0.05,
     justifyContent: "center",
-    padding: 20
+    padding: 20,
   },
   bannerTexto: {
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
-    maxWidth: "70%"
+    maxWidth: "70%",
   },
-  sectionContainer: { 
-    marginBottom: 20 
-  },
+  sectionContainer: { marginBottom: 20 },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginHorizontal: 16,
-    marginBottom: 10
+    marginBottom: 10,
   },
   sectionTitle: {
     color: "#fff",
     fontSize: 22,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    marginTop: 30,
   },
-  viewAllText: {
-    color: "#bbb",
-    fontSize: 14
-  },
+  viewAllText: { color: "#bbb", fontSize: 14, marginTop: 30 },
+  cardWrapper: { paddingHorizontal: 8 },
   card: {
-    width: 150,
+    width: 190,
+    height: 270,
     backgroundColor: "#1E1E1E",
     borderRadius: 12,
     overflow: "hidden",
-    marginHorizontal: 8
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    marginHorizontal: 8,
   },
-  cardImage: {
-    width: "100%",
-    height: 130
-  },
-  cardBody: {
-    padding: 8,
-    alignItems: "center"
-  },
+  cardImage: { width: "100%", height: 130 },
+  cardBody: { padding: 8, alignItems: "center", justifyContent: "center" },
   cardTitle: {
     color: "#fff",
     fontSize: 14,
     fontWeight: "600",
-    textAlign: "center"
+    textAlign: "center",
   },
-  ratingContainer: {
+  ratingContainerTop: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 6
+    marginTop: 6,
   },
-  ratingText: {
+  ratingTextTop: {
     color: "#FFD700",
     fontSize: 12,
-    marginLeft: 4
+    marginLeft: 6,
+    marginRight: 6,
   },
-  priceContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 6
-  },
+  priceContainer: { flexDirection: "row", alignItems: "center", marginTop: 8 },
   oldPrice: {
     color: "#aaa",
     fontSize: 12,
     textDecorationLine: "line-through",
-    marginRight: 6
+    marginRight: 6,
   },
-  price: {
-    color: "#FF09E6",
+  price: { color: "#FF09E6", fontSize: 14, fontWeight: "bold" },
+
+  bottomRow: {
+    marginTop: 10,
+    alignSelf: "stretch",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 6,
+  },
+  starTapArea: { flexDirection: "row", alignItems: "center" },
+  starContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  starText: {
+    color: "#FFD700",
     fontSize: 14,
-    fontWeight: "bold"
+    marginLeft: 6,
+    fontWeight: "700",
   },
+
   addCartButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -285,12 +755,78 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 20,
-    marginTop: 8
+    marginTop: 0,
   },
   addCartText: {
     color: "#fff",
     marginLeft: 6,
     fontWeight: "bold",
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
+
+  specialCardsContainer: { paddingHorizontal: 16, marginBottom: 20, gap: 2 },
+  specialCard: {
+    height: 220,
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    marginTop: 20,
+  },
+  specialCardImage: { width: "100%", height: "100%", justifyContent: "center" },
+  specialCardContent: {
+    padding: 16,
+    justifyContent: "space-between",
+    height: "100%",
+  },
+  specialCardTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
+    marginBottom: 8,
+  },
+  specialCardButton: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+  },
+  specialCardButtonText: { color: "#000", fontWeight: "bold" },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  ratingModal: {
+    width: "90%",
+    maxWidth: 360,
+    backgroundColor: "#1E1E1E",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  ratingModalTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 12,
+  },
+  ratingStarsRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  modalStarButton: { paddingHorizontal: 6 },
+  ratingCancel: { marginTop: 6 },
+  ratingCancelText: { color: "#bbb" },
 });

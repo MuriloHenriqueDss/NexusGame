@@ -113,6 +113,7 @@ export default function App() {
           <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
           <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
           <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
+          <Stack.Screen name="Produtos" component={ProdutosScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </CartProvider>
