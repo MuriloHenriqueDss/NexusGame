@@ -13,8 +13,10 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context"; // ✅ IMPORTA AQUI
 
 export default function CarrinhoScreen({ navigation, route }) {
+  const insets = useSafeAreaInsets(); // ✅ PEGA AS ÁREAS SEGURAS
   const [cart, setCart] = useState([]);
   const [cupom, setCupom] = useState("");
   const frete = 27.61;
@@ -120,7 +122,8 @@ export default function CarrinhoScreen({ navigation, route }) {
                 <View style={styles.info}>
                   <Text style={styles.nome}>{item.nome}</Text>
                   <Text style={styles.preco}>
-                    R${((item.preco || 0) * (item.quantidade || 1))
+                    R$
+                    {((item.preco || 0) * (item.quantidade || 1))
                       .toFixed(2)
                       .replace(".", ",")}
                   </Text>
@@ -184,7 +187,12 @@ export default function CarrinhoScreen({ navigation, route }) {
         </ScrollView>
 
         {/* Botões fixos embaixo */}
-        <View style={styles.botoesFixos}>
+        <View
+          style={[
+            styles.botoesFixos,
+            { paddingBottom: insets.bottom + 10 }, // ✅ AQUI É A MÁGICA
+          ]}
+        >
           <TouchableOpacity
             style={styles.botaoCinza}
             onPress={() => navigation.navigate("Main")}
