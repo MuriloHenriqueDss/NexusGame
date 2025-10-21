@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context"; // ✅ NOVO
 
 // Import screens
 import HomeScreen from "./screens/HomeScreen";
@@ -61,8 +62,10 @@ function TabButton({ label, isFocused, onPress }) {
 }
 
 function CustomTabBar({ state, navigation }) {
+  const insets = useSafeAreaInsets(); // ✅ NOVO
+
   return (
-    <View style={styles.tabBar}>
+    <View style={[styles.tabBar, { paddingBottom: insets.bottom }]}> 
       {state.routes.map((route, index) => (
         <TabButton
           key={route.key}
@@ -88,35 +91,37 @@ function BottomTabs() {
 
 export default function App() {
   return (
-    <CartProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{
-            cardStyle: { backgroundColor: "#7B009A" },
-            headerShown: false,
-          }}
-          initialRouteName="SplashScreen"
-        >
-          <Stack.Screen name="SplashScreen" component={SplashScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Cadastro" component={CadastroScreen} />
-          <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
-          <Stack.Screen name="Main" component={BottomTabs} />
-          <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
-          <Stack.Screen name="Categorias" component={CategoriasScreen} />
-          <Stack.Screen name="DetalhesProduto" component={DetalhesProduto} />
-          <Stack.Screen name="AdicionarJogo" component={AdicionarJogoScreen} />
-          <Stack.Screen name="Notificacoes" component={NotificacoesScreen} />
-          <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
-          <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
-          <Stack.Screen name="MeusCartoes" component={MeusCartoesScreen} />
-          <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
-          <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
-          <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
-          <Stack.Screen name="Produtos" component={ProdutosScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </CartProvider>
+    <SafeAreaProvider> {/* ✅ ENVOLVE TUDO AQUI */}
+      <CartProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              cardStyle: { backgroundColor: "#7B009A" },
+              headerShown: false,
+            }}
+            initialRouteName="SplashScreen"
+          >
+            <Stack.Screen name="SplashScreen" component={SplashScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Cadastro" component={CadastroScreen} />
+            <Stack.Screen name="Esqueceu" component={EsqueceuScreen} />
+            <Stack.Screen name="Main" component={BottomTabs} />
+            <Stack.Screen name="Carrinho" component={CarrinhoScreen} />
+            <Stack.Screen name="Categorias" component={CategoriasScreen} />
+            <Stack.Screen name="DetalhesProduto" component={DetalhesProduto} />
+            <Stack.Screen name="AdicionarJogo" component={AdicionarJogoScreen} />
+            <Stack.Screen name="Notificacoes" component={NotificacoesScreen} />
+            <Stack.Screen name="EditarPerfil" component={EditarPerfilScreen} />
+            <Stack.Screen name="EditarAvatar" component={EditarAvatarScreen} />
+            <Stack.Screen name="MeusCartoes" component={MeusCartoesScreen} />
+            <Stack.Screen name="CategoriaDetalhada" component={CategoriaDetalhadasScreen} />
+            <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
+            <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
+            <Stack.Screen name="Produtos" component={ProdutosScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </CartProvider>
+    </SafeAreaProvider>
   );
 }
 
