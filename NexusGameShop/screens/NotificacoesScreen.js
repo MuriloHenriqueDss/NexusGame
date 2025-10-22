@@ -13,33 +13,36 @@ export default function NotificacoesScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/* NAV FIXA */}
-      <View style={styles.header}>
-        <View style={styles.nav}>
-          <Image
-            style={styles.logoNav}
-            source={require("../assets/img/logo_nexus.png")}
-          />
-          <View style={styles.icons}>
-            <Image
-              style={styles.iconNav}
-              source={require("../assets/img/buscar_icon.png")}
-            />
-            <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-              <Image
-                style={styles.iconNav}
-                source={require("../assets/img/carrinho_icon.png")}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-              <Image
-                style={styles.iconNav}
-                source={require("../assets/img/notificacao_icon.png")}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.navGlow} />
-      </View>
+      <View style={styles.navbar}>
+      
+                      <TouchableOpacity onPress={() => navigation.navigate("Main")}>
+                          <Image
+                              source={require("../assets/img/logo_nexus.png")}
+                              style={styles.logo}
+                          />
+                      </TouchableOpacity>
+                      
+                      <View style={styles.navIcons}>
+                          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+                              <Image
+                                  source={require("../assets/img/buscar_icon.png")}
+                                  style={styles.icon}
+                              />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+                              <Image
+                                  source={require("../assets/img/carrinho_icon.png")}
+                                  style={styles.icon}
+                              />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+                              <Image
+                                  source={require("../assets/img/notificacao_icon.png")}
+                                  style={styles.icon}
+                              />
+                          </TouchableOpacity>
+                      </View>
+                  </View>
 
       <ScrollView
         style={styles.body}
@@ -162,41 +165,34 @@ export default function NotificacoesScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "black" },
-  header: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 10,
-    backgroundColor: "black",
-  },
-  nav: {
-    padding: 10,
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 5,
-  },
-  logoNav: { height: 50, width: 170, marginLeft: 10, marginTop: -5 },
-  icons: { flexDirection: "row", gap: 20, marginRight: 5 },
-  iconNav: { height: 20, width: 20 },
-  navGlow: {
-    height: 3,
-    width: "100%",
-    backgroundColor: "black",
-    shadowColor: "white",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 3,
-    elevation: 3,
-  },
+  navbar: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: 20,
+    },
+
+    logo: {
+        width: 200,
+        height: 60,
+        resizeMode: "contain"
+    },
+
+    navIcons: {
+        flexDirection: "row",
+        gap: 15
+    },
+
+    icon: {
+        width: 20,
+        height: 20
+    },
   body: { flex: 1, backgroundColor: "black", paddingTop: 50 },
   parteCima: {
     width: "90%",
     alignItems: "center",
     marginBottom: 20,
-    marginTop: 60,
+    marginTop: -30,
   },
   voltar: {
     flexDirection: "row",

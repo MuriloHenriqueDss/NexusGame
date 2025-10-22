@@ -15,10 +15,14 @@ export default function PerfilScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
+
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
+
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image

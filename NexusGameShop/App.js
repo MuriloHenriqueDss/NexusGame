@@ -27,6 +27,12 @@ import EditarAvatarScreen from "./screens/EditarAvatarScreen";
 import MeusCartoesScreen from "./screens/MeusCartoesScreen";
 import MeusPedidosScreen from "./screens/MeusPedidosScreen";
 import AdicionarCartaoScreen from "./screens/AdicionarCartaoScreen";
+import FinalizarCompraScreen from "./screens/FinalizarCompraScreen";
+import PixScreen from "./screens/PixScreen";
+import PixPagarScreen from "./screens/PixPagarScreen";
+import BoletoScreen from "./screens/BoletoScreen";
+import BoletoPagarScreen from "./screens/BoletoPagarScreen";
+import EscolherCartaoScreen from "./screens/EscolherCartaoScreen";
 import { CartProvider } from "./screens/CartContext";
 
 const Tab = createBottomTabNavigator();
@@ -118,6 +124,12 @@ export default function App() {
             <Stack.Screen name="MeusPedidos" component={MeusPedidosScreen} />
             <Stack.Screen name="AdicionarCartao" component={AdicionarCartaoScreen} />
             <Stack.Screen name="Produtos" component={ProdutosScreen} />
+            <Stack.Screen name="Pagamento" component={FinalizarCompraScreen} />
+            <Stack.Screen name="Pix" component={PixScreen} />
+            <Stack.Screen name="PagarPix" component={PixPagarScreen} />
+            <Stack.Screen name="Boleto" component={BoletoScreen} />
+            <Stack.Screen name="PagarBoleto" component={BoletoPagarScreen} />
+            <Stack.Screen name="EscolherCartao" component={EscolherCartaoScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </CartProvider>

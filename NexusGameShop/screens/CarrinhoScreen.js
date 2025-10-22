@@ -74,10 +74,14 @@ export default function CarrinhoScreen({ navigation, route }) {
       <SafeAreaView style={{ flex: 1 }}>
         {/* Navbar */}
         <View style={styles.navbar}>
-          <Image
-            source={require("../assets/img/logo_nexus.png")}
-            style={styles.logo}
-          />
+
+          <TouchableOpacity onPress={() => navigation.navigate("Main")}>
+            <Image
+              source={require("../assets/img/logo_nexus.png")}
+              style={styles.logo}
+            />
+          </TouchableOpacity>
+
           <View style={styles.navIcons}>
             <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
               <Image
@@ -91,9 +95,7 @@ export default function CarrinhoScreen({ navigation, route }) {
                 style={styles.icon}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Notificacoes")}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
               <Image
                 source={require("../assets/img/notificacao_icon.png")}
                 style={styles.icon}
@@ -152,7 +154,7 @@ export default function CarrinhoScreen({ navigation, route }) {
             </View>
 
             <View style={styles.linhaResumo}>
-              <Text style={styles.textoResumo}>Descontos:</Text>
+              <Text style={styles.textoResumo}>Desconto:</Text>
               <View style={styles.areaCupom}>
                 <TextInput
                   style={styles.inputCupom}
@@ -163,7 +165,7 @@ export default function CarrinhoScreen({ navigation, route }) {
                 />
                 <TouchableOpacity
                   style={styles.botaoAplicar}
-                  onPress={() => Alert.alert("Cupom aplicado com sucesso!")}
+                  onPress={() => Alert.alert("Sucesso!", "Cupom de desconto aplicado!")}
                 >
                   <Text style={styles.textoAplicar}>Aplicar</Text>
                 </TouchableOpacity>
