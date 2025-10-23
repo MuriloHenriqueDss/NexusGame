@@ -36,7 +36,7 @@ export default function CategoriasScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Main")}>
           <Image
             source={require("../assets/img/logo_nexus.png")}
             style={styles.logo}

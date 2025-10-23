@@ -430,6 +430,7 @@ function GameCard({ jogo, onPress }) {
 }
 
 function SpecialCard({ title, backgroundColor, image, onPress }) {
+  const navigation = useNavigation()
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -442,7 +443,7 @@ function SpecialCard({ title, backgroundColor, image, onPress }) {
       >
         <View style={styles.specialCardContent}>
           <Text style={styles.specialCardTitle}>{title}</Text>
-          <TouchableOpacity style={styles.specialCardButton}>
+          <TouchableOpacity style={styles.specialCardButton} onPress={() => navigation.navigate("CategoriaDetalhada")}>
             <Text style={styles.specialCardButtonText}>Saiba mais</Text>
           </TouchableOpacity>
         </View>
@@ -501,7 +502,7 @@ export default function ProdutosScreen() {
 
         <TouchableOpacity />
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Produtos")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categori")}>
             <Image
               source={require("../assets/img/buscar_icon.png")}
               style={styles.icon}

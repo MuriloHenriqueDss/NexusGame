@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Alert
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -36,7 +36,6 @@ export default function EditAvatar({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-
         <TouchableOpacity onPress={() => navigation.navigate("Main")}>
           <Image
             source={require("../assets/img/logo_nexus.png")}
@@ -69,7 +68,6 @@ export default function EditAvatar({ navigation }) {
         style={styles.body}
         contentContainerStyle={{ alignItems: "center", paddingBottom: 50 }}
       >
-
         {/* Voltar */}
         <TouchableOpacity
           style={styles.voltar}
@@ -109,7 +107,12 @@ export default function EditAvatar({ navigation }) {
         </View>
 
         {/* Botão salvar */}
-        <TouchableOpacity style={styles.botaoSalvar} onPress={() => Alert.alert("Edição salva!", "Avatar atualizado com sucesso.")}>
+        <TouchableOpacity
+          style={styles.botaoSalvar}
+          onPress={() =>
+            Alert.alert("Edição salva!", "Avatar atualizado com sucesso.")
+          }
+        >
           <Text style={styles.textoSalvar}>Salvar</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -134,17 +137,17 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 60,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
 
   navIcons: {
     flexDirection: "row",
-    gap: 15
+    gap: 15,
   },
 
   icon: {
     width: 20,
-    height: 20
+    height: 20,
   },
 
   voltar: {

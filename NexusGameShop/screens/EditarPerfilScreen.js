@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -17,44 +17,46 @@ export default function PerfilScreen({ navigation }) {
   const [senha, setSenha] = useState("*******");
   const [cep, setCEP] = useState("12280-470");
   const [endereco, setEndereco] = useState("Rua José Bonifácio, 395");
+  const [CPF, setCPF] = useState("123.456.789-1");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
   return (
     <View style={styles.container}>
-
       <View style={styles.navbar}>
-      
-                      <TouchableOpacity onPress={() => navigation.navigate("Main")}>
-                          <Image
-                              source={require("../assets/img/logo_nexus.png")}
-                              style={styles.logo}
-                          />
-                      </TouchableOpacity>
-      
-                      <View style={styles.navIcons}>
-                          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-                              <Image
-                                  source={require("../assets/img/buscar_icon.png")}
-                                  style={styles.icon}
-                              />
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-                              <Image
-                                  source={require("../assets/img/carrinho_icon.png")}
-                                  style={styles.icon}
-                              />
-                          </TouchableOpacity>
-                          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-                              <Image
-                                  source={require("../assets/img/notificacao_icon.png")}
-                                  style={styles.icon}
-                              />
-                          </TouchableOpacity>
-                      </View>
-                  </View>
+        <TouchableOpacity onPress={() => navigation.navigate("Main")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
 
-      <ScrollView style={styles.body} contentContainerStyle={{ alignItems: "center" }}>
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView
+        style={styles.body}
+        contentContainerStyle={{ alignItems: "center" }}
+      >
         {/* Voltar */}
         <TouchableOpacity
           style={styles.voltar}
@@ -73,7 +75,10 @@ export default function PerfilScreen({ navigation }) {
             source={require("../assets/img/mario_avatar.png")}
             style={styles.foto}
           />
-          <TouchableOpacity style={styles.editarFoto} onPress={() => navigation.navigate('EditarAvatar')}>
+          <TouchableOpacity
+            style={styles.editarFoto}
+            onPress={() => navigation.navigate("EditarAvatar")}
+          >
             <Ionicons name="pencil" size={14} color="white" />
           </TouchableOpacity>
         </View>
@@ -99,12 +104,11 @@ export default function PerfilScreen({ navigation }) {
             onChangeText={setSenha}
           />
 
+          <Text style={styles.label}>CPF: </Text>
+          <TextInput style={styles.input} value={CPF} onChangeText={setCPF} />
+
           <Text style={styles.label}>CEP:</Text>
-          <TextInput
-            style={styles.input}
-            value={cep}
-            onChangeText={setCEP}
-          />
+          <TextInput style={styles.input} value={cep} onChangeText={setCEP} />
 
           <Text style={styles.label}>Endereço:</Text>
           <TextInput
@@ -136,7 +140,12 @@ export default function PerfilScreen({ navigation }) {
         </View>
 
         {/* Botão salvar */}
-        <TouchableOpacity style={styles.botaoSalvar} onPress={() => Alert.alert("Perfil salvo!", "Alterações salvas com sucesso.")}>
+        <TouchableOpacity
+          style={styles.botaoSalvar}
+          onPress={() =>
+            Alert.alert("Perfil salvo!", "Alterações salvas com sucesso.")
+          }
+        >
           <Text style={styles.textoSalvar}>Salvar</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -161,17 +170,17 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 60,
-    resizeMode: "contain"
+    resizeMode: "contain",
   },
 
   navIcons: {
     flexDirection: "row",
-    gap: 15
+    gap: 15,
   },
 
   icon: {
     width: 20,
-    height: 20
+    height: 20,
   },
 
   body: {

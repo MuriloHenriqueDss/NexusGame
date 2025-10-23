@@ -37,6 +37,7 @@ import EscolherCartaoScreen from "./screens/EscolherCartaoScreen";
 import PagarCartaoScreen from "./screens/PagarCartaoScreen";
 import EditarJogoScreen from "./screens/EditarJogoScreen";
 import { CartProvider } from "./screens/CartContext";
+import { StackScreen } from "react-native-screens";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -136,6 +137,7 @@ export default function App() {
             <Stack.Screen name="PagarCartao" component={PagarCartaoScreen} />
             <Stack.Screen name="GerenciarJogos" component={GerenciarJogosScreen} />
             <Stack.Screen name="EditarJogo" component={EditarJogoScreen} />
+            <Stack.Screen name="PerfilScreen" component={PerfilScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </CartProvider>

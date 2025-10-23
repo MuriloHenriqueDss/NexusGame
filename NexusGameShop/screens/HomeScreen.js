@@ -213,7 +213,7 @@ export default function HomeScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            navigation.navigate("Produ");
+            navigation.navigate("Produtos");
           }}
         >
           <LinearGradient
@@ -268,7 +268,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity />
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Produtos")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
               source={require("../assets/img/buscar_icon.png")}
               style={styles.icon}

@@ -116,10 +116,10 @@ export default function NotificacoesScreen({ navigation }) {
             style={styles.imgLoc}
           />
           <View style={styles.cardTexto}>
-            <Text style={styles.textoTitulo}>
+            <Text style={[styles.textoTitulo, styles.textoLocaliza]}>
               Seu pedido chegou à transportadora!
             </Text>
-            <Text style={styles.textoDescricao}>
+            <Text style={[styles.textoDescricao,styles.textoLocaliza]}>
               O pedido <Text style={styles.bold}>#431</Text> está no centro de distribuição.{"\n"}
               Item: <Text style={styles.bold}>Overcooked! 2 (PS4)</Text> – 1 unidade{"\n"}
               Chegada prevista: <Text style={styles.bold}>07/09/2025 (Amanhã)</Text>
@@ -248,25 +248,26 @@ const styles = StyleSheet.create({
     height: 50,
     marginRight: 15,
     marginLeft: 5,
-    marginTop: 30,
+    marginTop: 40,
     borderRadius: 8,
   },
   imgLoc: {
     width: 30,
     height: 40,
-    marginRight: 17,
+    marginRight: 15,
     marginLeft: 5,
-    marginTop: 50,
+    marginTop: 60,
   },
   imgCaminhao: {
     width: 55,
     height: 30,
     marginRight: 15,
-    marginTop: 40,
+    marginTop: 50,
   },
   cardTexto: { flex: 1 },
   textoTitulo: { color: "white", fontWeight: "bold", marginBottom: 4 },
-  textoDescricao: { color: "white", lineHeight: 20 },
+  textoLocaliza: { marginLeft: 8},
+  textoDescricao: { color: "white", lineHeight: 20},
   bold: { fontWeight: "bold" },
   entregue: { color: "#00FF87", fontWeight: "bold" },
   novaBolinha: {

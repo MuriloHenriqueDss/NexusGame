@@ -142,7 +142,6 @@ export default function DetalhesProdutoScreen({ route, navigation }) {
           <Ionicons name="heart" size={25} color="#FF09E6" />
         </TouchableOpacity>
       </View>
-      {/* Imagens adicionais */}
       <View style={styles.imagensExtrasContainer}>
         <Image
           source={require("../screens/assets/1.png")}

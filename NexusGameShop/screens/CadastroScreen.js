@@ -12,6 +12,7 @@ export default function RegisterScreen({ navigation }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [CPF, setCPF] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -83,6 +84,15 @@ export default function RegisterScreen({ navigation }) {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
+        />
+
+        <Text style={styles.label}>CPF:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="xxx.xxx.xxx-xx"
+          placeholderTextColor="#aaa"
+          value={CPF}
+          onChangeText={setCPF}
         />
 
         {/* Confirmar Senha */}
