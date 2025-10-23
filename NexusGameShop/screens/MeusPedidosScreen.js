@@ -84,19 +84,19 @@ export default function MeusPedidos({ navigation }) {
         {/* Em processamento */}
         <View style={styles.sessao}>
           <View style={styles.linhaTitulo}>
-            <View style={styles.linha} />
+            <View style={[styles.linha, styles.linhaProcessamento]} />
             <View style={styles.textoComIcone}>
-              <Ionicons name="time-outline" size={14} color="white" style={styles.iconeTitulo} />
-              <Text style={styles.subtitulo}>Em processamento</Text>
+              <Ionicons name="time-outline" size={14} color="#FF09E6" style={styles.iconeTitulo} />
+              <Text style={[styles.subtitulo]}>Em processamento</Text>
             </View>
-            <View style={styles.linha} />
+            <View style={[styles.linha, styles.linhaProcessamento]} />
           </View>
 
           {pedidosEmProcessamento.map((pedido) => (
             <View key={pedido.id} style={styles.card}>
               <Image source={pedido.imagem} style={styles.imagemJogo} />
               <View style={styles.info}>
-                <Text style={styles.nome}>Pedido #{pedido.id}</Text>
+                <Text style={[styles.nome, styles.nomeProcessamento]}>Pedido #{pedido.id}</Text>
                 <Text style={styles.item}>Item: {pedido.item} – 1 unidade</Text>
                 <Text style={styles.valor}>Valor: {pedido.valor}</Text>
                 <Text style={styles.data}>
@@ -113,26 +113,26 @@ export default function MeusPedidos({ navigation }) {
         {/* Entregues */}
         <View style={[styles.sessao, styles.margemCima]}>
           <View style={styles.linhaTitulo}>
-            <View style={styles.linha} />
+            <View style={[styles.linha, styles.linhaEntregue]} />
             <View style={styles.textoComIcone}>
-              <Ionicons name="checkmark-circle-outline" size={15} color="white" style={styles.iconeTitulo} />
-              <Text style={styles.subtitulo}>Entregues</Text>
+              <Ionicons name="checkmark-circle-outline" size={15} color="#00FF87" style={styles.iconeTitulo} />
+              <Text style={[styles.subtitulo]}>Entregues</Text>
             </View>
-            <View style={styles.linha} />
+            <View style={[styles.linha, styles.linhaEntregue]} />
           </View>
 
           {pedidosEntregues.map((pedido) => (
-            <View key={pedido.id} style={styles.card}>
+            <View key={pedido.id} style={[styles.card, styles.cardEntregue]}>
               <Image source={pedido.imagem} style={styles.imagemJogo} />
               <View style={styles.info}>
-                <Text style={styles.nome}>Pedido #{pedido.id}</Text>
+                <Text style={[styles.nome, styles.nomeEntregue]}>Pedido #{pedido.id}</Text>
                 <Text style={styles.item}>Item: {pedido.item} – 1 unidade</Text>
                 <Text style={styles.valor}>Valor: {pedido.valor}</Text>
                 <Text style={styles.data}>
                   Data da compra: <Text style={styles.bold}>{pedido.compra}</Text>
                 </Text>
                 <Text style={styles.data}>
-                  Data de entrega: <Text style={styles.bold}>{pedido.entrega}</Text>
+                  Data de entrega: <Text style={[styles.bold, styles.dataEntregue]}>{pedido.entrega}</Text>
                 </Text>
               </View>
             </View>
@@ -213,6 +213,12 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#FFFFFF",
   },
+  linhaProcessamento: {
+    backgroundColor: "#FF09E6",
+  },
+  linhaEntregue: {
+    backgroundColor: "#00FF87",
+  },
   textoComIcone: {
     flexDirection: "row",
     alignItems: "center",
@@ -228,6 +234,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginHorizontal: 8,
     opacity: 0.8,
+  },
+  subtituloProcessamento: {
+    color: "#FF09E6",
+  },
+  subtituloEntregue: {
+    color: "#00FF87",
   },
   card: {
     flexDirection: "row",
@@ -253,6 +265,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 15,
     marginBottom: 3,
+  },
+  nomeProcessamento: {
+    color: "#FF09E6",
+  },
+  nomeEntregue: {
+    color: "#00FF87",
   },
   item: {
     color: "white",
