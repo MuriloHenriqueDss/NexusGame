@@ -75,7 +75,7 @@ export default function AdicionarJogoScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.scrollview}>
       {/* Navbar */}
       <View style={styles.navbar}>
         <Image
@@ -113,6 +113,8 @@ export default function AdicionarJogoScreen() {
         <Ionicons name="arrow-back" size={22} color="#fff" />
         <Text style={styles.voltarTexto}>Voltar</Text>
       </TouchableOpacity>
+
+      <View style= {styles.container}>
 
       {/* Título */}
       <Text style={styles.title}>Cadastro de jogos</Text>
@@ -181,12 +183,22 @@ export default function AdicionarJogoScreen() {
       >
         <Text style={styles.cadastrarTexto}>Cadastrar Jogo</Text>
       </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000" },
+  container: {
+    backgroundColor: '#1A1A1A',
+    width: '90%',
+    marginLeft: 20,
+    borderRadius: 20,
+    height: '83%',
+    marginTop: 35,
+  },
+  
+  scrollview: { flex: 1, backgroundColor: "#000" },
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -205,9 +217,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    backgroundColor: "#1E1E1E",
     borderRadius: 10,
-    shadowColor: "#FF09E6",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.6,
     shadowRadius: 5,
@@ -223,7 +233,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   input: {
-    backgroundColor: "#1E1E1E",
+    backgroundColor: "#222",
     color: "#fff",
     padding: 12,
     borderRadius: 10,

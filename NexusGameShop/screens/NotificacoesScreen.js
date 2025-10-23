@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   novaBolinha: {
     position: "absolute",
     left: -15,
-    top: 70,
+    top: 80,
     width: 6,
     height: 6,
     borderRadius: 5,

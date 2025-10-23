@@ -161,7 +161,7 @@ export default function ProdutosScreen() {
           style={styles.botaoVoltar}
         >
           <Ionicons name="arrow-back" size={20} color="#fff" />
-          <Text style={styles.textoVoltar}>Categoria: </Text>
+          <Text style={styles.textoVoltar}>Categoria </Text>
         </TouchableOpacity>
       </View>
       

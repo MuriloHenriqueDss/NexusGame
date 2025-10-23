@@ -502,7 +502,7 @@ export default function ProdutosScreen() {
 
         <TouchableOpacity />
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categori")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
               source={require("../assets/img/buscar_icon.png")}
               style={styles.icon}

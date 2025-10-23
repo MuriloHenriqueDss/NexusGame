@@ -290,6 +290,7 @@ const styles = StyleSheet.create({
         color: "#aaa",
         fontSize: 12,
         marginTop: 3,
+        maxWidth: '95%',
     },
     link: {
         color: "#FF00C8",
