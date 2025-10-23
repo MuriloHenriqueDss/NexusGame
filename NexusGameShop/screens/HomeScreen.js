@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from '@expo/vector-icons';
@@ -206,27 +207,27 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const scrollX = useRef(new Animated.Value(0)).current;
 
-const renderCard = (item, tipo) => {
-  if (item.id === "verMais") {
-    return (
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => {
-          navigation.navigate("Produ"); 
-        }}
-      >
-        <LinearGradient
-          colors={["#8000FF", "#FF00FF"]}
-          style={[
-            tipo === "grande" ? styles.cardVendidos : styles.card,
-            styles.verMaisCard,
-          ]}
+  const renderCard = (item, tipo) => {
+    if (item.id === "verMais") {
+      return (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate("Produ");
+          }}
         >
-          <Text style={styles.verMaisText}>Ver mais</Text>
-        </LinearGradient>
-      </TouchableOpacity>
-    );
-  }
+          <LinearGradient
+            colors={["#8000FF", "#FF00FF"]}
+            style={[
+              tipo === "grande" ? styles.cardVendidos : styles.card,
+              styles.verMaisCard,
+            ]}
+          >
+            <Text style={styles.verMaisText}>Ver mais</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+      );
+    }
 
     if (tipo === "grande") {
       return (
@@ -254,10 +255,8 @@ const renderCard = (item, tipo) => {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{ paddingBottom: 20 }}
-    >
+    <View style={styles.container}>
+
       {/* Navbar */}
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate("Home")}>
@@ -290,142 +289,154 @@ const renderCard = (item, tipo) => {
         </View>
       </View>
 
-      {/* Banner */}
-      <Animated.FlatList
-        data={banners}
-        keyExtractor={(item) => item.id}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          {
-            useNativeDriver: false,
-          }
-        )}
-        renderItem={({ item }) => (
-          <ImageBackground
-            source={item.imagem}
-            style={styles.bannerImage}
-            imageStyle={{ borderRadius: 5 }}
-          >
-            <LinearGradient
-              colors={["rgba(0,0,0,0.7)", "transparent"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={[StyleSheet.absoluteFillObject, { borderRadius: 5 }]}
-            />
-            <Text style={styles.bannerTitle}>{item.titulo}</Text>
-          </ImageBackground>
-        )}
-      />
+      <ScrollView
+        style={styles.scrollview}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        <StatusBar style="light" translucent backgroundColor="transparent" />
 
-      {/* Mais Vendidos */}
-      <Text style={styles.sectionTitle}>Mais Vendidos</Text>
-      <FlatList
-        data={[...maisVendidos, { id: "verMais" }]}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => renderCard(item, "grande")}
-      />
-
-      {/* Pré-Venda */}
-      <Text style={styles.sectionTitle}>Pré-Venda</Text>
-      <FlatList
-        data={[...preVenda, { id: "verMais" }]}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => renderCard(item, "pequeno")}
-      />
-
-      {/* Categorias */}
-      <Text style={styles.sectionTitle}>Categorias de jogos</Text>
-      <View style={styles.grid}>
-        
-        {categorias.map((cat) => {
-          let characterStyle = {};
-          let textStyle = {};
-          switch (cat.id) {
-            case "4":
-              characterStyle = styles.characterAcao;
-              textStyle = styles.overlayAcao;
-              break;
-            case "5":
-              characterStyle = styles.characterAventura;
-              textStyle = styles.overlayAventura;
-              break;
-            case "6":
-              characterStyle = styles.characterEsportes;
-              textStyle = styles.overlayEsportes;
-              break;
-            case "7":
-              characterStyle = styles.characterFPS;
-              textStyle = styles.overlayFPS;
-              break;
-            case "8":
-              characterStyle = styles.characterSimulacao;
-              textStyle = styles.overlaySimulacao;
-              break;
-            case "9":
-              characterStyle = styles.characterRPG;
-              textStyle = styles.overlayRPG;
-              break;
-          }
-          return (
-            <TouchableOpacity
-              key={cat.id}
-              style={styles.gridCard3D}
-              activeOpacity={0.9}
-              onPress={() => navigation.navigate('Categorias')} 
+        {/* Banner */}
+        <Animated.FlatList
+          data={banners}
+          keyExtractor={(item) => item.id}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            {
+              useNativeDriver: false,
+            }
+          )}
+          renderItem={({ item }) => (
+            <ImageBackground
+              source={item.imagem}
+              style={styles.bannerImage}
+              imageStyle={{ borderRadius: 5 }}
             >
-              <Image
-                source={cat.imagem}
-                style={styles.gridCardImage}
-                blurRadius={2}
+              <LinearGradient
+                colors={["rgba(0,0,0,0.7)", "transparent"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[StyleSheet.absoluteFillObject, { borderRadius: 5 }]}
               />
-              <View style={styles.overlay3D} />
-              <View style={styles.cardContent}>
-                {cat.personagem && (
-                  <Image
-                    source={cat.personagem}
-                    style={characterStyle}
-                    resizeMode="contain"
-                  />
-                )}
-                <Text style={textStyle}>{cat.nome}</Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
+              <Text style={styles.bannerTitle}>{item.titulo}</Text>
+            </ImageBackground>
+          )}
+        />
 
-      {/* Melhores Avaliações */}
-      <Text style={styles.sectionTitle}>Melhores Avaliações</Text>
-      <FlatList
-        data={[...melhorAvaliacao, { id: "verMais" }]}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => renderCard(item, "pequeno")}
-      />
+        {/* Mais Vendidos */}
+        <Text style={styles.sectionTitle}>Mais Vendidos</Text>
+        <FlatList
+          data={[...maisVendidos, { id: "verMais" }]}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => renderCard(item, "grande")}
+        />
 
-      {/* Ofertas */}
-      <Text style={styles.sectionTitle}>Ofertas</Text>
-      <FlatList
-        data={[...ofertas, { id: "verMais" }]}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => renderCard(item, "grande")}
-      />
-    </ScrollView>
+        {/* Pré-Venda */}
+        <Text style={styles.sectionTitle}>Pré-Venda</Text>
+        <FlatList
+          data={[...preVenda, { id: "verMais" }]}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => renderCard(item, "pequeno")}
+        />
+
+        {/* Categorias */}
+        <Text style={styles.sectionTitle}>Categorias de jogos</Text>
+        <View style={styles.grid}>
+
+          {categorias.map((cat) => {
+            let characterStyle = {};
+            let textStyle = {};
+            switch (cat.id) {
+              case "4":
+                characterStyle = styles.characterAcao;
+                textStyle = styles.overlayAcao;
+                break;
+              case "5":
+                characterStyle = styles.characterAventura;
+                textStyle = styles.overlayAventura;
+                break;
+              case "6":
+                characterStyle = styles.characterEsportes;
+                textStyle = styles.overlayEsportes;
+                break;
+              case "7":
+                characterStyle = styles.characterFPS;
+                textStyle = styles.overlayFPS;
+                break;
+              case "8":
+                characterStyle = styles.characterSimulacao;
+                textStyle = styles.overlaySimulacao;
+                break;
+              case "9":
+                characterStyle = styles.characterRPG;
+                textStyle = styles.overlayRPG;
+                break;
+            }
+            return (
+              <TouchableOpacity
+                key={cat.id}
+                style={styles.gridCard3D}
+                activeOpacity={0.9}
+                onPress={() => navigation.navigate('CategoriaDetalhada')}
+              >
+                <Image
+                  source={cat.imagem}
+                  style={styles.gridCardImage}
+                  blurRadius={2}
+                />
+                <View style={styles.overlay3D} />
+                <View style={styles.cardContent}>
+                  {cat.personagem && (
+                    <Image
+                      source={cat.personagem}
+                      style={characterStyle}
+                      resizeMode="contain"
+                    />
+                  )}
+                  <Text style={textStyle}>{cat.nome}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Melhores Avaliações */}
+        <Text style={styles.sectionTitle}>Melhores Avaliações</Text>
+        <FlatList
+          data={[...melhorAvaliacao, { id: "verMais" }]}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => renderCard(item, "pequeno")}
+        />
+
+        {/* Ofertas */}
+        <Text style={styles.sectionTitle}>Ofertas</Text>
+        <FlatList
+          data={[...ofertas, { id: "verMais" }]}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => renderCard(item, "grande")}
+        />
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000", paddingTop: 5 },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingTop: 5,
+  },
+  scrollview: { flex: 1, backgroundColor: "#000", paddingTop: 5 },
   priceRatingContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -528,12 +539,12 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
   },
-  cardTitle: { 
-    color: "#fff", 
+  cardTitle: {
+    color: "#fff",
     fontSize: 14,
-    fontWeight: 'bold', 
-    marginTop: 10, 
-    paddingLeft: 4 
+    fontWeight: 'bold',
+    marginTop: 10,
+    paddingLeft: 4
   },
 
   cardPrice: {

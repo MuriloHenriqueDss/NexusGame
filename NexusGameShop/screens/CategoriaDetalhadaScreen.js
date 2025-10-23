@@ -161,7 +161,7 @@ export default function ProdutosScreen() {
           style={styles.botaoVoltar}
         >
           <Ionicons name="arrow-back" size={20} color="#fff" />
-          <Text style={styles.textoVoltar}>Categoria: Playstation</Text>
+          <Text style={styles.textoVoltar}>Categoria: Ação</Text>
         </TouchableOpacity>
       </View>
       
@@ -217,7 +217,7 @@ export default function ProdutosScreen() {
       />
 
       {/* Boxes grandes no final */}
-      <Text style={styles.sectionTitle}>Categorias:</Text>
+      <Text style={styles.sectionTitle}>Plataformas:</Text>
       <View style={styles.boxContainer}>
         {["PlayStation", "Xbox", "Nintendo"].map((cat, idx) => (
           <TouchableOpacity

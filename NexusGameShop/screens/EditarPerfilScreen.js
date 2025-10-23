@@ -15,6 +15,8 @@ export default function PerfilScreen({ navigation }) {
   const [nome, setNome] = useState("João Gustavo");
   const [email, setEmail] = useState("joaogustavo2202@gmail.com");
   const [senha, setSenha] = useState("*******");
+  const [cep, setCEP] = useState("12280-470");
+  const [endereco, setEndereco] = useState("Rua José Bonifácio, 395");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
@@ -22,31 +24,35 @@ export default function PerfilScreen({ navigation }) {
     <View style={styles.container}>
 
       <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
-        <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-            <Image
-              source={require("../assets/img/buscar_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-            <Image
-              source={require("../assets/img/carrinho_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-            <Image
-              source={require("../assets/img/notificacao_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+      
+                      <TouchableOpacity onPress={() => navigation.navigate("Main")}>
+                          <Image
+                              source={require("../assets/img/logo_nexus.png")}
+                              style={styles.logo}
+                          />
+                      </TouchableOpacity>
+      
+                      <View style={styles.navIcons}>
+                          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+                              <Image
+                                  source={require("../assets/img/buscar_icon.png")}
+                                  style={styles.icon}
+                              />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+                              <Image
+                                  source={require("../assets/img/carrinho_icon.png")}
+                                  style={styles.icon}
+                              />
+                          </TouchableOpacity>
+                          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+                              <Image
+                                  source={require("../assets/img/notificacao_icon.png")}
+                                  style={styles.icon}
+                              />
+                          </TouchableOpacity>
+                      </View>
+                  </View>
 
       <ScrollView style={styles.body} contentContainerStyle={{ alignItems: "center" }}>
         {/* Voltar */}
@@ -92,6 +98,20 @@ export default function PerfilScreen({ navigation }) {
             value={senha}
             onChangeText={setSenha}
           />
+
+          <Text style={styles.label}>CEP:</Text>
+          <TextInput
+            style={styles.input}
+            value={cep}
+            onChangeText={setCEP}
+          />
+
+          <Text style={styles.label}>Endereço:</Text>
+          <TextInput
+            style={styles.input}
+            value={endereco}
+            onChangeText={setEndereco}
+          />
         </View>
 
         {/* Alterar senha */}
@@ -116,7 +136,7 @@ export default function PerfilScreen({ navigation }) {
         </View>
 
         {/* Botão salvar */}
-        <TouchableOpacity style={styles.botaoSalvar} onPress={() => alert("Alterações salvas com sucesso!")}>
+        <TouchableOpacity style={styles.botaoSalvar} onPress={() => Alert.alert("Perfil salvo!", "Alterações salvas com sucesso.")}>
           <Text style={styles.textoSalvar}>Salvar</Text>
         </TouchableOpacity>
       </ScrollView>

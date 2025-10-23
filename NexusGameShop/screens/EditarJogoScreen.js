@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -19,12 +20,16 @@ export default function EditarJogoScreen() {
   const [plataforma, setPlataforma] = useState("Playstation");
   const [preco, setPreco] = useState("R$349,90");
   const [categorias, setCategorias] = useState([
-    "Ação",
-    "Lego",
     "Aventura",
-    "FPS",
-    "RPG",
+    "Ação",
+    "Corrida",
+    "Esportes",
     "Estratégia",
+    "FPS",
+    "Lego",
+    "Luta",
+    "RPG",
+    "Simulação"
   ]);
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState(["Ação", "RPG"]);
   const [imagem, setImagem] = useState(
@@ -46,19 +51,6 @@ export default function EditarJogoScreen() {
     } else {
       setCategoriasSelecionadas([...categoriasSelecionadas, cat]);
     }
-  };
-
-  const handleNovaCategoria = () => {
-    const novaCat = prompt("Digite o nome da nova categoria:");
-    if (novaCat && novaCat.trim() !== "") {
-      setCategorias([...categorias, novaCat.trim()]);
-      setCategoriasSelecionadas([...categoriasSelecionadas, novaCat.trim()]);
-    }
-  };
-
-  const handleSalvar = () => {
-    // Apenas volta para GerenciarJogosScreen sem alterar nada
-    navigation.navigate("GerenciarJogos");
   };
 
   return (
@@ -113,7 +105,6 @@ export default function EditarJogoScreen() {
           >
             <Picker.Item label="Playstation" value="Playstation" />
             <Picker.Item label="Xbox" value="Xbox" />
-            <Picker.Item label="PC" value="PC" />
             <Picker.Item label="Nintendo" value="Nintendo" />
           </Picker>
         </View>
@@ -136,12 +127,6 @@ export default function EditarJogoScreen() {
               <Text style={styles.categoriaTexto}>{cat}</Text>
             </TouchableOpacity>
           ))}
-          <TouchableOpacity
-            style={styles.categoria}
-            onPress={handleNovaCategoria}
-          >
-            <Text style={styles.categoriaTexto}>+ Nova categoria</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Campo Preço */}
@@ -157,7 +142,7 @@ export default function EditarJogoScreen() {
         {/* Botão Salvar */}
         <TouchableOpacity
           style={styles.cadastrarButton}
-          onPress={handleSalvar}
+          onPress={() => Alert.alert("Produto atualizado!", "Alterações salvas com sucesso.")}
         >
           <Text style={styles.cadastrarTexto}>Salvar Alterações</Text>
         </TouchableOpacity>

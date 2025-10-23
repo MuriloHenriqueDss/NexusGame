@@ -7,10 +7,12 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function NotificacoesScreen({ navigation }) {
   return (
+    <SafeAreaView style={styles.safeArea} edges={["bottom"]}>
     <View style={styles.container}>
       {/* NAV FIXA */}
       <View style={styles.navbar}>
@@ -160,10 +162,15 @@ export default function NotificacoesScreen({ navigation }) {
         </View>
       </ScrollView>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+  flex: 1,
+  backgroundColor: "black",
+},
   container: { flex: 1, backgroundColor: "black" },
   navbar: {
         flexDirection: "row",
@@ -228,12 +235,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     position: "relative",
   },
-  cardUltimo: { marginBottom: 40 },
+  cardUltimo: { marginBottom: 80 },
   cardImagem: {
     width: 45,
     height: 45,
     marginRight: 15,
-    marginTop: 15,
+    marginTop: 35,
     borderRadius: 8,
   },
   imgEntregue: {
@@ -241,7 +248,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginRight: 15,
     marginLeft: 5,
-    marginTop: 12,
+    marginTop: 30,
     borderRadius: 8,
   },
   imgLoc: {
@@ -249,13 +256,13 @@ const styles = StyleSheet.create({
     height: 40,
     marginRight: 17,
     marginLeft: 5,
-    marginTop: 15,
+    marginTop: 50,
   },
   imgCaminhao: {
     width: 55,
     height: 30,
     marginRight: 15,
-    marginTop: 25,
+    marginTop: 40,
   },
   cardTexto: { flex: 1 },
   textoTitulo: { color: "white", fontWeight: "bold", marginBottom: 4 },
@@ -265,7 +272,7 @@ const styles = StyleSheet.create({
   novaBolinha: {
     position: "absolute",
     left: -15,
-    top: 50,
+    top: 70,
     width: 6,
     height: 6,
     borderRadius: 5,

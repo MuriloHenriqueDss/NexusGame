@@ -44,39 +44,41 @@ export default function MeusPedidos({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
+        <TouchableOpacity onPress={() => navigation.navigate("Main")}>
           <Image
             source={require("../assets/img/logo_nexus.png")}
             style={styles.logo}
           />
-          <View style={styles.navIcons}>
-            <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-              <Image
-                source={require("../assets/img/buscar_icon.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-              <Image
-                source={require("../assets/img/carrinho_icon.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-              <Image
-                source={require("../assets/img/notificacao_icon.png")}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-          </View>
+        </TouchableOpacity>
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+            <Image
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Topo com botão Voltar */}
-      <TouchableOpacity style={styles.voltar} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={22} color="white" />
-        <Text style={styles.voltarTexto}>Voltar</Text>
-      </TouchableOpacity>
-
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        {/* Topo com botão Voltar */}
+        <TouchableOpacity style={styles.voltar} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={22} color="white" />
+          <Text style={styles.voltarTexto}>Voltar</Text>
+        </TouchableOpacity>
+
         <Text style={styles.titulo}>Meus pedidos</Text>
 
         {/* Em processamento */}
@@ -174,7 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     position: "absolute",
-    top: 130,
+    top: 30,
     left: 20,
     zIndex: 10,
   },

@@ -93,10 +93,12 @@ export default function FavoritosScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
-        <Image
-          source={require("../assets/img/logo_nexus.png")}
-          style={styles.logo}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <Image
+            source={require("../assets/img/logo_nexus.png")}
+            style={styles.logo}
+          />
+        </TouchableOpacity>
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
@@ -151,20 +153,20 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 
-  logo: { 
-    width: 200, 
-    height: 60, 
-    resizeMode: "contain" 
+  logo: {
+    width: 200,
+    height: 60,
+    resizeMode: "contain"
   },
 
-  navIcons: { 
-    flexDirection: "row", 
+  navIcons: {
+    flexDirection: "row",
     gap: 15
   },
 
-  icon: { 
-    width: 20, 
-    height: 20 
+  icon: {
+    width: 20,
+    height: 20
   },
 
   titulo: {
@@ -217,6 +219,6 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   botaoFavorito: {
-    marginLeft: 50,
+    marginLeft: 20,
   },
 });

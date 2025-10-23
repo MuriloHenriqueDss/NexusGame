@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   Image,
   ScrollView,
 } from "react-native";
+import { StatusBar} from "expo-status-bar";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -42,6 +43,7 @@ export default function LoginScreen({ navigation }) {
       contentContainerStyle={styles.container}
       keyboardShouldPersistTaps="handled"
     >
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       <View style={styles.card}>
         {/* Logo */}
         <Image source={require("./assets/3.png")} style={styles.logo} />

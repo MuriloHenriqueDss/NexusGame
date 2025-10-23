@@ -490,7 +490,7 @@ export default function ProdutosScreen() {
   const handleAddGame = () => navigation.navigate("AdicionarJogo");
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={styles.container}>
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <Image
@@ -521,7 +521,7 @@ export default function ProdutosScreen() {
           </TouchableOpacity>
         </View>
       </View>
-
+    <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
       <View style={styles.searchBar}>
         <Ionicons
           name="search-outline"
@@ -653,11 +653,17 @@ export default function ProdutosScreen() {
 
       <View style={{ height: 20 }} />
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#000", paddingTop: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: "#000",
+    paddingTop: 5,
+  },
+  scrollview: { flex: 1, backgroundColor: "#000", paddingTop: 10 },
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -16,9 +16,6 @@ import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 
 const categorias = [
-  { id: "1", nome: "Playstation", cor: "#00439C" },
-  { id: "2", nome: "Xbox", cor: "#107C10" },
-  { id: "3", nome: "Nintendo", cor: "#E60012" },
   { id: "4", nome: "Ação", imagem: require("../screens/assets/1.png") },
   { id: "5", nome: "Corrida", imagem: require("../screens/assets/1.png") },
   { id: "6", nome: "Aventura", imagem: require("../screens/assets/1.png") },
@@ -31,7 +28,6 @@ const categorias = [
   { id: "13", nome: "RPG", imagem: require("../screens/assets/1.png") },
   { id: "14", nome: "FPS", imagem: require("../screens/assets/1.png") },
   { id: "15", nome: "Simulação", imagem: require("../screens/assets/1.png") },
-  { id: "16", nome: "Simulação", imagem: require("../screens/assets/1.png") },
 ];
 
 export default function CategoriasScreen() {
@@ -92,12 +88,6 @@ export default function CategoriasScreen() {
           placeholder="Buscar jogos"
           placeholderTextColor="#888"
           style={styles.input}
-        />
-        <Ionicons
-          name="moon-outline"
-          size={20}
-          color="#888"
-          style={{ marginRight: 8 }}
         />
       </View>
 

@@ -106,17 +106,17 @@ export default function PixScreen({ navigation }) {
                 <View style={styles.infoBox}>
                     <Ionicons name="location-outline" size={22} color="#fff" style={styles.iconeInfo} />
                     <View>
-                        <Text style={styles.infoTitulo}>Rua José Bonifácio 395</Text>
-                        <Text style={styles.infoTexto}>Jardim Rafael - CEP 12280470</Text>
-                        <Text style={styles.link}>Alterar endereço</Text>
+                        <Text style={styles.infoTitulo}>Rua José Bonifácio, 395</Text>
+                        <Text style={styles.infoTexto}>Jardim Rafael - CEP 12280-470</Text>
+                        <Text style={styles.link} onPress={() => navigation.navigate("EditarPerfil")}>Alterar endereço</Text>
                     </View>
                 </View>
 
                 {/* PAGAMENTO */}
                 <Text style={styles.subtitulo}>Detalhes do pagamento</Text>
-                <View style={styles.infoBox}>
+                <View style={[styles.infoBox, styles.ultimoCard]}>
                     <Ionicons name="document-text-outline" size={26} color="#fff" />
-                    <View>
+                    <View style={styles.textoDetalhes}>
                         <Text style={styles.infoTitulo}>Boleto</Text>
                         <Text style={styles.infoTexto}>R${subtotal.toFixed(2).replace(".", ",")}</Text>
                         <Text style={styles.infoTextoPequeno}>
@@ -296,4 +296,10 @@ const styles = StyleSheet.create({
         fontSize: 13,
         marginTop: 2,
     },
+    ultimoCard: {
+        marginBottom: 50,
+    },
+    textoDetalhes: {
+        marginLeft: 8,
+    }
 });

@@ -106,15 +106,15 @@ export default function PixScreen({ navigation }) {
                 <View style={styles.infoBox}>
                     <Ionicons name="location-outline" size={22} color="#fff" style={styles.iconeInfo} />
                     <View>
-                        <Text style={styles.infoTitulo}>Rua José Bonifácio 395</Text>
-                        <Text style={styles.infoTexto}>Jardim Rafael - CEP 12280470</Text>
-                        <Text style={styles.link}>Alterar endereço</Text>
+                        <Text style={styles.infoTitulo}>Rua José Bonifácio, 395</Text>
+                        <Text style={styles.infoTexto}>Jardim Rafael - CEP 12280-470</Text>
+                        <Text style={styles.link} onPress={() => navigation.navigate("EditarPerfil")}>Alterar endereço</Text>
                     </View>
                 </View>
 
                 {/* PAGAMENTO */}
                 <Text style={styles.subtitulo}>Detalhes do pagamento</Text>
-                <View style={styles.infoBox}>
+                <View style={[styles.infoBox, styles.ultimoCard]}>
                     <Ionicons name="cash-outline" size={26} color="#00CBA9" style={styles.iconeInfo} />
                     <View>
                         <Text style={styles.infoTitulo}>Pix</Text>
@@ -289,10 +289,14 @@ const styles = StyleSheet.create({
         color: "#aaa",
         fontSize: 12,
         marginTop: 3,
+        maxWidth: "95%",
     },
     link: {
         color: "#FF00C8",
         fontSize: 13,
         marginTop: 2,
+    },
+    ultimoCard: {
+        marginBottom: 50,
     },
 });

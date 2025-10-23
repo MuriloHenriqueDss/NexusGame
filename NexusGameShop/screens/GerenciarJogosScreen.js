@@ -55,49 +55,59 @@ export default function GerenciarJogosScreen({ navigation }) {
   const jogos = mostrarMais ? [...jogosMock, ...jogosMock] : jogosMock;
 
   const renderJogo = ({ item }) => (
-  <View style={styles.card}>
-    <View style={{ position: "relative" }}>
-      <Image source={{ uri: item.imagem }} style={styles.cardImage} />
-      <View style={styles.cardActions}>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => navigation.navigate("EditarJogo", { jogoId: item.id })}
-        >
-          <Ionicons name="pencil" size={14} color="#fff" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() =>
-            Alert.alert(
-              "Excluir Jogo",
-              `Tem certeza que deseja excluir "${item.nome}"?`,
-              [
-                { text: "Cancelar", style: "cancel" },
-                { text: "Excluir", style: "destructive", onPress: () => {} },
-              ]
-            )
-          }
-        >
-          <Ionicons name="close" size={16} color="#fff" />
-        </TouchableOpacity>
+    <View style={styles.card}>
+      <View style={{ position: "relative" }}>
+        <Image source={{ uri: item.imagem }} style={styles.cardImage} />
+        <View style={styles.cardActions}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => navigation.navigate("EditarJogo", { jogoId: item.id })}
+          >
+            <Ionicons name="pencil" size={14} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() =>
+              Alert.alert(
+                "Excluir jogo",
+                `Tem certeza que deseja excluir "${item.nome}"?`,
+                [
+                  { text: "Cancelar", style: "cancel" },
+                  {
+                    text: "Excluir",
+                    style: "destructive",
+                    onPress: () => {
+                      // Aqui você pode colocar a lógica real de exclusão (ex: API, Firestore, etc.)
+
+                      // E depois exibe a confirmação
+                      Alert.alert("Jogo excluído!", `"${item.nome}" foi excluído com sucesso.`);
+                    },
+                  },
+                ]
+              )
+            }
+          >
+            <Ionicons name="close" size={16} color="#fff" />
+          </TouchableOpacity>
+
+        </View>
+      </View>
+      <View style={styles.cardInfo}>
+        <Text style={styles.cardTitle}>{item.nome}</Text>
+        <Text style={styles.cardPrice}>{item.preco}</Text>
+        <View style={styles.rating}>
+          <Ionicons name="star" size={12} color="#FFD700" />
+          <Text style={styles.ratingText}>{item.avaliacao}</Text>
+        </View>
       </View>
     </View>
-    <View style={styles.cardInfo}>
-      <Text style={styles.cardTitle}>{item.nome}</Text>
-      <Text style={styles.cardPrice}>{item.preco}</Text>
-      <View style={styles.rating}>
-        <Ionicons name="star" size={12} color="#FFD700" />
-        <Text style={styles.ratingText}>{item.avaliacao}</Text>
-      </View>
-    </View>
-  </View>
-);
+  );
 
   return (
     <View style={styles.container}>
       {/* Navbar */}
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity onPress={() => navigation.navigate("Main")}>
           <Image
             source={require("../assets/img/logo_nexus.png")}
             style={styles.logo}
@@ -128,14 +138,14 @@ export default function GerenciarJogosScreen({ navigation }) {
 
       {/* Botão de voltar */}
       <View style={styles.voltarContainer}>
-            <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.botaoVoltar}
-            >
-            <Ionicons name="arrow-back" size={20} color="#fff" />
-            <Text style={styles.textoVoltar}>Voltar</Text>
-            </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.botaoVoltar}
+        >
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+          <Text style={styles.textoVoltar}>Voltar</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Corpo */}
       <ScrollView style={styles.body} contentContainerStyle={{ padding: 16 }}>
@@ -330,10 +340,10 @@ const styles = StyleSheet.create({
   },
 
   verMaisBtn: {
-    backgroundColor: "#7B009A",
+    backgroundColor: "#FF09E6",
     borderRadius: 20,
     paddingVertical: 8,
-    paddingHorizontal: 24,
+    paddingHorizontal: 15,
     alignSelf: "center",
     marginTop: 12,
     marginBottom: 50,
@@ -342,5 +352,6 @@ const styles = StyleSheet.create({
   verMaisText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 16,
   },
 });

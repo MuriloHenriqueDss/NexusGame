@@ -20,12 +20,16 @@ export default function AdicionarJogoScreen() {
   const [plataforma, setPlataforma] = useState("Playstation");
   const [preco, setPreco] = useState("");
   const [categorias, setCategorias] = useState([
-    "Ação",
-    "Lego",
     "Aventura",
-    "FPS",
-    "RPG",
+    "Ação",
+    "Corrida",
+    "Esportes",
     "Estratégia",
+    "FPS",
+    "Lego",
+    "Luta",
+    "RPG",
+    "Simulação"
   ]);
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
 
@@ -41,22 +45,6 @@ export default function AdicionarJogoScreen() {
     } else {
       setCategoriasSelecionadas([...categoriasSelecionadas, cat]);
     }
-  };
-
-  const handleNovaCategoria = () => {
-    Alert.prompt(
-      "Nova Categoria",
-      "Digite o nome da nova categoria:",
-      (novaCat) => {
-        if (novaCat && novaCat.trim() !== "") {
-          setCategorias([...categorias, novaCat.trim()]);
-          setCategoriasSelecionadas([
-            ...categoriasSelecionadas,
-            novaCat.trim(),
-          ]);
-        }
-      }
-    );
   };
 
   const handleCadastrar = () => {
@@ -147,7 +135,6 @@ export default function AdicionarJogoScreen() {
         >
           <Picker.Item label="Playstation" value="Playstation" />
           <Picker.Item label="Xbox" value="Xbox" />
-          <Picker.Item label="PC" value="PC" />
           <Picker.Item label="Nintendo" value="Nintendo" />
         </Picker>
       </View>
@@ -155,7 +142,7 @@ export default function AdicionarJogoScreen() {
       {/* Upload Imagem */}
       <TouchableOpacity style={styles.uploadButton} onPress={handleUploadImage}>
         <Ionicons name="image-outline" size={24} color="#fff" />
-        <Text style={styles.uploadText}>Upload Imagem</Text>
+        <Text style={styles.uploadText}>Carregar Imagem</Text>
       </TouchableOpacity>
 
       {/* Categorias */}
@@ -175,18 +162,12 @@ export default function AdicionarJogoScreen() {
             <Text style={styles.categoriaTexto}>{cat}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity
-          style={styles.categoria}
-          onPress={handleNovaCategoria}
-        >
-          <Text style={styles.categoriaTexto}>+ Nova categoria</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Campo Preço */}
       <TextInput
         style={styles.input}
-        placeholder="Preço"
+        placeholder="Valor"
         placeholderTextColor="#888"
         keyboardType="numeric"
         value={preco}

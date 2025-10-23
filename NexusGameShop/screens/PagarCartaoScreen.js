@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function FinalizarCompraScreen({ navigation }) {
+export default function PixScreen({ navigation }) {
     const pedido = [
         {
             id: 1,
@@ -17,6 +17,8 @@ export default function FinalizarCompraScreen({ navigation }) {
             imagem: require("../assets/img/jogos/astrobot.png"),
         },
     ];
+
+    const subtotal = 465.5;
 
     return (
         <View style={styles.container}>
@@ -58,8 +60,9 @@ export default function FinalizarCompraScreen({ navigation }) {
                     <Text style={styles.voltarTexto}>Voltar</Text>
                 </TouchableOpacity>
 
-                <Text style={styles.titulo}>Finalizar compra</Text>
+                <Text style={styles.titulo}>Revise e confirme</Text>
 
+                {/* MEU PEDIDO */}
                 <View style={styles.pedidoContainer}>
                     <Text style={styles.subtitulo}>Meu Pedido</Text>
 
@@ -68,48 +71,61 @@ export default function FinalizarCompraScreen({ navigation }) {
                             <Image source={item.imagem} style={styles.imagem} />
                             <View style={styles.info}>
                                 <Text style={styles.nome}>{item.nome}</Text>
-                                <Text style={styles.preco}>
-                                    R${item.preco.toFixed(2).replace(".", ",")}
-                                </Text>
+                                <Text style={styles.preco}>R${item.preco.toFixed(2).replace(".", ",")}</Text>
                             </View>
                         </View>
                     ))}
+
+                    <View style={styles.totalLinha}>
+                        <Text style={styles.totalLabel}>Subtotal</Text>
+                        <Text style={styles.totalValor}>R${subtotal.toFixed(2).replace(".", ",")}</Text>
+                    </View>
+
+                    <View style={styles.totalLinha}>
+                        <Text style={styles.vocePagara}>Você Pagará</Text>
+                        <Text style={styles.totalFinal}>R${subtotal.toFixed(2).replace(".", ",")}</Text>
+                    </View>
+
+                    <TouchableOpacity style={styles.botaoConfirmar} onPress={() => Alert.alert("Obrigado!", "Compra efetuada com sucesso.")}>
+                        <Text style={styles.botaoTexto}>Confirmar a compra</Text>
+                    </TouchableOpacity>
                 </View>
 
-                <Text style={styles.subtitulo}>Escolha de pagamento</Text>
+                {/* FATURAMENTO */}
+                <Text style={styles.subtitulo}>Faturamento</Text>
+                <View style={styles.infoBox}>
+                    <Ionicons name="document-text-outline" size={22} color="#fff" style={styles.iconeInfo} />
+                    <View>
+                        <Text style={styles.infoTitulo}>Kaique Ferreira</Text>
+                        <Text style={styles.infoTexto}>CPF 123.456.789-1</Text>
+                    </View>
+                </View>
 
-                <View style={styles.pagamentoContainer}>
-                    <TouchableOpacity style={styles.pagamentoOpcao} onPress={() => navigation.navigate("Pix")}>
-                        <View style={styles.pagamentoIcone}>
-                            <Ionicons name="cash-outline" size={26} color="#00CBA9" />
-                        </View>
-                        <View>
-                            <Text style={styles.pagamentoTitulo}>Pix</Text>
-                            <Text style={styles.pagamentoDescricao}>Aprovação imediata</Text>
-                        </View>
-                    </TouchableOpacity>
+                {/* ENTREGA */}
+                <Text style={styles.subtitulo}>Detalhes da entrega</Text>
+                <View style={styles.infoBox}>
+                    <Ionicons name="location-outline" size={22} color="#fff" style={styles.iconeInfo} />
+                    <View>
+                        <Text style={styles.infoTitulo}>Rua José Bonifácio, 395</Text>
+                        <Text style={styles.infoTexto}>Jardim Rafael - CEP 12280-470</Text>
+                        <Text style={styles.link} onPress={() => navigation.navigate("EditarPerfil")}>Alterar endereço</Text>
+                    </View>
+                </View>
 
-                    <TouchableOpacity style={styles.pagamentoOpcao} onPress={() => navigation.navigate("Boleto")}>
-                        <View style={styles.pagamentoIcone}>
-                            <Ionicons name="document-text-outline" size={26} color="#fff" />
-                        </View>
-                        <View>
-                            <Text style={styles.pagamentoTitulo}>Boleto</Text>
-                            <Text style={styles.pagamentoDescricao}>Aprovação em 1 a 2 dias úteis</Text>
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.pagamentoOpcao, styles.ultimoCard]} onPress={() => navigation.navigate("EscolherCartao")}>
-                        <View style={styles.pagamentoIcone}>
-                            <Ionicons name="card-outline" size={26} color="#FFD84D" />
-                        </View>
-                        <View>
-                            <Text style={styles.pagamentoTitulo}>Cartão</Text>
-                            <Text style={styles.pagamentoDescricao}>Aprovação em 1 a 2 dias úteis</Text>
-                        </View>
-                    </TouchableOpacity>
+                {/* PAGAMENTO */}
+                <Text style={styles.subtitulo}>Detalhes do pagamento</Text>
+                <View style={[styles.infoBox, styles.ultimoCard]}>
+                    <Ionicons name="card-outline" size={26} color="#FFD84D" />
+                    <View style={styles.textoDetalhes}>
+                        <Text style={styles.infoTitulo}>Cartão Visa - Final 8922</Text>
+                        <Text style={styles.infoTexto}>R${subtotal.toFixed(2).replace(".", ",")}</Text>
+                        <Text style={styles.infoTextoPequeno}>
+                            Ao realizar o pagmento via cartão, o prazo de aprovação é de 2 a 3 dias úteis
+                        </Text>
+                    </View>
                 </View>
             </ScrollView>
+
         </View>
     );
 }
@@ -210,32 +226,79 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "700",
     },
-    pagamentoContainer: {
-        gap: 10,
-        marginBottom: 30,
+    totalLinha: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 5,
     },
-    pagamentoOpcao: {
+    totalLabel: {
+        color: "#fff",
+        fontSize: 15,
+    },
+    totalValor: {
+        color: "#fff",
+        fontSize: 15,
+        fontWeight: "600",
+    },
+    vocePagara: {
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 16,
+        marginTop: 5,
+    },
+    totalFinal: {
+        color: "#fff",
+        fontWeight: "700",
+        fontSize: 18,
+    },
+    botaoConfirmar: {
+        backgroundColor: "#FF00C8",
+        borderRadius: 8,
+        marginTop: 12,
+        paddingVertical: 10,
+    },
+    botaoTexto: {
+        color: "#fff",
+        textAlign: "center",
+        fontWeight: "700",
+        fontSize: 16,
+    },
+    infoBox: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#1a1a1a",
         borderWidth: 2,
         borderColor: "#a200ff",
         borderRadius: 10,
-        padding: 12,
+        padding: 10,
+        backgroundColor: "#1a1a1a",
+        marginBottom: 15,
     },
-    pagamentoIcone: {
-        marginRight: 12,
+    iconeInfo: {
+        marginRight: 10,
     },
-    pagamentoTitulo: {
+    infoTitulo: {
         color: "#fff",
-        fontSize: 16,
         fontWeight: "600",
+        fontSize: 15,
     },
-    pagamentoDescricao: {
+    infoTexto: {
         color: "#ccc",
         fontSize: 13,
+    },
+    infoTextoPequeno: {
+        color: "#aaa",
+        fontSize: 12,
+        marginTop: 3,
+    },
+    link: {
+        color: "#FF00C8",
+        fontSize: 13,
+        marginTop: 2,
     },
     ultimoCard: {
         marginBottom: 50,
     },
+    textoDetalhes: {
+        marginLeft: 10,
+    }
 });

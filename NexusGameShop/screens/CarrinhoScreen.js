@@ -109,6 +109,16 @@ export default function CarrinhoScreen({ navigation, route }) {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ alignItems: "center", paddingBottom: 150 }}
         >
+
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.voltar}
+          >
+            <Ionicons name="arrow-back" size={22} color="white" />
+            <Text style={styles.textoVoltar}>Voltar</Text>
+          </TouchableOpacity>
+
+
           <Text style={styles.titulo}>Carrinho</Text>
 
           {cart.length === 0 ? (
@@ -165,7 +175,7 @@ export default function CarrinhoScreen({ navigation, route }) {
                 />
                 <TouchableOpacity
                   style={styles.botaoAplicar}
-                  onPress={() => Alert.alert("Sucesso!", "Cupom de desconto aplicado!")}
+                  onPress={() => Alert.alert("Sucesso!", "Cupom de desconto aplicado.")}
                 >
                   <Text style={styles.textoAplicar}>Aplicar</Text>
                 </TouchableOpacity>
@@ -236,11 +246,24 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  voltar: {
+    flexDirection: "row",
+    alignSelf: "flex-start",
+    alignItems: "center",
+    marginTop: 20,
+    marginLeft: 30,
+  },
+  textoVoltar: {
+    color: "white",
+    fontSize: 16,
+    marginLeft: 5,
+  },
   titulo: {
     color: "white",
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "bold",
     marginVertical: 30,
+    marginTop: 20,
   },
   itemContainer: {
     flexDirection: "row",
@@ -299,7 +322,7 @@ const styles = StyleSheet.create({
   },
   textoResumo: {
     color: "white",
-    fontSize: 20,
+    fontSize: 18,
   },
   valorResumo: {
     color: "white",
@@ -322,8 +345,8 @@ const styles = StyleSheet.create({
   botaoAplicar: {
     backgroundColor: "#FF00C8",
     borderRadius: 5,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
     marginRight: 10,
   },
   textoAplicar: {
@@ -334,13 +357,13 @@ const styles = StyleSheet.create({
   totalTexto: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 24,
+    fontSize: 18,
     marginTop: 5,
   },
   totalValor: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 24,
+    fontSize: 18,
     marginTop: 5,
   },
   botoesFixos: {
@@ -362,8 +385,8 @@ const styles = StyleSheet.create({
   },
   botaoRosa: {
     backgroundColor: "#FF00C8",
-    paddingVertical: 12,
-    paddingHorizontal: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
     borderRadius: 8,
   },
   textoBotao: {

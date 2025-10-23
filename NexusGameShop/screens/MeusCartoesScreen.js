@@ -69,20 +69,20 @@ export default function MeusCartoes({ navigation }) {
         </View>
       </View>
 
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={styles.voltar}
-      >
-        <Ionicons name="arrow-back" size={22} color="white" />
-        <Text style={styles.textoVoltar}>Voltar</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.titulo}>Meus cartões</Text>
-
       <ScrollView
         contentContainerStyle={{ alignItems: "center", paddingBottom: 40 }}
         showsVerticalScrollIndicator={false}
       >
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.voltar}
+        >
+          <Ionicons name="arrow-back" size={22} color="white" />
+          <Text style={styles.textoVoltar}>Voltar</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.titulo}>Meus cartões</Text>
+
         {cartoes.map((cartao) => (
           <View key={cartao.id} style={styles.card}>
             <Image source={cartao.imagem} style={styles.imagemCartao} />
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   voltar: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 20,
+    marginLeft: -230,
     marginBottom: 10,
     marginTop: 30,
   },
@@ -225,6 +225,8 @@ const styles = StyleSheet.create({
     color: "#FF00C8",
     fontWeight: "bold",
     marginRight: 137,
+    width: "100%",
+    marginLeft: 3,
   },
   tornarPadrao: {
     color: "#FF00C8",
@@ -240,9 +242,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#FF09E6",
     borderRadius: 5,
-    paddingVertical: 7,
+    paddingVertical: 10,
     paddingHorizontal: 10,
     marginTop: 30,
+    marginBottom: 50,
   },
   textoBotaoAdicionar: {
     color: "white",

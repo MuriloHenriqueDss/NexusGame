@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -22,49 +23,50 @@ export default function AdicionarCartaoScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-        <View style={styles.navbar}>
+      <View style={styles.navbar}>
+        <Image
+          source={require("../assets/img/logo_nexus.png")}
+          style={styles.logo}
+        />
+        <View style={styles.navIcons}>
+          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
-              source={require("../assets/img/logo_nexus.png")}
-              style={styles.logo}
+              source={require("../assets/img/buscar_icon.png")}
+              style={styles.icon}
             />
-            <View style={styles.navIcons}>
-                <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-                      <Image
-                        source={require("../assets/img/buscar_icon.png")}
-                        style={styles.icon}
-                      />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-                    <Image
-                      source={require("../assets/img/carrinho_icon.png")}
-                      style={styles.icon}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-                    <Image
-                      source={require("../assets/img/notificacao_icon.png")}
-                      style={styles.icon}
-                    />
-                </TouchableOpacity>
-            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
+            <Image
+              source={require("../assets/img/carrinho_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+            <Image
+              source={require("../assets/img/notificacao_icon.png")}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
         </View>
-      {/* Botão Voltar */}
-      <TouchableOpacity style={styles.voltar} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={22} color="white" />
-        <Text style={styles.voltarTexto}>Voltar</Text>
-      </TouchableOpacity>
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scroll}
       >
+        {/* Botão Voltar */}
+        <TouchableOpacity style={styles.voltar} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={22} color="white" />
+          <Text style={styles.voltarTexto}>Voltar</Text>
+        </TouchableOpacity>
+
         <View style={styles.cardContainer}>
           <Text style={styles.titulo}>Novo cartão</Text>
 
           <View style={styles.boxImage}>
             <Image
-                source={require("../assets/img/cartao_visa.png")}
-                style={styles.imagemCartao}
+              source={require("../assets/img/cartao_visa.png")}
+              style={styles.imagemCartao}
             />
           </View>
 
@@ -155,7 +157,7 @@ export default function AdicionarCartaoScreen({ navigation }) {
               <Text style={styles.seguroTexto}>Seus dados estão seguros</Text>
             </View>
 
-            <TouchableOpacity style={styles.botao} onPress={() => alert("Cartão cadastrado com sucesso!")}>
+            <TouchableOpacity style={styles.botao} onPress={() => Alert.alert("Cartão adicionado!", "Seu novo cartão foi cadastrado com sucesso.")}>
               <Text style={styles.textoBotao}>Adicionar cartão</Text>
             </TouchableOpacity>
           </View>
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginTop: 30,
-    marginLeft: 20,
+    marginLeft: -230,
     marginBottom: 30,
   },
   voltarTexto: {

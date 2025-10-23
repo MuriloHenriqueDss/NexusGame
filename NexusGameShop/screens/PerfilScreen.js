@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert
 } from "react-native";
 import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
@@ -65,9 +66,31 @@ export default function PerfilScreen({ navigation }) {
             <TouchableOpacity style={styles.botaoEditar} onPress={() => navigation.navigate('EditarPerfil')}>
               <Text style={styles.textoEditar}>Editar perfil</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.botaoSair} onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity
+              style={styles.botaoSair}
+              onPress={() =>
+                Alert.alert(
+                  "Desconectar",
+                  "Tem certeza que deseja sair da sua conta?",
+                  [
+                    { text: "Cancelar", style: "cancel" },
+                    {
+                      text: "Sair",
+                      style: "destructive",
+                      onPress: () => {
+                        // Por enquanto só navega para a tela de login
+                        navigation.navigate("Login");
+                        // Opcional: mostrar um alert de confirmação
+                        Alert.alert("Logout efetuado!", "Você saiu da sua conta com sucesso.");
+                      },
+                    },
+                  ]
+                )
+              }
+            >
               <Text style={styles.textoSair}>Sair</Text>
             </TouchableOpacity>
+
           </View>
         </View>
 
@@ -78,7 +101,7 @@ export default function PerfilScreen({ navigation }) {
             <Text style={styles.textoCard}>Meus favoritos</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('Carrinho')}>
             <Ionicons name="cart-outline" size={20} color="#FF09E6" />
             <Text style={styles.textoCard}>Meu carrinho</Text>
           </TouchableOpacity>
@@ -95,11 +118,11 @@ export default function PerfilScreen({ navigation }) {
         </View>
 
         {/* Botões inferiores */}
-        <TouchableOpacity style={styles.botaoRosa}>
+        <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('GerenciarJogos')}>
           <Text style={styles.textoRosa}>Gerenciar jogos</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botaoRosa}>
+        <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('AdicionarJogo')}>
           <Text style={styles.textoRosa}>Adicionar jogos</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -146,7 +169,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    marginTop: 100,
+    marginTop: 30,
   },
   perfilContainer: {
     alignItems: "center",
@@ -198,14 +221,15 @@ const styles = StyleSheet.create({
   card: {
     borderWidth: 2,
     borderColor: "#7B009A",
-    borderRadius: 12,
-    width: "40%",
+    borderRadius: 10,
+    width: "45%",
     alignItems: "center",
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     gap: 10,
     paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   textoCard: {
     color: "white",
