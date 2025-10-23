@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -105,8 +106,25 @@ export default function MeusCartoes({ navigation }) {
                 </View>
               ) : (
                 <View style={styles.linhaBaixo}>
-                  <Text style={styles.tornarPadrao}>Tornar padrão</Text>
-                  <Text style={styles.excluir}>Excluir</Text>
+                  <Text style={styles.tornarPadrao} onPress={() => Alert.alert("Sucesso!", "Cartão tornado padrão com sucesso.")}>Tornar padrão</Text>
+                  <Text style={styles.excluir} onPress={() =>
+                                  Alert.alert(
+                                    "Excluir cartão",
+                                    "Tem certeza que deseja excluir esse cartão?",
+                                    [
+                                      { text: "Cancelar", style: "cancel" },
+                                      {
+                                        text: "Excluir",
+                                        style: "destructive",
+                                        onPress: () => {
+                                          // Por enquanto só navega para a tela de login
+                                          // Opcional: mostrar um alert de confirmação
+                                          Alert.alert("Cartão excluído!", "Você excluiu seu cartão com sucesso.");
+                                        },
+                                      },
+                                    ]
+                                  )
+                                }>Excluir</Text>
                 </View>
               )}
             </View>
