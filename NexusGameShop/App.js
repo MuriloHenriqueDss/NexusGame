@@ -32,7 +32,9 @@ import PixScreen from "./screens/PixScreen";
 import PixPagarScreen from "./screens/PixPagarScreen";
 import BoletoScreen from "./screens/BoletoScreen";
 import BoletoPagarScreen from "./screens/BoletoPagarScreen";
+import GerenciarJogosScreen from "./screens/GerenciarJogosScreen";
 import EscolherCartaoScreen from "./screens/EscolherCartaoScreen";
+import EditarJogoScreen from "./screens/EditarJogoScreen";
 import { CartProvider } from "./screens/CartContext";
 
 const Tab = createBottomTabNavigator();
@@ -130,6 +132,9 @@ export default function App() {
             <Stack.Screen name="Boleto" component={BoletoScreen} />
             <Stack.Screen name="PagarBoleto" component={BoletoPagarScreen} />
             <Stack.Screen name="EscolherCartao" component={EscolherCartaoScreen} />
+            <Stack.Screen name="GerenciarJogos" component={GerenciarJogosScreen} />
+            <Stack.Screen name="EditarJogo" component={EditarJogoScreen} />
+            
           </Stack.Navigator>
         </NavigationContainer>
       </CartProvider>
