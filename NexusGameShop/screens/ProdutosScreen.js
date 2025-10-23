@@ -501,7 +501,7 @@ export default function ProdutosScreen() {
 
         <TouchableOpacity />
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Produtos")}>
             <Image
               source={require("../assets/img/buscar_icon.png")}
               style={styles.icon}
@@ -526,12 +526,12 @@ export default function ProdutosScreen() {
         <Ionicons
           name="search-outline"
           size={20}
-          color="#000"
+          color="#ffffffff"
           style={{ marginLeft: 12 }}
         />
         <TextInput
           placeholder="Buscar jogos"
-          placeholderTextColor="#666"
+          placeholderTextColor="#535353ff"
           style={styles.input}
         />
       </View>
@@ -802,21 +802,23 @@ const styles = StyleSheet.create({
   },
   specialCardTitle: {
     color: "#fff",
-    fontSize: 20,
+    fontSize: 28,
     fontWeight: "bold",
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
     marginBottom: 8,
+    marginTop: 50, 
   },
   specialCardButton: {
-    backgroundColor: "#fff",
+    borderColor: '#fff',
+    borderWidth: 2,
     paddingHorizontal: 20,
     paddingVertical: 8,
     borderRadius: 20,
     alignSelf: "flex-start",
   },
-  specialCardButtonText: { color: "#000", fontWeight: "bold" },
+  specialCardButtonText: { color: "#ffffffff", fontWeight: "bold" },
 
   modalOverlay: {
     flex: 1,

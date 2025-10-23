@@ -155,6 +155,16 @@ export default function ProdutosScreen() {
         </View>
       </View>
 
+      <View style={styles.voltarContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.botaoVoltar}
+        >
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+          <Text style={styles.textoVoltar}>Categoria: Playstation</Text>
+        </TouchableOpacity>
+      </View>
+      
       {/* Busca */}
       <View style={styles.searchContainer}>
         <TextInput
@@ -244,22 +254,40 @@ const styles = StyleSheet.create({
   logo: { width: 200, height: 60, resizeMode: "contain" },
   navIcons: { flexDirection: "row", gap: 15 },
   icon: { width: 20, height: 20 },
+    botaoVoltar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7B009A",
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+  },
+  textoVoltar: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
+    marginLeft: 6,
+  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: 20,
     padding: 5,
+    marginLeft: 50,
     marginHorizontal: 10,
     marginBottom: 15,
+    width: 300,
+    justifyContent: 'center',
   },
-  searchInput: { flex: 1, padding: 5, color: "#000" },
+  searchInput: { flex: -1, padding: 5, color: "#000" },
   sectionTitle: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
     marginLeft: 15,
-    marginBottom: 10,
+    marginBottom: 5,
+    marginTop: 30,
   },
   card: {
     backgroundColor: "#1a1a3b",

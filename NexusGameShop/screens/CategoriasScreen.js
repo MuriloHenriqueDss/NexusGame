@@ -8,10 +8,10 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  FlatList,
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
@@ -35,6 +35,8 @@ const categorias = [
 ];
 
 export default function CategoriasScreen() {
+  const navigation = useNavigation(); // <-- adiciona navigation
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.navbar}>
@@ -45,9 +47,8 @@ export default function CategoriasScreen() {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity />
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Produtos")}>
             <Image
               source={require("../assets/img/buscar_icon.png")}
               style={styles.icon}
@@ -69,8 +70,14 @@ export default function CategoriasScreen() {
       </View>
 
       {/* Barra roxa */}
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>Todas as categorias</Text>
+      <View style={styles.voltarContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.botaoVoltar}
+        >
+          <Ionicons name="arrow-back" size={20} color="#fff" />
+          <Text style={styles.textoVoltar}>Categorias</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Barra de pesquisa */}
@@ -98,7 +105,17 @@ export default function CategoriasScreen() {
       <Text style={styles.sectionTitle}>Categorias de jogos</Text>
       <View style={styles.grid}>
         {categorias.map((cat) => (
-          <TouchableOpacity key={cat.id} style={styles.card}>
+          <TouchableOpacity
+            key={cat.id}
+            style={styles.card}
+            activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate("CategoriaDetalhada", {
+                categoriaId: cat.id,
+                categoriaNome: cat.nome,
+              })
+            }
+          >
             {cat.imagem ? (
               <Image source={cat.imagem} style={styles.cardImage} />
             ) : (
@@ -117,8 +134,8 @@ export default function CategoriasScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: "#000",
   },
   navbar: {
@@ -139,6 +156,32 @@ const styles = StyleSheet.create({
   },
   bannerText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 
+  botaoVoltar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7B009A",
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+  },
+  textoVoltar: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
+    marginLeft: 6,
+  },
+  botaoVoltar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7B009A",
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+  },
+  textoVoltar: {
+    color: "#fff",
+    fontSize: 15,
+    fontWeight: "bold",
+    marginLeft: 6,
+  },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
@@ -147,16 +190,6 @@ const styles = StyleSheet.create({
     margin: 12,
   },
   input: { flex: 1, padding: 10, color: "#fff", fontSize: 16 },
-
-  filterScroll: { marginHorizontal: 12, marginBottom: 10 },
-  filterButton: {
-    backgroundColor: "#1E1E1E",
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginRight: 8,
-  },
-  filterText: { color: "#fff", fontSize: 14 },
 
   sectionTitle: {
     color: "#fff",
@@ -175,7 +208,7 @@ const styles = StyleSheet.create({
     width: width / 2 - 18,
     height: 100,
     borderRadius: 10,
-    marginBottom: 12,
+    marginBottom: 20,
     overflow: "hidden",
     backgroundColor: "#1E1E1E",
     justifyContent: "center",

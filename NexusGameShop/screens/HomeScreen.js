@@ -14,6 +14,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from '@expo/vector-icons';
+import CategoriasScreen from "./CategoriasScreen";
 
 const { width } = Dimensions.get("window");
 
@@ -85,21 +86,21 @@ const preVenda = [
   {
     id: "1",
     image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
+    title: "Minecraft",
     price: "R$99,99",
     rating: 4.6,
   },
   {
     id: "2",
     image: require("../screens/assets/spiderman2.png"),
-    title: "Marvel Spider Man 2",
+    title: "Marvel Spider-Man 2",
     price: "R$79,99",
     rating: 4.9,
   },
   {
     id: "3",
     image: require("../screens/assets/the_last_of_us.png"),
-    title: "Oferta 3",
+    title: "The Last of Us II",
     price: "R$59,99",
     rating: 4.7,
   },
@@ -172,21 +173,21 @@ const ofertas = [
   {
     id: "1",
     image: require("../screens/assets/minecraftofer.png"),
-    title: "Oferta 1",
+    title: "Minecraft",
     price: "R$99,99",
     rating: 4.5,
   },
   {
     id: "2",
     image: require("../screens/assets/spiderman2.png"),
-    title: "Oferta 2",
+    title: "Marvel Spider-man 2",
     price: "R$79,99",
     rating: 4.8,
   },
   {
     id: "3",
     image: require("../screens/assets/the_last_of_us.png"),
-    title: "Oferta 3",
+    title: "The Last of Us II",
     price: "R$59,99",
     rating: 4.6,
   },
@@ -205,9 +206,15 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  const renderCard = (item, tipo) => {
-    if (item.id === "verMais") {
-      return (
+const renderCard = (item, tipo) => {
+  if (item.id === "verMais") {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={() => {
+          navigation.navigate("Produ"); 
+        }}
+      >
         <LinearGradient
           colors={["#8000FF", "#FF00FF"]}
           style={[
@@ -217,8 +224,9 @@ export default function HomeScreen() {
         >
           <Text style={styles.verMaisText}>Ver mais</Text>
         </LinearGradient>
-      );
-    }
+      </TouchableOpacity>
+    );
+  }
 
     if (tipo === "grande") {
       return (
@@ -261,7 +269,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity />
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
+          <TouchableOpacity onPress={() => navigation.navigate("Produtos")}>
             <Image
               source={require("../assets/img/buscar_icon.png")}
               style={styles.icon}
@@ -335,6 +343,7 @@ export default function HomeScreen() {
       {/* Categorias */}
       <Text style={styles.sectionTitle}>Categorias de jogos</Text>
       <View style={styles.grid}>
+        
         {categorias.map((cat) => {
           let characterStyle = {};
           let textStyle = {};
@@ -369,6 +378,7 @@ export default function HomeScreen() {
               key={cat.id}
               style={styles.gridCard3D}
               activeOpacity={0.9}
+              onPress={() => navigation.navigate('Categorias')} 
             >
               <Image
                 source={cat.imagem}
@@ -540,7 +550,8 @@ const styles = StyleSheet.create({
   verMaisText: {
     color: "#fff",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 20,
+    marginTop: 50,
     textAlign: "center",
   },
   grid: {

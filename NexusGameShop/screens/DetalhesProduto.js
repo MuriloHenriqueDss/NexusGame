@@ -206,7 +206,7 @@ export default function DetalhesProdutoScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#121212", padding: 10 },
+  container: { flex: 1, backgroundColor: "#000000ff", padding: 10 },
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   },
   banner: {
     width: "100%",
-    height: 230,
+    height: 250,
     resizeMode: "cover",
     marginBottom: 16,
   },
