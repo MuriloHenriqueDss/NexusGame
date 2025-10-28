@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     borderRadius: 20,
     height: '83%',
-    marginTop: 35,
+    marginTop: 0,
   },
   
   scrollview: { flex: 1, backgroundColor: "#000" },

@@ -1,3 +1,4 @@
+// screens/SplashScreen.js
 import React, { useEffect, useRef } from 'react';
 import { 
   View, 
@@ -16,19 +17,19 @@ const { width } = Dimensions.get('window');
 export default function SplashScreen() {
   const navigation = useNavigation();
 
-  // Animações de entrada
+  // Animações principais
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const textFade = useRef(new Animated.Value(0)).current;
   const moveY = useRef(new Animated.Value(50)).current;
 
   // Animações de saída
-  const fadeOutOpacity = useRef(new Animated.Value(1)).current; // apenas para opacidade nativa
+  const fadeOutOpacity = useRef(new Animated.Value(1)).current;
   const moveOutY = useRef(new Animated.Value(0)).current;
-  const backgroundAnim = useRef(new Animated.Value(1)).current; // apenas para background
+  const backgroundAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Entrada
+    // Entrada suave do logo e textos
     Animated.sequence([
       Animated.parallel([
         Animated.timing(scaleAnim, {
@@ -64,103 +65,97 @@ export default function SplashScreen() {
       ]),
     ]).start();
 
-    // Saída
+    // Saída e navegação após 4s
     const timer = setTimeout(() => {
       Animated.parallel([
-        // Fade-out de opacidade (logo e textos)
         Animated.timing(fadeOutOpacity, {
           toValue: 0,
-          duration: 1200,
+          duration: 1000,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-        // Movimento para cima
         Animated.timing(moveOutY, {
           toValue: -100,
-          duration: 1200,
+          duration: 1000,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-        // Background roxo (sem driver nativo)
         Animated.timing(backgroundAnim, {
           toValue: 0,
-          duration: 1200,
+          duration: 1000,
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: false,
         }),
       ]).start(() => {
-        navigation.replace('Login');
+        navigation.replace('Login'); // Troca de tela
       });
     }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // Cor de fundo animada
+  // Animação de cor de fundo
   const backgroundColor = backgroundAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['#7B009A', '#4B0082'],
   });
 
   return (
-    <Animated.View style={[styles.fadeWrapper, { backgroundColor }]}>
+    <Animated.View style={[styles.container, { backgroundColor }]}>
       <LinearGradient
         colors={['#7b009a', '#4B0082', '#000']}
-        style={styles.container}
+        style={StyleSheet.absoluteFillObject}
+      />
+      
+      {/* Logo central animado */}
+      <Animated.View
+        style={[
+          styles.logoContainer,
+          {
+            opacity: Animated.multiply(fadeAnim, fadeOutOpacity),
+            transform: [
+              { scale: scaleAnim },
+              { translateY: Animated.add(moveY, moveOutY) },
+            ],
+          },
+        ]}
       >
-        {/* Logo */}
-        <Animated.View
-          style={[
-            styles.logoContainer,
-            {
-              opacity: Animated.multiply(fadeAnim, fadeOutOpacity),
-              transform: [
-                { scale: scaleAnim },
-                { translateY: Animated.add(moveY, moveOutY) },
-              ],
-            },
-          ]}
-        >
-          <Image
-            source={require('../screens/assets/nexuslogo.png')}
-            style={styles.logo}
-          />
-        </Animated.View>
+        <Image
+          source={require('../screens/assets/nexuslogo.png')}
+          style={styles.logo}
+        />
+      </Animated.View>
 
-        {/* Título */}
-        <Animated.Text
-          style={[
-            styles.title,
-            {
-              opacity: Animated.multiply(textFade, fadeOutOpacity),
-              transform: [{ translateY: Animated.add(moveY, moveOutY) }],
-            },
-          ]}
-        >
-          Bem-vindo à <Text style={styles.highlight}>Nexus Store</Text>
-        </Animated.Text>
+      {/* Título */}
+      <Animated.Text
+        style={[
+          styles.title,
+          {
+            opacity: Animated.multiply(textFade, fadeOutOpacity),
+            transform: [{ translateY: Animated.add(moveY, moveOutY) }],
+          },
+        ]}
+      >
+        Bem-vindo à <Text style={styles.highlight}>Nexus Store</Text>
+      </Animated.Text>
 
-        {/* Subtítulo */}
-        <Animated.Text
-          style={[
-            styles.subtitle,
-            {
-              opacity: Animated.multiply(textFade, fadeOutOpacity),
-              transform: [{ translateY: Animated.add(moveY, moveOutY) }],
-            },
-          ]}
-        >
-          Onde o universo dos jogos ganha vida.
-        </Animated.Text>
-      </LinearGradient>
+      {/* Subtítulo */}
+      <Animated.Text
+        style={[
+          styles.subtitle,
+          {
+            opacity: Animated.multiply(textFade, fadeOutOpacity),
+            transform: [{ translateY: Animated.add(moveY, moveOutY) }],
+          },
+        ]}
+      >
+        Onde o universo dos jogos ganha vida.
+      </Animated.Text>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  fadeWrapper: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     justifyContent: 'center',

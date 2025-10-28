@@ -97,7 +97,7 @@ const jogosIniciais = {
     },
     {
       id: "8",
-      nome: "NBA 2K24",
+      nome: "NBA 2K25",
       imagem: require("../screens/assets/jogos/nba2k.jpg"),
       preco: 199.9,
     },

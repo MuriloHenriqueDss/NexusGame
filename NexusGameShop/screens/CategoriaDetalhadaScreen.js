@@ -11,6 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
@@ -87,13 +88,9 @@ export default function ProdutosScreen() {
   const route = useRoute();
   const categoriaRecebida = route.params?.categoria || "Todos";
 
-  const [produtos, setProdutos] = useState(produtosIniciais);
   const [filtro, setFiltro] = useState(categoriaRecebida);
   const [busca, setBusca] = useState("");
 
-  const categorias = ["Todos", "PlayStation", "Xbox", "Nintendo"];
-
-  // Atualiza filtro ao receber parâmetro
   useEffect(() => {
     if (categoriaRecebida) setFiltro(categoriaRecebida);
   }, [categoriaRecebida]);
@@ -124,6 +121,7 @@ export default function ProdutosScreen() {
 
   return (
     <ScrollView style={styles.container}>
+      {/* Barra superior */}
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <Image
@@ -131,8 +129,6 @@ export default function ProdutosScreen() {
             style={styles.logo}
           />
         </TouchableOpacity>
-
-        <TouchableOpacity />
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
@@ -155,17 +151,18 @@ export default function ProdutosScreen() {
         </View>
       </View>
 
+      {/* Botão Voltar */}
       <View style={styles.voltarContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.botaoVoltar}
         >
           <Ionicons name="arrow-back" size={20} color="#fff" />
-          <Text style={styles.textoVoltar}>Categoria </Text>
+          <Text style={styles.textoVoltar}>Categoria</Text>
         </TouchableOpacity>
       </View>
-      
-      {/* Busca */}
+
+      {/* Campo de busca */}
       <View style={styles.searchContainer}>
         <TextInput
           placeholder="Buscar jogos desta categoria"
@@ -182,63 +179,65 @@ export default function ProdutosScreen() {
         />
       </View>
 
-      {/* Filtros horizontais */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ marginBottom: 15, paddingLeft: 10 }}
-      >
-        {categorias.map((cat) => (
-          <TouchableOpacity
-            key={cat}
-            style={{
-              marginRight: 10,
-              paddingVertical: 6,
-              paddingHorizontal: 12,
-              backgroundColor: filtro === cat ? "#FF09E6" : "#8000FF",
-              borderRadius: 20,
-            }}
-            onPress={() => setFiltro(cat)}
-          >
-            <Text style={{ color: "#fff", fontWeight: "bold" }}>{cat}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {/* Ícones de plataforma */}
+      <View style={styles.platformRow}>
+        <TouchableOpacity
+          style={[
+            styles.platformCircle,
+            filtro === "PlayStation" && { backgroundColor: "#003791" },
+          ]}
+          onPress={() => setFiltro("PlayStation")}
+        >
+          <FontAwesome5
+            name="playstation"
+            size={24}
+            color={filtro === "PlayStation" ? "#fff" : "#003791"}
+          />
+        </TouchableOpacity>
 
-      {/* Produtos */}
+        <TouchableOpacity
+          style={[
+            styles.platformCircle,
+            filtro === "Xbox" && { backgroundColor: "#107C10" },
+          ]}
+          onPress={() => setFiltro("Xbox")}
+        >
+          <FontAwesome5
+            name="xbox"
+            size={24}
+            color={filtro === "Xbox" ? "#fff" : "#107C10"}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[
+            styles.platformCircle,
+            filtro === "Nintendo" && { backgroundColor: "#E60012" },
+          ]}
+          onPress={() => setFiltro("Nintendo")}
+        >
+          <FontAwesome5
+            name="gamepad"
+            size={24}
+            color={filtro === "Nintendo" ? "#fff" : "#E60012"}
+          />
+        </TouchableOpacity>
+      </View>
+
+      {/* Lista de produtos */}
       <Text style={styles.sectionTitle}>Produtos</Text>
       <FlatList
         data={filtrarProdutos()}
         keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
         renderItem={renderProduto}
-        contentContainerStyle={{ paddingHorizontal: 10 }}
+        numColumns={2} 
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          paddingHorizontal: 15,
+        }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 30 }}
       />
-
-      {/* Boxes grandes no final */}
-      <Text style={styles.sectionTitle}>Plataformas:</Text>
-      <View style={styles.boxContainer}>
-        {["PlayStation", "Xbox", "Nintendo"].map((cat, idx) => (
-          <TouchableOpacity
-            key={idx}
-            style={[
-              styles.box,
-              {
-                backgroundColor:
-                  cat === "PlayStation"
-                    ? "#1E50FF"
-                    : cat === "Xbox"
-                    ? "#107C10"
-                    : "#E60012",
-              },
-            ]}
-            onPress={() => setFiltro(cat)}
-          >
-            <Text style={styles.boxText}>{cat}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
     </ScrollView>
   );
 }
@@ -254,7 +253,7 @@ const styles = StyleSheet.create({
   logo: { width: 200, height: 60, resizeMode: "contain" },
   navIcons: { flexDirection: "row", gap: 15 },
   icon: { width: 20, height: 20 },
-    botaoVoltar: {
+  botaoVoltar: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#7B009A",
@@ -274,13 +273,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 20,
     padding: 5,
-    marginLeft: 50,
-    marginHorizontal: 10,
+    marginHorizontal: 40,
     marginBottom: 15,
-    width: 300,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
-  searchInput: { flex: -1, padding: 5, color: "#000" },
+  searchInput: { flex: 1, padding: 5, color: "#000" },
   sectionTitle: {
     color: "#fff",
     fontSize: 18,
@@ -295,6 +292,7 @@ const styles = StyleSheet.create({
     width: width * 0.4,
     marginRight: 15,
     padding: 10,
+    
   },
   produtoImg: { width: "100%", height: 120, borderRadius: 10, marginBottom: 8 },
   produtoNome: {
@@ -311,19 +309,24 @@ const styles = StyleSheet.create({
   produtoPreco: { color: "#FFD700", fontWeight: "bold", fontSize: 14 },
   avaliacao: { flexDirection: "row", alignItems: "center" },
   avaliacaoText: { color: "#fff", marginRight: 3, fontSize: 12 },
-  boxContainer: {
+
+  platformRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginHorizontal: 10,
-    marginTop: 15,
-  },
-  box: {
-    flex: 1,
-    height: 80,
-    marginHorizontal: 5,
-    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
+    marginVertical: 15,
+    gap: 25,
   },
-  boxText: { color: "#fff", fontWeight: "bold", fontSize: 16 },
+  platformCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
+  },
 });
