@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,17 +10,139 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from '@react-navigation/native';
+import { supabase } from "../SupabaseConfig";
 
 export default function PerfilScreen({ navigation }) {
-  const [nome, setNome] = useState("João Gustavo");
-  const [email, setEmail] = useState("joaogustavo2202@gmail.com");
-  const [senha, setSenha] = useState("*******");
-  const [cep, setCEP] = useState("12280-470");
-  const [endereco, setEndereco] = useState("Rua José Bonifácio, 395");
-  const [CPF, setCPF] = useState("123.456.789-1");
+  const isFocused = useIsFocused(); // Hook para detectar quando a tela está focada
+  
+  // lista de avatares (mesma lista do EditarAvatarScreen)
+  const avatars = [
+    require("../assets/img/avatars/tetris.png"),
+    require("../assets/img/avatars/pikachu.png"),
+    require("../assets/img/avatars/pokeball.png"),
+    require("../assets/img/mario_avatar.png"),
+    require("../assets/img/avatars/luigi.png"),
+    require("../assets/img/avatars/boo.png"),
+    require("../assets/img/avatars/sonic.png"),
+    require("../assets/img/avatars/pacman.png"),
+    require("../assets/img/avatars/pacghost.png"),
+    require("../assets/img/avatars/kratos.png"),
+    require("../assets/img/avatars/godofwar.png"),
+    require("../assets/img/avatars/minecraft.png"),
+    require("../assets/img/avatars/amongus.png"),
+    require("../assets/img/avatars/playstation.png"),
+    require("../assets/img/avatars/xbox.png"),
+    require("../assets/img/avatars/switch.png"),
+  ];
+
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [cep, setCEP] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [CPF, setCPF] = useState("");
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    let mounted = true;
+    async function loadProfile() {
+      if (!isFocused) return; // Não carrega se a tela não estiver focada
+      setLoading(true);
+      try {
+        const { data: userRes, error: userErr } = await supabase.auth.getUser();
+        if (userErr) {
+          console.log('getUser error', userErr);
+          return;
+        }
+        const user = userRes?.user;
+        if (!user) return;
+
+        // buscar dados na tabela usuarios
+        const { data: profile, error: profileError } = await supabase
+          .from('usuarios')
+          .select('nome, email, cpf, avatar_url, role')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.log('fetch profile error', profileError);
+        } else if (mounted && profile) {
+          setNome(profile.nome || '');
+          setEmail(profile.email || user.email || '');
+          setCPF(profile.cpf || '');
+          setAvatarUrl(profile.avatar_url);
+          setRole(profile.role);
+          // endereco/cep não estão no schema por padrão — mantenha vazios se não houver
+        }
+      } catch (e) {
+        console.log('loadProfile error', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProfile();
+    return () => { mounted = false };
+  }, [isFocused]); // Recarrega quando a tela recebe foco
+
+  async function handleSave() {
+    setLoading(true);
+    try {
+      const { data: userRes, error: userErr } = await supabase.auth.getUser();
+      if (userErr) {
+        Alert.alert('Erro', 'Não foi possível obter o usuário: ' + userErr.message);
+        setLoading(false);
+        return;
+      }
+      const user = userRes?.user;
+      if (!user) {
+        Alert.alert('Erro', 'Usuário não autenticado');
+        setLoading(false);
+        return;
+      }
+
+      // Atualizar senha se solicitado
+      if (novaSenha) {
+        if (novaSenha !== confirmarSenha) {
+          Alert.alert('Erro', 'As senhas não coincidem');
+          setLoading(false);
+          return;
+        }
+        const { error: updateUserError } = await supabase.auth.updateUser({ password: novaSenha });
+        if (updateUserError) {
+          Alert.alert('Erro', 'Não foi possível atualizar a senha: ' + updateUserError.message);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Atualizar dados na tabela usuarios
+      const updates = {
+        nome,
+        cpf: CPF,
+        // se quiser salvar cep/endereco, adicione esses campos na tabela e no objeto
+      };
+
+      const { error: profileError } = await supabase
+        .from('usuarios')
+        .update(updates)
+        .eq('email', email); // usa email como chave alternativa
+
+      if (profileError) {
+        Alert.alert('Erro', 'Falha ao salvar perfil: ' + profileError.message);
+      } else {
+        Alert.alert('Perfil salvo!', 'Alterações salvas com sucesso.');
+        navigation.goBack();
+      }
+    } catch (e) {
+      Alert.alert('Erro inesperado', e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
@@ -71,10 +193,12 @@ export default function PerfilScreen({ navigation }) {
 
         {/* Foto de perfil */}
         <View style={styles.fotoContainer}>
-          <Image
-            source={require("../assets/img/mario_avatar.png")}
-            style={styles.foto}
-          />
+          {avatarUrl && avatarUrl.startsWith('local:') && (
+            <Image
+              source={avatars[parseInt(avatarUrl.split(':')[1], 10)]}
+              style={styles.foto}
+            />
+          )}
           <TouchableOpacity
             style={styles.editarFoto}
             onPress={() => navigation.navigate("EditarAvatar")}
@@ -96,13 +220,7 @@ export default function PerfilScreen({ navigation }) {
             keyboardType="email-address"
           />
 
-          <Text style={styles.label}>Senha:</Text>
-          <TextInput
-            style={styles.input}
-            secureTextEntry
-            value={senha}
-            onChangeText={setSenha}
-          />
+          {/* Senha antiga não é exibida aqui; use 'Alterar senha' abaixo */}
 
           <Text style={styles.label}>CPF: </Text>
           <TextInput style={styles.input} value={CPF} onChangeText={setCPF} />
@@ -140,12 +258,7 @@ export default function PerfilScreen({ navigation }) {
         </View>
 
         {/* Botão salvar */}
-        <TouchableOpacity
-          style={styles.botaoSalvar}
-          onPress={() =>
-            Alert.alert("Perfil salvo!", "Alterações salvas com sucesso.")
-          }
-        >
+        <TouchableOpacity style={styles.botaoSalvar} onPress={handleSave}>
           <Text style={styles.textoSalvar}>Salvar</Text>
         </TouchableOpacity>
       </ScrollView>

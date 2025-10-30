@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "../SupabaseConfig";
 
 export default function EditAvatar({ navigation }) {
   // lista de avatares (coloque seus arquivos na pasta /assets/img/avatars/)
@@ -31,7 +32,80 @@ export default function EditAvatar({ navigation }) {
     require("../assets/img/avatars/switch.png"),
   ];
 
-  const [selected, setSelected] = useState(3); // por padrão, Mario
+  const [selected, setSelected] = useState(null);
+
+  // Carregar o avatar atual do usuário quando a tela abrir
+  useEffect(() => {
+    async function loadCurrentAvatar() {
+      try {
+        const { data: userRes, error: userErr } = await supabase.auth.getUser();
+        if (userErr) {
+          console.log('getUser error', userErr);
+          return;
+        }
+        const user = userRes?.user;
+        if (!user) return;
+
+        const { data: profile, error: profileError } = await supabase
+          .from('usuarios')
+          .select('avatar_url')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.log('fetch avatar error', profileError);
+          return;
+        }
+
+        if (profile?.avatar_url) {
+          const savedIndex = parseInt(profile.avatar_url.split(':')[1], 10);
+          setSelected(savedIndex);
+        }
+      } catch (e) {
+        console.log('loadCurrentAvatar error', e);
+      }
+    }
+
+    loadCurrentAvatar();
+  }, []);
+
+  async function handleSave() {
+    if (selected === null) {
+      Alert.alert('Erro', 'Por favor, selecione um avatar');
+      return;
+    }
+
+    try {
+      const { data: userRes, error: userErr } = await supabase.auth.getUser();
+      if (userErr) {
+        Alert.alert('Erro', 'Não foi possível obter o usuário: ' + userErr.message);
+        return;
+      }
+      const user = userRes?.user;
+      if (!user) {
+        Alert.alert('Erro', 'Usuário não autenticado');
+        return;
+      }
+
+      // Salvamos uma referência local no formato `local:<index>` para uso no app
+      const avatar_value = `local:${selected}`;
+
+      const { error: profileError } = await supabase
+        .from('usuarios')
+        .update({ avatar_url: avatar_value })
+        .eq('id', user.id);
+
+      if (profileError) {
+        Alert.alert('Erro', 'Não foi possível salvar o avatar: ' + profileError.message);
+        return;
+      }
+
+      Alert.alert('Edição salva!', 'Avatar atualizado com sucesso.');
+      navigation.navigate('Perfil');
+    } catch (e) {
+      Alert.alert('Erro inesperado', e.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -81,9 +155,9 @@ export default function EditAvatar({ navigation }) {
         <Text style={styles.titulo}>Editar Avatar</Text>
 
         {/* Avatar atual */}
-        {/* <Image source={avatars[selected]} style={styles.avatarSelecionado} /> */}
-
-        <Image source={avatars[selected]} style={[styles.avatarAtual]} />
+        {selected !== null && (
+          <Image source={avatars[selected]} style={[styles.avatarAtual]} />
+        )}
 
         {/* Grade de avatares */}
         <View style={styles.grid}>
@@ -107,12 +181,7 @@ export default function EditAvatar({ navigation }) {
         </View>
 
         {/* Botão salvar */}
-        <TouchableOpacity
-          style={styles.botaoSalvar}
-          onPress={() =>
-            Alert.alert("Edição salva!", "Avatar atualizado com sucesso.")
-          }
-        >
+        <TouchableOpacity style={styles.botaoSalvar} onPress={handleSave}>
           <Text style={styles.textoSalvar}>Salvar</Text>
         </TouchableOpacity>
       </ScrollView>

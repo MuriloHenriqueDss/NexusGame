@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,83 @@ import {
   Alert
 } from "react-native";
 import { Ionicons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
+import { supabase } from "../SupabaseConfig";
 
 export default function PerfilScreen({ navigation }) {
+  const [name, setName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const [role, setRole] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
+
+  // mesmos avatares usados na tela de edição (índices correspondentes)
+  const localAvatars = [
+    require("../assets/img/avatars/tetris.png"),
+    require("../assets/img/avatars/pikachu.png"),
+    require("../assets/img/avatars/pokeball.png"),
+    require("../assets/img/mario_avatar.png"),
+    require("../assets/img/avatars/luigi.png"),
+    require("../assets/img/avatars/boo.png"),
+    require("../assets/img/avatars/sonic.png"),
+    require("../assets/img/avatars/pacman.png"),
+    require("../assets/img/avatars/pacghost.png"),
+    require("../assets/img/avatars/kratos.png"),
+    require("../assets/img/avatars/godofwar.png"),
+    require("../assets/img/avatars/minecraft.png"),
+    require("../assets/img/avatars/amongus.png"),
+    require("../assets/img/avatars/playstation.png"),
+    require("../assets/img/avatars/xbox.png"),
+    require("../assets/img/avatars/switch.png"),
+  ];
+
+  useEffect(() => {
+    let mounted = true;
+    async function loadProfile() {
+      setLoading(true);
+      try {
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        if (userError) {
+          console.log('getUser error', userError);
+          return;
+        }
+
+        const user = userData?.user;
+        if (!user) return;
+
+        const { data: profile, error: profileError } = await supabase
+          .from('usuarios')
+          .select('nome, avatar_url, email, role')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.log('profile fetch error', profileError);
+        } else if (mounted && profile) {
+          setName(profile.nome || user.email || 'Usuário');
+          setAvatarUrl(profile.avatar_url || null);
+          setRole(profile.role || null);
+        }
+      } catch (e) {
+        console.log('loadProfile error', e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProfile();
+    return () => { mounted = false };
+  }, [isFocused]);
+
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      console.log('signOut error', e);
+    }
+    navigation.navigate('Login');
+    Alert.alert('Logout efetuado!', 'Você saiu da sua conta com sucesso.');
+  }
 
   return (
     <View style={styles.container}>
@@ -37,12 +111,14 @@ export default function PerfilScreen({ navigation }) {
               style={styles.icon}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-            <Image
-              source={require("../assets/img/notificacao_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
+          {role !== 'admin' && (
+            <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
+              <Image
+                source={require("../assets/img/notificacao_icon.png")}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -57,10 +133,15 @@ export default function PerfilScreen({ navigation }) {
         {/* Foto e nome */}
         <View style={styles.perfilContainer}>
           <Image
-            source={require("../assets/img/mario_avatar.png")}
+            source={
+              // se avatarUrl armazenar referência local no formato 'local:<index>'
+              avatarUrl && avatarUrl.startsWith && avatarUrl.startsWith('local:')
+                ? (localAvatars[parseInt(avatarUrl.split(':')[1], 10)] || require("../assets/img/mario_avatar.png"))
+                : (avatarUrl ? { uri: avatarUrl } : require("../assets/img/mario_avatar.png"))
+            }
             style={styles.foto}
           />
-          <Text style={styles.nome}>João Gustavo</Text>
+          <Text style={styles.nome}>{loading ? 'Carregando...' : (name || 'Usuário')}</Text>
 
           <View style={styles.botoesPerfil}>
             <TouchableOpacity style={styles.botaoEditar} onPress={() => navigation.navigate('EditarPerfil')}>
@@ -77,12 +158,7 @@ export default function PerfilScreen({ navigation }) {
                     {
                       text: "Sair",
                       style: "destructive",
-                      onPress: () => {
-                        // Por enquanto só navega para a tela de login
-                        navigation.navigate("Login");
-                        // Opcional: mostrar um alert de confirmação
-                        Alert.alert("Logout efetuado!", "Você saiu da sua conta com sucesso.");
-                      },
+                      onPress: handleLogout,
                     },
                   ]
                 )
@@ -105,26 +181,33 @@ export default function PerfilScreen({ navigation }) {
             <Ionicons name="cart-outline" size={20} color="#FF09E6" />
             <Text style={styles.textoCard}>Meu carrinho</Text>
           </TouchableOpacity>
+          {role !== 'admin' && (
+            <>
+              <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusPedidos')}>
+                <FontAwesome5 name="gamepad" size={18} color="#FF09E6" />
+                <Text style={styles.textoCard}>Meus pedidos</Text>
+              </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusPedidos')}>
-            <FontAwesome5 name="gamepad" size={18} color="#FF09E6" />
-            <Text style={styles.textoCard}>Meus pedidos</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusCartoes')}>
-            <MaterialIcons name="credit-card" size={20} color="#FF09E6" />
-            <Text style={styles.textoCard}>Meus cartões</Text>
-          </TouchableOpacity>
+              <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusCartoes')}>
+                <MaterialIcons name="credit-card" size={20} color="#FF09E6" />
+                <Text style={styles.textoCard}>Meus cartões</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Botões inferiores */}
-        <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('GerenciarJogos')}>
-          <Text style={styles.textoRosa}>Gerenciar jogos</Text>
-        </TouchableOpacity>
+        {role === 'admin' && (
+          <>
+            <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('GerenciarJogos')}>
+              <Text style={styles.textoRosa}>Gerenciar jogos</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('AdicionarJogo')}>
-          <Text style={styles.textoRosa}>Adicionar jogos</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('AdicionarJogo')}>
+              <Text style={styles.textoRosa}>Adicionar jogos</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </ScrollView>
     </View>
   );

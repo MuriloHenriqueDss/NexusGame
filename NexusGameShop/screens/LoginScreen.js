@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,35 +7,60 @@ import {
   StyleSheet,
   Image,
   ScrollView,
+  Alert,
 } from "react-native";
-import { StatusBar} from "expo-status-bar";
+import { StatusBar } from "expo-status-bar";
+import { supabase } from "../SupabaseConfig";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔹 LOGIN
   async function handleLogin() {
-    if (!email || !password) {
-      alert("Preencha todos os campos");
-      return;
-    }
-
-  
-    const FIXED_EMAIL = "adm@teste.com";
-    const FIXED_PASSWORD = "123qwe";
-
     setLoading(true);
+    try {
+      // Usar Supabase Auth (não buscar senha em tabela)
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase(),
+        password,
+      });
 
-
-    setTimeout(() => {
-      setLoading(false);
-      if (email.toLowerCase() === FIXED_EMAIL && password === FIXED_PASSWORD) {
-        navigation.navigate("Main");
+      if (error || !data?.user) {
+        Alert.alert("Erro", "E-mail ou senha incorretos.");
       } else {
-        alert("Credenciais inválidas");
+        // Buscar perfil completo incluindo avatar
+        try {
+          const { data: profile } = await supabase
+            .from("usuarios")
+            .select("nome, avatar_url")
+            .eq("id", data.user.id)
+            .single();
+
+          // Se não tiver avatar definido, vamos definir um padrão (Mario - índice 3)
+          if (!profile?.avatar_url) {
+            await supabase
+              .from("usuarios")
+              .update({ avatar_url: "local:3" })
+              .eq("id", data.user.id);
+          }
+
+          Alert.alert(
+            "Bem-vindo(a)!",
+            `Olá, ${profile?.nome ?? data.user.email}!`
+          );
+        } catch (e) {
+          Alert.alert("Bem-vindo(a)!", `Olá, ${data.user.email}!`);
+        }
+
+        navigation.navigate("Main");
       }
-    }, 700);
+    } catch (err) {
+      Alert.alert("Erro inesperado", err.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -81,9 +106,12 @@ export default function LoginScreen({ navigation }) {
 
         {/* Botão Entrar */}
         <TouchableOpacity
-          style={[styles.button, !(email && password) ? styles.buttonDisabled : null]}
+          style={[
+            styles.button,
+            !(email && password) ? styles.buttonDisabled : null,
+          ]}
           onPress={handleLogin}
-          disabled={!(email && password) || loading}
+          disabled={loading || !(email && password)}
         >
           <Text style={styles.buttonText}>
             {loading ? "Carregando..." : "Entrar"}

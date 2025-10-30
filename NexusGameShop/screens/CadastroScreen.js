@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import { supabase } from "../SupabaseConfig";
 
 export default function RegisterScreen({ navigation }) {
   const [nome, setNome] = useState("");
@@ -16,9 +17,8 @@ export default function RegisterScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Função para criar conta
   async function handleRegister() {
-    if (!nome || !email || !password || !confirmPassword) {
+    if (!nome || !email || !password || !confirmPassword || !CPF) {
       alert("Preencha todos os campos");
       return;
     }
@@ -30,22 +30,70 @@ export default function RegisterScreen({ navigation }) {
 
     setLoading(true);
 
+    // 🔹 Criação do usuário no Supabase Auth
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
-    setLoading(false);
-
     if (error) {
       alert("Erro ao cadastrar: " + error.message);
-    } else {
-      // Opcional: você pode salvar o nome do usuário em uma tabela "profiles"
-      await supabase.from("profiles").insert([{ id: data.user.id, nome }]);
-
-      alert("Conta criada com sucesso!");
-      navigation.navigate("Login");
+      setLoading(false);
+      return;
     }
+
+    // Após signUp, precisamos garantir que há uma sessão (auth.uid())
+    // Caso não haja (ex: confirmação de e-mail obrigatória), a política RLS
+    // que exige auth.uid() = id para INSERT irá bloquear a operação.
+    // Aqui tentamos logar imediatamente para obter sessão; se não for possível,
+    // avisamos o usuário para confirmar o e-mail.
+    let userId = data?.user?.id;
+    let hasSession = !!data?.session?.access_token;
+
+    if (!hasSession) {
+      // Tenta autenticar para criar sessão
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError || !signInData?.user) {
+        setLoading(false);
+        // Não tentamos inserir o perfil por causa da política RLS.
+        alert(
+          "Conta criada! Confirme seu e-mail (se aplicável) e depois faça login para completar o perfil."
+        );
+        navigation.navigate("Login");
+        return;
+      }
+
+      userId = signInData.user.id;
+    }
+
+    // 🔹 Agora que temos sessão (auth.uid()), podemos inserir o registro do usuário
+    const { error: profileError } = await supabase
+      .from("usuarios")
+      .insert([
+        {
+          id: userId,
+          email: email,
+          nome: nome,
+          cpf: CPF,
+          created_at: new Date().toISOString(),
+            avatar_url: "local:3", // Define Mario como avatar padrão
+            role: "user", // papel padrão
+        },
+      ]);
+
+    setLoading(false);
+
+    if (profileError) {
+      alert("Erro ao salvar perfil: " + profileError.message + "\nSe for RLS, ajuste as políticas no Supabase ou confirme a sessão antes de inserir.");
+      return;
+    }
+
+    alert("Conta criada com sucesso!");
+    navigation.navigate("Login");
   }
 
   return (
@@ -53,7 +101,6 @@ export default function RegisterScreen({ navigation }) {
       <View style={styles.card}>
         <Text style={styles.title}>Criar Conta</Text>
 
-        {/* Nome */}
         <Text style={styles.label}>Nome:</Text>
         <TextInput
           style={styles.input}
@@ -63,7 +110,6 @@ export default function RegisterScreen({ navigation }) {
           onChangeText={setNome}
         />
 
-        {/* Email */}
         <Text style={styles.label}>E-mail:</Text>
         <TextInput
           style={styles.input}
@@ -75,7 +121,15 @@ export default function RegisterScreen({ navigation }) {
           autoCapitalize="none"
         />
 
-        {/* Senha */}
+        <Text style={styles.label}>CPF:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="xxx.xxx.xxx-xx"
+          placeholderTextColor="#aaa"
+          value={CPF}
+          onChangeText={setCPF}
+        />
+
         <Text style={styles.label}>Senha:</Text>
         <TextInput
           style={styles.input}
@@ -86,16 +140,6 @@ export default function RegisterScreen({ navigation }) {
           onChangeText={setPassword}
         />
 
-        <Text style={styles.label}>CPF:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="xxx.xxx.xxx-xx"
-          placeholderTextColor="#aaa"
-          value={CPF}
-          onChangeText={setCPF}
-        />
-
-        {/* Confirmar Senha */}
         <Text style={styles.label}>Confirmar Senha:</Text>
         <TextInput
           style={styles.input}
@@ -106,14 +150,12 @@ export default function RegisterScreen({ navigation }) {
           onChangeText={setConfirmPassword}
         />
 
-        {/* Botão Criar Conta */}
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text style={styles.buttonText}>
             {loading ? "Carregando..." : "Cadastrar"}
           </Text>
         </TouchableOpacity>
 
-        {/* Voltar para login */}
         <Text style={styles.registerText}>
           Já possui uma conta?{" "}
           <Text
