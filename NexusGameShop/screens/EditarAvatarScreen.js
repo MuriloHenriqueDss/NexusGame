@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { supabase } from "../SupabaseConfig";
 
 export default function EditAvatar({ navigation }) {
-  // lista de avatares (coloque seus arquivos na pasta /assets/img/avatars/)
+  
   const avatars = [
     require("../assets/img/avatars/tetris.png"),
     require("../assets/img/avatars/pikachu.png"),
@@ -101,7 +101,7 @@ export default function EditAvatar({ navigation }) {
       }
 
       Alert.alert('Edição salva!', 'Avatar atualizado com sucesso.');
-      navigation.navigate('Perfil');
+      navigation.navigate('EditarPerfil');
     } catch (e) {
       Alert.alert('Erro inesperado', e.message);
     }

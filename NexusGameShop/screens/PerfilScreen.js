@@ -19,7 +19,7 @@ export default function PerfilScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
 
-  // mesmos avatares usados na tela de edição (índices correspondentes)
+
   const localAvatars = [
     require("../assets/img/avatars/tetris.png"),
     require("../assets/img/avatars/pikachu.png"),

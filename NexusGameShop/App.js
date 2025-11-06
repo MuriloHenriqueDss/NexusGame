@@ -101,7 +101,7 @@ function BottomTabs() {
 
 export default function App() {
   return (
-    <SafeAreaProvider> {/* ✅ ENVOLVE TUDO AQUI */}
+    <SafeAreaProvider>
       <CartProvider>
         <NavigationContainer>
           <Stack.Navigator

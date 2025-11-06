@@ -14,9 +14,9 @@ import { useIsFocused } from '@react-navigation/native';
 import { supabase } from "../SupabaseConfig";
 
 export default function PerfilScreen({ navigation }) {
-  const isFocused = useIsFocused(); // Hook para detectar quando a tela está focada
+  const isFocused = useIsFocused(); 
   
-  // lista de avatares (mesma lista do EditarAvatarScreen)
+
   const avatars = [
     require("../assets/img/avatars/tetris.png"),
     require("../assets/img/avatars/pikachu.png"),
@@ -61,7 +61,7 @@ export default function PerfilScreen({ navigation }) {
         const user = userRes?.user;
         if (!user) return;
 
-        // buscar dados na tabela usuarios
+        
         const { data: profile, error: profileError } = await supabase
           .from('usuarios')
           .select('nome, email, cpf, avatar_url, role')
@@ -76,7 +76,7 @@ export default function PerfilScreen({ navigation }) {
           setCPF(profile.cpf || '');
           setAvatarUrl(profile.avatar_url);
           setRole(profile.role);
-          // endereco/cep não estão no schema por padrão — mantenha vazios se não houver
+          
         }
       } catch (e) {
         console.log('loadProfile error', e);
@@ -86,7 +86,7 @@ export default function PerfilScreen({ navigation }) {
     }
     loadProfile();
     return () => { mounted = false };
-  }, [isFocused]); // Recarrega quando a tela recebe foco
+  }, [isFocused]); 
 
   async function handleSave() {
     setLoading(true);
@@ -119,23 +119,24 @@ export default function PerfilScreen({ navigation }) {
         }
       }
 
-      // Atualizar dados na tabela usuarios
+     
       const updates = {
         nome,
         cpf: CPF,
-        // se quiser salvar cep/endereco, adicione esses campos na tabela e no objeto
+        
       };
 
       const { error: profileError } = await supabase
         .from('usuarios')
         .update(updates)
-        .eq('email', email); // usa email como chave alternativa
+        .eq('email', email); 
 
       if (profileError) {
         Alert.alert('Erro', 'Falha ao salvar perfil: ' + profileError.message);
       } else {
         Alert.alert('Perfil salvo!', 'Alterações salvas com sucesso.');
-        navigation.goBack();
+        navigation.navigate("Main", { screen: "Perfil" });
+
       }
     } catch (e) {
       Alert.alert('Erro inesperado', e.message);
