@@ -7,13 +7,13 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import { supabase } from "../SupabaseConfig";
+import { supabase } from "../SupabaseConfig"; // Importa a configuração Supabase
 
 export default function RegisterScreen({ navigation }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [CPF, setCPF] = useState("");
+  const [CPF, setCPF] = useState(""); // Campo CPF está sendo coletado
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,28 +30,27 @@ export default function RegisterScreen({ navigation }) {
 
     setLoading(true);
 
-    // 🔹 Criação do usuário no Supabase Auth
+    // 🔹 RF 01 - Cadastro de usuário: Criação do usuário no Supabase Auth
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) {
+      // Erro comum: usuário já registrado.
       alert("Erro ao cadastrar: " + error.message);
       setLoading(false);
       return;
     }
 
-    // Após signUp, precisamos garantir que há uma sessão (auth.uid())
-    // Caso não haja (ex: confirmação de e-mail obrigatória), a política RLS
-    // que exige auth.uid() = id para INSERT irá bloquear a operação.
-    // Aqui tentamos logar imediatamente para obter sessão; se não for possível,
-    // avisamos o usuário para confirmar o e-mail.
+    // O Supabase Auth pode exigir confirmação de e-mail.
+    // Tentamos obter o ID do usuário (auth.uid()) e uma sessão.
     let userId = data?.user?.id;
     let hasSession = !!data?.session?.access_token;
 
-    if (!hasSession) {
-      // Tenta autenticar para criar sessão
+    // Se não houver sessão imediatamente (confirmação de e-mail ativada),
+    // tentamos fazer o login para obter o ID e inserir o perfil.
+    if (!hasSession && userId) {
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -59,7 +58,6 @@ export default function RegisterScreen({ navigation }) {
 
       if (signInError || !signInData?.user) {
         setLoading(false);
-        // Não tentamos inserir o perfil por causa da política RLS.
         alert(
           "Conta criada! Confirme seu e-mail (se aplicável) e depois faça login para completar o perfil."
         );
@@ -69,26 +67,34 @@ export default function RegisterScreen({ navigation }) {
 
       userId = signInData.user.id;
     }
+    
+    // Se não conseguirmos o userId, há um problema
+    if (!userId) {
+        setLoading(false);
+        alert("Erro desconhecido ao obter o ID do usuário.");
+        return;
+    }
 
-    // 🔹 Agora que temos sessão (auth.uid()), podemos inserir o registro do usuário
+    // 🔹 Inserir perfil na tabela 'usuarios' com os nomes de colunas do nosso DB
+    // Nota: O campo CPF coletado foi omitido do insert, pois a coluna no DB é 'cep_usuario'.
     const { error: profileError } = await supabase
       .from("usuarios")
       .insert([
         {
-          id: userId,
-          email: email,
-          nome: nome,
-          cpf: CPF,
-          created_at: new Date().toISOString(),
-            avatar_url: "local:3", // Define Mario como avatar padrão
-            role: "user", // papel padrão
+          id_usuario: userId, // Liga o registro com o ID do Supabase Auth
+          email_usuario: email, // Mapeamento: email -> email_usuario
+          nome_usuario: nome, // Mapeamento: nome -> nome_usuario
+          tipo_usuario: 'Cliente', // Definido como 'Cliente' por padrão (enum)
+          avatar_usuario: 'local:3', // Mapeamento: avatar_url -> avatar_usuario (referência)
         },
       ]);
 
     setLoading(false);
 
     if (profileError) {
-      alert("Erro ao salvar perfil: " + profileError.message + "\nSe for RLS, ajuste as políticas no Supabase ou confirme a sessão antes de inserir.");
+      alert("Erro ao salvar perfil: " + profileError.message);
+      // O erro mais comum aqui é de RLS (Row Level Security). Certifique-se
+      // que as políticas de 'INSERT' para 'authenticated' e 'auth.uid() = id_usuario' estão ativas na tabela 'usuarios'.
       return;
     }
 
@@ -150,7 +156,7 @@ export default function RegisterScreen({ navigation }) {
           onChangeText={setConfirmPassword}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+        <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
           <Text style={styles.buttonText}>
             {loading ? "Carregando..." : "Cadastrar"}
           </Text>

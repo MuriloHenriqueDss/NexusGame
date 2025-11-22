@@ -15,7 +15,7 @@ import { supabase } from "../SupabaseConfig";
 export default function PerfilScreen({ navigation }) {
   const [name, setName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState(null); // 'Cliente' ou 'Administrador'
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
 
@@ -24,7 +24,7 @@ export default function PerfilScreen({ navigation }) {
     require("../assets/img/avatars/tetris.png"),
     require("../assets/img/avatars/pikachu.png"),
     require("../assets/img/avatars/pokeball.png"),
-    require("../assets/img/mario_avatar.png"),
+    require("../assets/img/mario_avatar.png"), // ÍNDICE 3 (Padrão)
     require("../assets/img/avatars/luigi.png"),
     require("../assets/img/avatars/boo.png"),
     require("../assets/img/avatars/sonic.png"),
@@ -47,24 +47,37 @@ export default function PerfilScreen({ navigation }) {
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError) {
           console.log('getUser error', userError);
+          setLoading(false);
           return;
         }
 
         const user = userData?.user;
-        if (!user) return;
+        if (!user) {
+          setLoading(false);
+          return;
+        }
 
+        // 🔹 Busca o perfil do usuário na tabela 'usuarios'
         const { data: profile, error: profileError } = await supabase
           .from('usuarios')
-          .select('nome, avatar_url, email, role')
-          .eq('id', user.id)
+          .select('nome_usuario, avatar_usuario, email_usuario, tipo_usuario') 
+          .eq('id_usuario', user.id) 
           .single();
 
-        if (profileError) {
+        if (profileError && profileError.code !== 'PGRST116') {
           console.log('profile fetch error', profileError);
-        } else if (mounted && profile) {
-          setName(profile.nome || user.email || 'Usuário');
-          setAvatarUrl(profile.avatar_url || null);
-          setRole(profile.role || null);
+        } 
+        
+        if (mounted && profile) {
+          // 💡 DEBBUG: Verifica qual URL/ref está sendo lida do DB
+          console.log("Avatar lido do DB:", profile.avatar_usuario);
+          
+          setName(profile.nome_usuario || user.email || 'Usuário'); 
+          setAvatarUrl(profile.avatar_usuario || null);
+          setRole(profile.tipo_usuario || 'Cliente');
+        } else {
+            setName(user.email || 'Usuário');
+            setRole('Cliente');
         }
       } catch (e) {
         console.log('loadProfile error', e);
@@ -73,10 +86,13 @@ export default function PerfilScreen({ navigation }) {
       }
     }
 
-    loadProfile();
+    if (isFocused) {
+        loadProfile();
+    }
     return () => { mounted = false };
   }, [isFocused]);
 
+  // 🔹 Logout (RF 11 - Sair do sistema)
   async function handleLogout() {
     try {
       await supabase.auth.signOut();
@@ -87,6 +103,9 @@ export default function PerfilScreen({ navigation }) {
     Alert.alert('Logout efetuado!', 'Você saiu da sua conta com sucesso.');
   }
 
+  // 🔹 Checa se o usuário é administrador (enum 'Administrador')
+  const isAdmin = role === 'Administrador';
+  
   return (
     <View style={styles.container}>
       <View style={styles.navbar}>
@@ -111,7 +130,8 @@ export default function PerfilScreen({ navigation }) {
               style={styles.icon}
             />
           </TouchableOpacity>
-          {role !== 'admin' && (
+          
+          {!isAdmin && (
             <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
               <Image
                 source={require("../assets/img/notificacao_icon.png")}
@@ -134,9 +154,10 @@ export default function PerfilScreen({ navigation }) {
         <View style={styles.perfilContainer}>
           <Image
             source={
-              // se avatarUrl armazenar referência local no formato 'local:<index>'
+              // 1. Verifica se é uma referência local ('local:<index>')
               avatarUrl && avatarUrl.startsWith && avatarUrl.startsWith('local:')
                 ? (localAvatars[parseInt(avatarUrl.split(':')[1], 10)] || require("../assets/img/mario_avatar.png"))
+                // 2. Se for uma URL externa ou nulo, usa o fallback
                 : (avatarUrl ? { uri: avatarUrl } : require("../assets/img/mario_avatar.png"))
             }
             style={styles.foto}
@@ -181,7 +202,9 @@ export default function PerfilScreen({ navigation }) {
             <Ionicons name="cart-outline" size={20} color="#FF09E6" />
             <Text style={styles.textoCard}>Meu carrinho</Text>
           </TouchableOpacity>
-          {role !== 'admin' && (
+          
+          
+          {!isAdmin && (
             <>
               <TouchableOpacity style={styles.card} onPress={() => navigation.navigate('MeusPedidos')}>
                 <FontAwesome5 name="gamepad" size={18} color="#FF09E6" />
@@ -196,8 +219,8 @@ export default function PerfilScreen({ navigation }) {
           )}
         </View>
 
-        {/* Botões inferiores */}
-        {role === 'admin' && (
+        {/* Botões inferiores (Administrador) */}
+        {isAdmin && (
           <>
             <TouchableOpacity style={styles.botaoRosa} onPress={() => navigation.navigate('GerenciarJogos')}>
               <Text style={styles.textoRosa}>Gerenciar jogos</Text>
@@ -219,7 +242,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     paddingTop: 5,
   },
-
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",

@@ -17,11 +17,11 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // 🔹 LOGIN
+  // 🔹 LOGIN (RF 02 - Login de usuário)
   async function handleLogin() {
     setLoading(true);
     try {
-      // Usar Supabase Auth (não buscar senha em tabela)
+      // 1. Autenticação via Supabase Auth
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.toLowerCase(),
         password,
@@ -30,27 +30,38 @@ export default function LoginScreen({ navigation }) {
       if (error || !data?.user) {
         Alert.alert("Erro", "E-mail ou senha incorretos.");
       } else {
-        // Buscar perfil completo incluindo avatar
+        // 2. Buscar perfil completo para obter nome e avatar
         try {
-          const { data: profile } = await supabase
+          const { data: profile, error: profileError } = await supabase
             .from("usuarios")
-            .select("nome, avatar_url")
-            .eq("id", data.user.id)
+            // 💡 AJUSTE: Mapeando para as colunas do DB: nome_usuario e avatar_usuario
+            .select("nome_usuario, avatar_usuario") 
+            // 💡 AJUSTE: Mapeando para a PK do DB: id_usuario
+            .eq("id_usuario", data.user.id) 
             .single();
 
-          // Se não tiver avatar definido, vamos definir um padrão (Mario - índice 3)
-          if (!profile?.avatar_url) {
+          if (profileError && profileError.code !== 'PGRST116') {
+              console.error("Erro ao buscar perfil:", profileError);
+          }
+          
+          // 3. Definir avatar padrão se estiver faltando
+          if (!profile?.avatar_usuario) {
+            // 💡 AJUSTE: Mapeando para a coluna do DB: avatar_usuario e id_usuario
             await supabase
               .from("usuarios")
-              .update({ avatar_url: "local:3" })
-              .eq("id", data.user.id);
+              .update({ avatar_usuario: "local:3" }) 
+              .eq("id_usuario", data.user.id);
           }
 
+          // 4. Mostrar mensagem de boas-vindas
           Alert.alert(
             "Bem-vindo(a)!",
-            `Olá, ${profile?.nome ?? data.user.email}!`
+            // 💡 AJUSTE: Usando nome_usuario
+            `Olá, ${profile?.nome_usuario ?? data.user.email}!`
           );
+
         } catch (e) {
+          // Fallback se a busca de perfil falhar por qualquer motivo
           Alert.alert("Bem-vindo(a)!", `Olá, ${data.user.email}!`);
         }
 

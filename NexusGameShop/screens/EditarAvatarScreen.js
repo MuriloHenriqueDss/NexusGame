@@ -48,18 +48,28 @@ export default function EditAvatar({ navigation }) {
 
         const { data: profile, error: profileError } = await supabase
           .from('usuarios')
-          .select('avatar_url')
-          .eq('id', user.id)
+          // 💡 CORREÇÃO: Usando avatar_usuario e id_usuario
+          .select('avatar_usuario')
+          .eq('id_usuario', user.id)
           .single();
 
         if (profileError) {
           console.log('fetch avatar error', profileError);
+          // O PGRST116 é ignorado (não encontrado), outros são logados.
+          if (profileError.code !== 'PGRST116') { 
+              console.log('fetch avatar error', profileError);
+          }
           return;
         }
 
-        if (profile?.avatar_url) {
-          const savedIndex = parseInt(profile.avatar_url.split(':')[1], 10);
-          setSelected(savedIndex);
+        // 💡 CORREÇÃO: Usando profile.avatar_usuario
+        if (profile?.avatar_usuario) {
+          // A referência salva é 'local:<index>'
+          const avatarRef = profile.avatar_usuario.toString();
+          if (avatarRef.startsWith('local:')) {
+            const savedIndex = parseInt(avatarRef.split(':')[1], 10);
+            setSelected(savedIndex);
+          }
         }
       } catch (e) {
         console.log('loadCurrentAvatar error', e);
@@ -87,21 +97,26 @@ export default function EditAvatar({ navigation }) {
         return;
       }
 
-      // Salvamos uma referência local no formato `local:<index>` para uso no app
+      // Salvamos a referência local no formato `local:<index>`
       const avatar_value = `local:${selected}`;
 
       const { error: profileError } = await supabase
         .from('usuarios')
-        .update({ avatar_url: avatar_value })
-        .eq('id', user.id);
+        // 💡 CORREÇÃO: Usando avatar_usuario no UPDATE
+        .update({ avatar_usuario: avatar_value })
+        // 💡 CORREÇÃO: Usando id_usuario na condição EQ
+        .eq('id_usuario', user.id)
+        .select(); // Adicionado select para forçar a execução (caso RLS exija)
 
       if (profileError) {
+        // 🛑 Lembre-se: Você precisa de uma política RLS de UPDATE!
         Alert.alert('Erro', 'Não foi possível salvar o avatar: ' + profileError.message);
         return;
       }
 
       Alert.alert('Edição salva!', 'Avatar atualizado com sucesso.');
-      navigation.navigate('EditarPerfil');
+      // Volta para a tela de edição de perfil, que irá recarregar o novo avatar
+      navigation.navigate('EditarPerfil'); 
     } catch (e) {
       Alert.alert('Erro inesperado', e.message);
     }

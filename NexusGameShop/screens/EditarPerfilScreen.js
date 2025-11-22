@@ -13,10 +13,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from '@react-navigation/native';
 import { supabase } from "../SupabaseConfig";
 
-export default function PerfilScreen({ navigation }) {
+export default function EditarPerfilScreen({ navigation }) { 
   const isFocused = useIsFocused(); 
   
-
   const avatars = [
     require("../assets/img/avatars/tetris.png"),
     require("../assets/img/avatars/pikachu.png"),
@@ -38,19 +37,22 @@ export default function PerfilScreen({ navigation }) {
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  const [cep, setCEP] = useState("");
+  // Estado para CEP usa o nome da coluna do DB
+  const [cep, setCEP] = useState(""); 
+  // Estado para Endereço e CPF (mantidos no frontend, mas sem interação com o DB por não constarem no ERS)
   const [endereco, setEndereco] = useState("");
-  const [CPF, setCPF] = useState("");
+  const [CPF, setCPF] = useState(""); 
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
     let mounted = true;
     async function loadProfile() {
-      if (!isFocused) return; // Não carrega se a tela não estiver focada
+      if (!isFocused) return;
       setLoading(true);
       try {
         const { data: userRes, error: userErr } = await supabase.auth.getUser();
@@ -64,18 +66,23 @@ export default function PerfilScreen({ navigation }) {
         
         const { data: profile, error: profileError } = await supabase
           .from('usuarios')
-          .select('nome, email, cpf, avatar_url, role')
-          .eq('id', user.id)
+          // 💡 CORREÇÃO 1: Usando apenas as colunas que existem no DB: nome_usuario, email_usuario, cep_usuario
+          .select('nome_usuario, email_usuario, avatar_usuario, tipo_usuario, cep_usuario') 
+          .eq('id_usuario', user.id) 
           .single();
 
         if (profileError) {
           console.log('fetch profile error', profileError);
+          
         } else if (mounted && profile) {
-          setNome(profile.nome || '');
-          setEmail(profile.email || user.email || '');
-          setCPF(profile.cpf || '');
-          setAvatarUrl(profile.avatar_url);
-          setRole(profile.role);
+          // Mapeamento dos estados
+          setNome(profile.nome_usuario || '');
+          setEmail(profile.email_usuario || user.email || '');
+          // 💡 CORREÇÃO 2: Mapeando corretamente cep_usuario
+          setCEP(profile.cep_usuario || ''); 
+          // CPF e Endereço não são carregados do DB por não existirem
+          setAvatarUrl(profile.avatar_usuario);
+          setRole(profile.tipo_usuario);
           
         }
       } catch (e) {
@@ -104,7 +111,7 @@ export default function PerfilScreen({ navigation }) {
         return;
       }
 
-      // Atualizar senha se solicitado
+      // 1. Atualizar senha se solicitado (Auth)
       if (novaSenha) {
         if (novaSenha !== confirmarSenha) {
           Alert.alert('Erro', 'As senhas não coincidem');
@@ -119,17 +126,18 @@ export default function PerfilScreen({ navigation }) {
         }
       }
 
-     
+      // 2. Atualizar perfil (Tabela 'usuarios')
       const updates = {
-        nome,
-        cpf: CPF,
-        
+        // 💡 CORREÇÃO 3: Usando apenas as colunas que existem no DB (nome_usuario e cep_usuario)
+        nome_usuario: nome,
+        cep_usuario: cep, 
+        // CPF e Endereço foram removidos, pois não constam no diagrama do DB.
       };
 
       const { error: profileError } = await supabase
         .from('usuarios')
         .update(updates)
-        .eq('email', email); 
+        .eq('id_usuario', user.id); 
 
       if (profileError) {
         Alert.alert('Erro', 'Falha ao salvar perfil: ' + profileError.message);
@@ -144,8 +152,12 @@ export default function PerfilScreen({ navigation }) {
       setLoading(false);
     }
   }
+  
+  // ... (Restante do JSX e Styles não alterados, mas mantidos para a integridade do arquivo)
+
   return (
     <View style={styles.container}>
+      {/* ... navbar ... */}
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate("Main")}>
           <Image
@@ -196,7 +208,8 @@ export default function PerfilScreen({ navigation }) {
         <View style={styles.fotoContainer}>
           {avatarUrl && avatarUrl.startsWith('local:') && (
             <Image
-              source={avatars[parseInt(avatarUrl.split(':')[1], 10)]}
+              // Carrega o avatar local
+              source={avatars[parseInt(avatarUrl.split(':')[1], 10)] || require("../assets/img/mario_avatar.png")}
               style={styles.foto}
             />
           )}
@@ -219,17 +232,18 @@ export default function PerfilScreen({ navigation }) {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            editable={false} // E-mail é a chave de login, não deve ser editável
           />
 
-          {/* Senha antiga não é exibida aqui; use 'Alterar senha' abaixo */}
-
           <Text style={styles.label}>CPF: </Text>
-          <TextInput style={styles.input} value={CPF} onChangeText={setCPF} />
+          {/* Este campo agora só coleta o valor para o estado local, não interage com o DB */}
+          <TextInput style={styles.input} value={CPF} onChangeText={setCPF} /> 
 
           <Text style={styles.label}>CEP:</Text>
           <TextInput style={styles.input} value={cep} onChangeText={setCEP} />
 
           <Text style={styles.label}>Endereço:</Text>
+          {/* Este campo agora só coleta o valor para o estado local, não interage com o DB */}
           <TextInput
             style={styles.input}
             value={endereco}
@@ -259,8 +273,8 @@ export default function PerfilScreen({ navigation }) {
         </View>
 
         {/* Botão salvar */}
-        <TouchableOpacity style={styles.botaoSalvar} onPress={handleSave}>
-          <Text style={styles.textoSalvar}>Salvar</Text>
+        <TouchableOpacity style={styles.botaoSalvar} onPress={handleSave} disabled={loading}>
+          <Text style={styles.textoSalvar}>{loading ? 'Salvando...' : 'Salvar'}</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -273,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     paddingTop: 5,
   },
-
+  // ... (Estilos omitidos por brevidade)
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -339,7 +353,7 @@ const styles = StyleSheet.create({
     left: 58,
   },
   margemCima: {
-    marginTop: "-20px",
+    marginTop: -20,
   },
   form: {
     width: "85%",
