@@ -13,107 +13,189 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
-import { supabase } from "../SupabaseConfig"; // Importando o Supabase
+import * as ImagePicker from "expo-image-picker";
+import { supabase } from "../SupabaseConfig";
+
+/*
+  INSTRUÇÕES IMPORTANTES (leia antes de rodar):
+  1) Bucket de Storage: confirme que existe um bucket chamado "jogos" no Supabase Storage.
+     - Se o bucket tiver outra nomenclatura, altere a constante BUCKET_NAME abaixo.
+  2) Enum de categorias: se o erro de enum persistir, rode no SQL editor do Supabase:
+       SELECT unnest(enum_range(NULL::categoria_enum));
+     (Substitua "categoria_enum" pelo nome real do seu tipo enum).
+     Depois, ajuste CATEGORY_MAP para mapear seus rótulos para os valores reais do enum.
+*/
+
+const BUCKET_NAME = "jogos";
+
+/**
+ * Se você já sabe os valores exatos do enum no Supabase, preencha CATEGORY_MAP
+ * com pareamentos ["rótulo exibido" : "valor_do_enum_exato"].
+ * Exemplo: "Aventura" : "Aventura"  ou "Aventura" : "aventura" (conforme o enum).
+ *
+ * Se você não souber, o código tenta normalizar (remover acentos e capitalizar).
+ * Caso o enum exija outra forma exata, atualize este mapa.
+ */
+const CATEGORY_MAP = {
+  // "Aventura": "Aventura", // Exemplo — ajuste conforme seu enum
+  // "Ação": "Acao", // ex: sem acento, se seu enum for assim
+};
+
+function removeAccents(str) {
+  if (!str) return str;
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function toEnumCandidate(displayLabel) {
+  // Primeiro tenta mapear via CATEGORY_MAP
+  if (CATEGORY_MAP[displayLabel]) return CATEGORY_MAP[displayLabel];
+
+  // Senão, faz normalização inteligente:
+  // 1) remove acentos
+  // 2) deixa com primeira letra maiúscula e resto minúsculo (ex: "Aventura")
+  const noAccents = removeAccents(displayLabel);
+  const words = noAccents.split(/\s+/).filter(Boolean);
+  const capitalized = words
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+  // Também retorna uma versão sem espaços, sem acento, tudo minusculo
+  // caso seu enum use 'aventura' ou 'acao'
+  const compactLower = noAccents.replace(/\s+/g, "").toLowerCase();
+
+  // prefira capitalized, mas retornamos um array de candidatos na ordem desejada
+  return [capitalized, compactLower];
+}
 
 export default function AdicionarJogoScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
-  // Estados dos inputs
   const [titulo, setTitulo] = useState("");
   const [plataforma, setPlataforma] = useState("Playstation");
   const [preco, setPreco] = useState("");
   const [descricao, setDescricao] = useState("");
-  
-  // Estados de controle
-  const [loading, setLoading] = useState(false); // Carregamento de permissões/cadastro
+  const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [imagemUrl, setImagemUrl] = useState(""); // URL da imagem após o upload
-  const [uploadingImage, setUploadingImage] = useState(false); // Carregamento do upload da imagem
+  const [imagemUrl, setImagemUrl] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
 
-  // Categorias (Ainda não integradas ao DB, apenas para a interface)
   const [categorias] = useState([
-    "Aventura", "Ação", "Corrida", "Esportes", "Estratégia",
-    "FPS", "Lego", "Luta", "RPG", "Simulação"
+    "Aventura",
+    "Ação",
+    "Corrida",
+    "Esportes",
+    "Estratégia",
+    "FPS",
+    "Lego",
+    "Luta",
+    "RPG",
+    "Simulação",
   ]);
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
 
-  // --- Funções de Autenticação e Verificação de Admin ---
-
   useEffect(() => {
-    if (isFocused) {
-      checkAdminStatus();
-    }
+    if (isFocused) checkAdminStatus();
   }, [isFocused]);
 
   const checkAdminStatus = async () => {
-    // Busca o usuário logado
     const { data: userRes } = await supabase.auth.getUser();
     const user = userRes?.user;
 
     if (!user) {
-      // Se não estiver logado, redireciona
-      Alert.alert("Acesso Negado", "Você precisa estar logado para acessar esta página.");
+      Alert.alert("Acesso Negado", "Faça login.");
       navigation.navigate("Login");
       return;
     }
 
     setLoading(true);
     try {
-      // Verifica o tipo de usuário na tabela 'usuarios'
       const { data: profile, error } = await supabase
-        .from('usuarios')
-        .select('tipo_usuario')
-        .eq('id_usuario', user.id)
+        .from("usuarios")
+        .select("tipo_usuario")
+        .eq("id_usuario", user.id)
         .single();
 
-      if (error || !profile || profile.tipo_usuario !== 'Administrador') {
-        // Redireciona se não for administrador
-        Alert.alert("Acesso Negado", "Somente administradores podem cadastrar jogos.");
-        navigation.navigate("Main"); 
+      if (error || !profile || profile.tipo_usuario !== "Administrador") {
+        Alert.alert("Acesso Negado", "Somente administradores.");
+        navigation.navigate("Main");
         setIsAdmin(false);
       } else {
         setIsAdmin(true);
       }
     } catch (e) {
-      console.error("Erro ao verificar status de admin:", e);
+      console.error("Erro ao checar admin:", e);
       Alert.alert("Erro", "Falha ao verificar permissões.");
-      navigation.navigate("Main"); 
+      navigation.navigate("Main");
     } finally {
       setLoading(false);
     }
   };
 
-
-  // --- Funções da Tela ---
-
   const handleUploadImage = async () => {
-    if (uploadingImage) return;
-
-    // Em uma aplicação real, aqui seria usado um picker para selecionar a imagem
-    
-    Alert.alert(
-      "Aviso", 
-      "Funcionalidade de Upload de Imagem Simulado! Em produção, usaria 'expo-image-picker' e Supabase Storage.", 
-      [{ text: "OK" }]
-    );
-    
-    setUploadingImage(true);
-    
     try {
-        // Simulação de delay para o upload
-        await new Promise(resolve => setTimeout(resolve, 1500)); 
+      setUploadingImage(true);
 
-        // Mock: URL de placeholder para simular a imagem salva no Storage
-        const mockPublicUrl = `https://placehold.co/600x400/FF09E6/white?text=Capa+Game+${Date.now()}`;
+      // pedir permissão
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permissão negada",
+          "Habilite o acesso às imagens nas configurações."
+        );
+        return;
+      }
 
-        setImagemUrl(mockPublicUrl);
+      // abrir a galeria
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 0.8,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      });
 
+      if (result.canceled) return;
+
+      const uri = result.assets[0].uri;
+      // obtém extensão (fallback para jpg)
+      const extMatch = /\.(\w+)$/.exec(uri);
+      const fileExt = extMatch ? extMatch[1] : "jpg";
+      const fileName = `jogo_${Date.now()}.${fileExt}`;
+
+      // converter para blob (necessário para supabase-js)
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      // faça o upload (upsert: false evita sobrescrever por padrão)
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(fileName, blob, { upsert: false });
+
+      if (uploadError) {
+        // algumas vezes a mensagem vem aninhada em uploadError.message
+        throw uploadError;
+      }
+
+      // obter URL pública
+      const { data: publicUrlData, error: publicUrlError } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(fileName);
+
+      if (publicUrlError) {
+        throw publicUrlError;
+      }
+
+      if (!publicUrlData || !publicUrlData.publicUrl) {
+        throw new Error("Não foi possível obter a URL pública da imagem.");
+      }
+
+      setImagemUrl(publicUrlData.publicUrl);
+      Alert.alert("Imagem enviada", "Imagem enviada com sucesso.");
     } catch (e) {
-        console.error("Erro simulado de upload:", e);
-        Alert.alert("Erro de Upload", e.message || "Falha ao simular o upload da imagem.");
+      console.error("Erro no upload:", e);
+      // mostra a mensagem bruta para facilitar debugging (se necessário)
+      Alert.alert("Erro no upload", e?.message || String(e));
     } finally {
-        setUploadingImage(false);
+      setUploadingImage(false);
     }
   };
 
@@ -127,127 +209,120 @@ export default function AdicionarJogoScreen() {
     }
   };
 
+  const prepareCategoriesForInsert = (selectedCategories) => {
+    // Mapeia cada categoria para o valor (ou candidatos) do enum.
+    // Retorna a primeira correspondência válida (string) ou o candidato principal.
+    const final = selectedCategories.map((c) => {
+      const candidate = toEnumCandidate(c);
+      // candidate pode ser array (candidatos) ou string
+      if (Array.isArray(candidate)) {
+        // preferimos candidate[0] (capitalized), mas pode ser necessário ajustar manualmente em CATEGORY_MAP
+        return candidate[0];
+      } else {
+        return candidate;
+      }
+    });
+    return final;
+  };
+
   const handleCadastrar = async () => {
     if (loading) return;
-    
-    // Validações
+
+    // Validações básicas
     if (!titulo.trim()) {
-      Alert.alert("Erro de Cadastro", "Por favor, insira o título do jogo.");
+      Alert.alert("Erro", "Informe o título do jogo.");
       return;
     }
-    if (!preco.trim()) {
-      Alert.alert("Erro de Cadastro", "Por favor, insira o preço do jogo.");
-      return;
-    }
-    if (isNaN(parseFloat(preco))) {
-      Alert.alert("Erro de Cadastro", "O preço deve ser um número válido (ex: 99.99).");
+    if (!preco.trim() || isNaN(parseFloat(preco))) {
+      Alert.alert("Erro", "Informe um preço válido (ex: 99.99).");
       return;
     }
     if (categoriasSelecionadas.length === 0) {
-      Alert.alert("Erro de Cadastro", "Selecione pelo menos uma categoria.");
+      Alert.alert("Erro", "Selecione ao menos uma categoria.");
       return;
     }
     if (!imagemUrl) {
-      Alert.alert("Erro de Cadastro", "Por favor, carregue a imagem do jogo antes de cadastrar.");
+      Alert.alert("Erro", "Faça o upload da imagem antes de cadastrar.");
       return;
     }
 
-
     setLoading(true);
 
+    // prepara categorias para o formato do enum esperado
+    const categoriasParaInserir = prepareCategoriesForInsert(
+      categoriasSelecionadas
+    );
+
     try {
-      const precoNumerico = parseFloat(preco);
-      
-      // 1. Inserir o Jogo na tabela `jogos`
-      const { data: jogoData, error: jogoError } = await supabase
-        .from('jogos')
+      const { data, error } = await supabase
+        .from("jogos")
         .insert([
           {
-            // Mapeando colunas - CORREÇÃO DE ARRAY MALFORMADO APLICADA
-            nome_jogo: titulo, 
-            plataforma_jogo: [plataforma], // CORRIGIDO: Deve ser um array de plataformas (ex: ["Playstation"])
-            preco_jogo: precoNumerico,
-            foto_jogo: imagemUrl, 
-            descricao_jogo: descricao, 
-            categoria_jogo: categoriasSelecionadas, // ADICIONADO: Inserindo categorias (que também é um array de ENUM)
+            nome_jogo: titulo,
+            plataforma_jogo: [plataforma], // array
+            preco_jogo: parseFloat(preco),
+            descricao_jogo: descricao,
+            foto_jogo: imagemUrl,
+            categoria_jogo: categoriasParaInserir, // array de strings que devem casar com o enum
           },
         ])
         .select()
         .single();
 
-      if (jogoError) {
-        // Lançando um erro mais claro para o console
-        throw new Error("Erro ao inserir jogo: " + jogoError.message);
+      if (error) {
+        // Se for erro de enum, traga a mensagem completa para o usuário
+        console.error("Erro no insert:", error);
+        throw error;
       }
-      
-      // O código de inserção em uma tabela de ligação (categorias_jogos) foi removido,
-      // pois o esquema de colunas que você forneceu indica que a coluna
-      // 'categoria_jogo' na tabela 'jogos' já é um array, o que a torna redundante.
-      
 
-      Alert.alert("Sucesso!", `Jogo "${titulo}" cadastrado com sucesso!`);
-
-      // Limpar campos
+      // sucesso
+      Alert.alert("Sucesso", `Jogo "${titulo}" cadastrado.`);
+      // limpar campos
       setTitulo("");
       setPreco("");
       setDescricao("");
       setImagemUrl("");
       setCategoriasSelecionadas([]);
-
     } catch (e) {
-      console.error("Erro no cadastro:", e);
-      Alert.alert("Erro de Cadastro", e.message || "Erro inesperado ao cadastrar o jogo.");
+      console.error("Erro ao cadastrar:", e);
+      // Se for um erro de enum, a mensagem do Supabase costuma mencionar 'invalid input value for enum'
+      // mostramos a mensagem completa para facilitar correção do CATEGORY_MAP
+      Alert.alert("Erro ao cadastrar", e?.message || String(e));
     } finally {
       setLoading(false);
     }
   };
 
-  // Tela de Carregamento de Permissões
-  if (loading && !isAdmin) { 
+  if (loading && !isAdmin) {
     return (
       <View style={[styles.scrollview, styles.loadingContainer]}>
         <ActivityIndicator size="large" color="#FF09E6" />
-        <Text style={styles.loadingText}>Carregando Permissões...</Text>
+        <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
   }
 
-  // Tela de Acesso Negado
-  if (!isAdmin && !loading) { 
+  if (!isAdmin) {
     return (
-        <View style={[styles.scrollview, styles.loadingContainer]}>
-            <Text style={styles.loadingText}>Acesso não autorizado. Você não tem permissões de administrador.</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("Main")}>
-                <Text style={styles.backButtonText}>Voltar para o Início</Text>
-            </TouchableOpacity>
-        </View>
+      <View style={[styles.scrollview, styles.loadingContainer]}>
+        <Text style={styles.loadingText}>Acesso negado.</Text>
+      </View>
     );
   }
-
 
   return (
     <ScrollView style={styles.scrollview}>
-      {/* Navbar */}
       <View style={styles.navbar}>
-        {/* Usando Image de forma simplificada, em um projeto real, os assets precisam ser importados */}
         <Text style={styles.logoText}>Nexus Admin</Text>
         <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-            <Ionicons name="search-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-            <Ionicons name="cart-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-            <Ionicons name="notifications-outline" size={24} color="#fff" />
-          </TouchableOpacity>
+          <Ionicons name="search-outline" size={24} color="#fff" />
+          <Ionicons name="cart-outline" size={24} color="#fff" />
+          <Ionicons name="notifications-outline" size={24} color="#fff" />
         </View>
       </View>
 
-      {/* Botão Voltar */}
       <TouchableOpacity
         style={styles.voltar}
-        activeOpacity={0.7}
         onPress={() => navigation.goBack()}
       >
         <Ionicons name="arrow-back" size={22} color="#fff" />
@@ -255,10 +330,8 @@ export default function AdicionarJogoScreen() {
       </TouchableOpacity>
 
       <View style={styles.container}>
-        {/* Título */}
         <Text style={styles.title}>Cadastro de Jogos</Text>
 
-        {/* Campo Título */}
         <TextInput
           style={styles.input}
           placeholder="Título"
@@ -267,24 +340,20 @@ export default function AdicionarJogoScreen() {
           onChangeText={setTitulo}
         />
 
-        {/* Campo Descrição */}
         <TextInput
           style={[styles.input, styles.textArea]}
-          placeholder="Descrição do Jogo"
+          placeholder="Descrição"
           placeholderTextColor="#888"
           multiline
-          numberOfLines={4}
           value={descricao}
           onChangeText={setDescricao}
         />
 
-        {/* Picker Plataforma */}
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={plataforma}
-            onValueChange={(itemValue) => setPlataforma(itemValue)}
+            onValueChange={setPlataforma}
             style={styles.picker}
-            itemStyle={styles.pickerItem}
           >
             <Picker.Item label="Playstation" value="Playstation" />
             <Picker.Item label="Xbox" value="Xbox" />
@@ -292,24 +361,15 @@ export default function AdicionarJogoScreen() {
           </Picker>
         </View>
 
-        {/* Pré-visualização da Imagem */}
-        {imagemUrl ? (
-            <View style={styles.imagePreviewContainer}>
-                <Image
-                    source={{ uri: imagemUrl }}
-                    style={styles.imagePreview}
-                />
-                <Text style={styles.imageUploadedText}>Imagem Carregada!</Text>
-                <TouchableOpacity onPress={() => setImagemUrl("")} style={styles.removeImageButton}>
-                    <Ionicons name="close-circle" size={20} color="#FF09E6" />
-                    <Text style={styles.removeImageText}>Remover</Text>
-                </TouchableOpacity>
-            </View>
-        ) : null}
+        {imagemUrl !== "" && (
+          <View style={styles.imagePreviewContainer}>
+            <Image source={{ uri: imagemUrl }} style={styles.imagePreview} />
+            <Text style={styles.imageUploadedText}>Imagem Carregada!</Text>
+          </View>
+        )}
 
-        {/* Upload Imagem */}
-        <TouchableOpacity 
-          style={[styles.uploadButton, uploadingImage && { backgroundColor: '#4a0090' }]} 
+        <TouchableOpacity
+          style={[styles.uploadButton, uploadingImage && { opacity: 0.8 }]}
           onPress={handleUploadImage}
           disabled={uploadingImage}
         >
@@ -318,13 +378,14 @@ export default function AdicionarJogoScreen() {
           ) : (
             <>
               <Ionicons name="cloud-upload-outline" size={24} color="#fff" />
-              <Text style={styles.uploadText}>{imagemUrl ? "Carregar Nova Imagem" : "Carregar Imagem"}</Text>
+              <Text style={styles.uploadText}>
+                {imagemUrl ? "Substituir Imagem" : "Enviar Imagem"}
+              </Text>
             </>
           )}
         </TouchableOpacity>
 
-        {/* Categorias */}
-        <Text style={styles.sectionTitle}>Selecione as Categorias:</Text>
+        <Text style={styles.sectionTitle}>Categorias</Text>
         <View style={styles.categoriasContainer}>
           {categorias.map((cat) => (
             <TouchableOpacity
@@ -343,17 +404,15 @@ export default function AdicionarJogoScreen() {
           ))}
         </View>
 
-        {/* Campo Preço */}
         <TextInput
           style={styles.input}
-          placeholder="Valor (ex: 99.99)"
+          placeholder="Preço (ex: 99.99)"
           placeholderTextColor="#888"
           keyboardType="numeric"
           value={preco}
           onChangeText={setPreco}
         />
 
-        {/* Botão Cadastrar */}
         <TouchableOpacity
           style={styles.cadastrarButton}
           onPress={handleCadastrar}
@@ -374,25 +433,15 @@ const styles = StyleSheet.create({
   scrollview: { flex: 1, backgroundColor: "#000" },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#000",
   },
-  loadingText: {
-      color: '#fff',
-      marginTop: 10,
-      fontSize: 16,
-  },
-  backButtonText: {
-      color: '#FF09E6',
-      marginTop: 20,
-      fontSize: 18,
-      fontWeight: 'bold',
-  },
+  loadingText: { color: "#fff", marginTop: 10 },
   container: {
     backgroundColor: "#1A1A1A",
     width: "90%",
-    alignSelf: 'center',
+    alignSelf: "center",
     borderRadius: 20,
     paddingVertical: 20,
     marginBottom: 40,
@@ -400,41 +449,19 @@ const styles = StyleSheet.create({
   navbar: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     padding: 20,
     paddingTop: 40,
   },
-  logoText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FF09E6',
-  },
+  logoText: { fontSize: 24, fontWeight: "bold", color: "#FF09E6" },
   navIcons: { flexDirection: "row", gap: 15 },
-  icon: { width: 20, height: 20, tintColor: "#fff" },
-  voltar: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-start",
-    marginLeft: 20,
-    marginTop: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 10,
-  },
-  voltarTexto: { color: "#fff", marginLeft: 6, fontSize: 16 },
+  voltar: { flexDirection: "row", alignItems: "center", marginLeft: 20 },
+  voltarTexto: { color: "#fff", marginLeft: 6 },
   title: {
     color: "#fff",
     fontSize: 26,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-  },
-  sectionTitle: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    marginHorizontal: 20,
-    marginBottom: 10,
   },
   input: {
     backgroundColor: "#222",
@@ -443,38 +470,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 12,
     marginHorizontal: 20,
-    fontSize: 16,
   },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
+  textArea: { height: 100, textAlignVertical: "top" },
   pickerContainer: {
     backgroundColor: "#222",
     borderRadius: 10,
     marginBottom: 12,
     marginHorizontal: 20,
-    overflow: 'hidden',
-    height: 50,
-    justifyContent: 'center',
+    overflow: "hidden",
   },
   picker: { color: "#fff" },
-  pickerItem: { color: "#fff" }, // Estilo específico para o item do Picker (pode não funcionar em todas as plataformas)
   uploadButton: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#6200EE",
     padding: 14,
     borderRadius: 10,
-    marginBottom: 20,
     marginHorizontal: 20,
+    marginBottom: 20,
   },
-  uploadText: { color: "#fff", marginLeft: 8, fontWeight: "600", fontSize: 16 },
+  uploadText: { color: "#fff", marginLeft: 8 },
   categoriasContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: 20,
     marginHorizontal: 20,
   },
   categoria: {
@@ -485,53 +504,25 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     marginRight: 8,
     marginBottom: 8,
-    backgroundColor: '#333',
+    backgroundColor: "#333",
   },
-  categoriaTexto: { color: "#fff", fontSize: 14 },
+  categoriaTexto: { color: "#fff" },
   cadastrarButton: {
     backgroundColor: "#FF09E6",
     paddingVertical: 14,
     borderRadius: 10,
     alignItems: "center",
-    justifyContent: "center",
     marginHorizontal: 20,
     marginTop: 10,
   },
   cadastrarTexto: { color: "#fff", fontWeight: "bold", fontSize: 18 },
-  imagePreviewContainer: {
-    alignItems: 'center',
-    marginBottom: 15,
-    marginHorizontal: 20,
-    position: 'relative',
-  },
+  imagePreviewContainer: { paddingHorizontal: 20 },
   imagePreview: {
-    width: '100%',
+    width: "100%",
     height: 150,
     borderRadius: 10,
-    resizeMode: 'cover',
-    marginBottom: 8,
     borderWidth: 2,
-    borderColor: '#FF09E6',
+    borderColor: "#FF09E6",
   },
-  imageUploadedText: {
-    color: '#FF09E6',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  removeImageButton: {
-    position: 'absolute',
-    top: -5,
-    right: -5,
-    backgroundColor: 'rgba(0,0,0,0.8)',
-    borderRadius: 15,
-    padding: 3,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  removeImageText: {
-    color: '#fff',
-    fontSize: 12,
-    marginLeft: 3,
-  }
+  imageUploadedText: { color: "#FF09E6", textAlign: "center", marginTop: 5 },
 });
