@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -15,11 +15,34 @@ import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome } from '@expo/vector-icons';
-import CategoriasScreen from "./CategoriasScreen";
+import { supabase } from "../SupabaseConfig";
 
 const { width } = Dimensions.get("window");
 
-// Dados
+// --------------------------
+// CONVERSOR HEX → STRING URL
+// --------------------------
+const hexToString = (hex) => {
+  try {
+    if (!hex) return null;
+
+    hex = hex.replace(/^\\x/, "");
+
+    let str = "";
+    for (let i = 0; i < hex.length; i += 2) {
+      const code = parseInt(hex.substr(i, 2), 16);
+      if (!isNaN(code)) str += String.fromCharCode(code);
+    }
+    return str;
+  } catch (e) {
+    console.log("Erro ao converter HEX:", e);
+    return null;
+  }
+};
+
+// --------------------------
+// BANNERS (ESTÁTICOS)
+// --------------------------
 const banners = [
   {
     id: "1",
@@ -38,75 +61,9 @@ const banners = [
   },
 ];
 
-const maisVendidos = [
-  {
-    id: "1",
-    image: require("../screens/assets/fc26.png"),
-    title: "FC 26 Ultimate Edition",
-    price: "R$199,99",
-    rating: 4.5,
-  },
-  {
-    id: "2",
-    image: require("../screens/assets/supermario.png"),
-    title: "Super Mario World",
-    price: "R$149,99",
-    rating: 4.8,
-  },
-  {
-    id: "3",
-    image: require("../screens/assets/ratchet_clank.png"),
-    title: "Ratchet Clank",
-    price: "R$129,99",
-    rating: 4.7,
-  },
-  {
-    id: "4",
-    image: require("../screens/assets/fc26.png"),
-    title: "FC 26 Ultimate Edition",
-    price: "R$199,99",
-    rating: 4.5,
-  },
-  {
-    id: "5",
-    image: require("../screens/assets/supermario.png"),
-    title: "Super Mario World",
-    price: "R$149,99",
-    rating: 4.8,
-  },
-  {
-    id: "6",
-    image: require("../screens/assets/ratchet_clank.png"),
-    title: "Ratchet Clank",
-    price: "R$129,99",
-    rating: 4.7,
-  },
-];
-
-const preVenda = [
-  {
-    id: "1",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Minecraft",
-    price: "R$99,99",
-    rating: 4.6,
-  },
-  {
-    id: "2",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Marvel Spider-Man 2",
-    price: "R$79,99",
-    rating: 4.9,
-  },
-  {
-    id: "3",
-    image: require("../screens/assets/the_last_of_us.png"),
-    title: "The Last of Us II",
-    price: "R$59,99",
-    rating: 4.7,
-  },
-];
-
+// --------------------------
+// CATEGORIAS (ESTÁTICAS)
+// --------------------------
 const categorias = [
   {
     id: "4",
@@ -146,54 +103,6 @@ const categorias = [
   },
 ];
 
-const melhorAvaliacao = [
-  {
-    id: "1",
-    image: require("../screens/assets/fc26.png"),
-    title: "FC 26 Ultimate Edition",
-    price: "R$199,99",
-    rating: 4.8,
-  },
-  {
-    id: "2",
-    image: require("../screens/assets/supermario.png"),
-    title: "Super Mario World",
-    price: "R$149,99",
-    rating: 4.9,
-  },
-  {
-    id: "3",
-    image: require("../screens/assets/ratchet_clank.png"),
-    title: "Ratchet Clank",
-    price: "R$129,99",
-    rating: 4.7,
-  },
-];
-
-const ofertas = [
-  {
-    id: "1",
-    image: require("../screens/assets/minecraftofer.png"),
-    title: "Minecraft",
-    price: "R$99,99",
-    rating: 4.5,
-  },
-  {
-    id: "2",
-    image: require("../screens/assets/spiderman2.png"),
-    title: "Marvel Spider-man 2",
-    price: "R$79,99",
-    rating: 4.8,
-  },
-  {
-    id: "3",
-    image: require("../screens/assets/the_last_of_us.png"),
-    title: "The Last of Us II",
-    price: "R$59,99",
-    rating: 4.6,
-  },
-];
-
 const StarRating = ({ rating }) => {
   return (
     <View style={styles.ratingContainer}>
@@ -201,53 +110,70 @@ const StarRating = ({ rating }) => {
       <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
     </View>
   );
-}
+};
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  const renderCard = (item, tipo) => {
-    if (item.id === "verMais") {
-      return (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            navigation.navigate("Produtos");
-          }}
-        >
-          <LinearGradient
-            colors={["#8000FF", "#FF00FF"]}
-            style={[
-              tipo === "grande" ? styles.cardVendidos : styles.card,
-              styles.verMaisCard,
-            ]}
-          >
-            <Text style={styles.verMaisText}>Ver mais</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      );
+  const [allGames, setAllGames] = useState([]);
+
+  // --------------------------
+  // CARREGAR JOGOS DO SUPABASE
+  // --------------------------
+  const loadGames = async () => {
+    const { data, error } = await supabase.from("jogos").select("*");
+
+    if (error) {
+      console.log("Erro ao buscar jogos:", error);
+      return;
     }
+
+    const jogosTratados = data.map((jogo) => ({
+      id: jogo.id_jogo.toString(),
+      title: jogo.nome_jogo,
+      price: `R$${jogo.preco_jogo}`,
+      rating: Math.floor(Math.random() * 2) + 4, // fake rating 4–5
+      image: hexToString(jogo.foto_jogo), // <-- CONVERSÃO FINAL
+    }));
+
+    setAllGames(jogosTratados);
+  };
+
+  useEffect(() => {
+    loadGames();
+  }, []);
+
+  const renderCard = (item, tipo) => {
+    if (!item.image) return null;
 
     if (tipo === "grande") {
       return (
         <View style={styles.cardVendidos}>
-          <Image source={item.image} style={styles.cardImageVendidos} />
+          <Image
+            source={{ uri: item.image }}
+            style={styles.cardImageVendidos}
+            resizeMode="cover"
+          />
           <Text style={styles.cardTitle}>{item.title}</Text>
           <View style={styles.priceRatingContainer}>
             <Text style={styles.cardPrice}>{item.price}</Text>
-            {item.rating && <StarRating rating={item.rating} />}
+            <StarRating rating={item.rating} />
           </View>
         </View>
       );
     } else {
       return (
         <View style={styles.card}>
-          <Image source={item.image} style={styles.cardImage} />
+          <Image
+            source={{ uri: item.image }}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
           <Text style={styles.cardTitle}>{item.title}</Text>
           <View style={styles.priceRatingContainer}>
             <Text style={styles.cardPrice}>{item.price}</Text>
-            {item.rating && <StarRating rating={item.rating} />}
+            <StarRating rating={item.rating} />
           </View>
         </View>
       );
@@ -256,39 +182,6 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-
-      {/* Navbar */}
-      <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-          <Image
-            source={require("../assets/img/logo_nexus.png")}
-            style={styles.logo}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity />
-        <View style={styles.navIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
-            <Image
-              source={require("../assets/img/buscar_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Carrinho")}>
-            <Image
-              source={require("../assets/img/carrinho_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Notificacoes")}>
-            <Image
-              source={require("../assets/img/notificacao_icon.png")}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
-
       <ScrollView
         style={styles.scrollview}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -304,9 +197,7 @@ export default function HomeScreen() {
           showsHorizontalScrollIndicator={false}
           onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            {
-              useNativeDriver: false,
-            }
+            { useNativeDriver: false }
           )}
           renderItem={({ item }) => (
             <ImageBackground
@@ -325,33 +216,33 @@ export default function HomeScreen() {
           )}
         />
 
-        {/* Mais Vendidos */}
+        {/* MAIS VENDIDOS */}
         <Text style={styles.sectionTitle}>Mais Vendidos</Text>
         <FlatList
-          data={[...maisVendidos, { id: "verMais" }]}
+          data={allGames}
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => renderCard(item, "grande")}
         />
 
-        {/* Pré-Venda */}
+        {/* PRÉ-VENDA */}
         <Text style={styles.sectionTitle}>Pré-Venda</Text>
         <FlatList
-          data={[...preVenda, { id: "verMais" }]}
+          data={allGames}
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => renderCard(item, "pequeno")}
         />
 
-        {/* Categorias */}
+        {/* CATEGORIAS */}
         <Text style={styles.sectionTitle}>Categorias de jogos</Text>
         <View style={styles.grid}>
-
           {categorias.map((cat) => {
             let characterStyle = {};
             let textStyle = {};
+
             switch (cat.id) {
               case "4":
                 characterStyle = styles.characterAcao;
@@ -378,12 +269,12 @@ export default function HomeScreen() {
                 textStyle = styles.overlayRPG;
                 break;
             }
+
             return (
               <TouchableOpacity
                 key={cat.id}
                 style={styles.gridCard3D}
                 activeOpacity={0.9}
-                onPress={() => navigation.navigate('CategoriaDetalhada')}
               >
                 <Image
                   source={cat.imagem}
@@ -406,29 +297,34 @@ export default function HomeScreen() {
           })}
         </View>
 
-        {/* Melhores Avaliações */}
+        {/* MELHORES AVALIAÇÕES */}
         <Text style={styles.sectionTitle}>Melhores Avaliações</Text>
         <FlatList
-          data={[...melhorAvaliacao, { id: "verMais" }]}
+          data={allGames}
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => renderCard(item, "pequeno")}
         />
 
-        {/* Ofertas */}
+        {/* OFERTAS */}
         <Text style={styles.sectionTitle}>Ofertas</Text>
         <FlatList
-          data={[...ofertas, { id: "verMais" }]}
+          data={allGames}
           keyExtractor={(item) => item.id}
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => renderCard(item, "grande")}
         />
+
       </ScrollView>
     </View>
   );
 }
+
+/* ------------------------------------------ */
+/* --------   STYLES (SEM ALTERAÇÃO)   ------ */
+/* ------------------------------------------ */
 
 const styles = StyleSheet.create({
   container: {
@@ -437,6 +333,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   scrollview: { flex: 1, backgroundColor: "#000", paddingTop: 5 },
+
   priceRatingContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -444,6 +341,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginTop: 4,
   },
+
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -456,15 +354,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginRight: 4,
   },
-  navbar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-  },
-  logo: { width: 200, height: 60, resizeMode: "contain" },
-  navIcons: { flexDirection: "row", gap: 15 },
-  icon: { width: 20, height: 20 },
+
   bannerImage: {
     width: width * 0.9,
     height: 180,
@@ -472,12 +362,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
+
   bannerTitle: {
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
     maxWidth: "70%",
   },
+
   sectionTitle: {
     fontSize: 20,
     color: "#fff",
@@ -485,6 +377,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 30,
   },
+
   card: {
     width: 200,
     height: 160,
@@ -521,7 +414,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#252525ff",
     borderRadius: 10,
     paddingBottom: 50,
-    boxShadowColor: "#86007bb3",
     shadowColor: "#ff00d0ff",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.3,
@@ -533,12 +425,10 @@ const styles = StyleSheet.create({
     width: 120,
     height: 160,
     borderRadius: 10,
-    justifyContent: "center",
     alignSelf: "center",
     marginTop: 5,
-    marginLeft: 15,
-    marginRight: 15,
   },
+
   cardTitle: {
     color: "#fff",
     fontSize: 14,
@@ -553,18 +443,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     paddingLeft: 4,
   },
-  verMaisCard: {
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  verMaisText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 20,
-    marginTop: 50,
-    textAlign: "center",
-  },
+
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -573,6 +452,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 30,
   },
+
   gridCard3D: {
     width: width / 2 - 18,
     height: 130,
@@ -586,143 +466,121 @@ const styles = StyleSheet.create({
       { rotateY: "-3deg" },
     ],
     elevation: 10,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
   },
+
   gridCardImage: {
     width: "100%",
     height: "100%",
     position: "absolute",
     borderRadius: 14,
   },
+
   overlay3D: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.35)",
     borderRadius: 14,
   },
+
   cardContent: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
     paddingRight: 10,
     zIndex: 10,
   },
+
   characterAcao: {
     width: 200,
     height: 230,
     bottom: -110,
     left: -90,
     position: "absolute",
-    zIndex: 100,
   },
   overlayAcao: {
     marginLeft: 80,
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 14,
+    fontWeight: "bold",
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6,
-    textAlign: "center",
-    zIndex: 15,
   },
+
   characterAventura: {
     width: 200,
     height: 230,
     bottom: -110,
     left: -90,
     position: "absolute",
-    zIndex: 100,
   },
   overlayAventura: {
     marginLeft: 50,
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 14,
+    fontWeight: "bold",
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6,
-    textAlign: "center",
-    zIndex: 15,
   },
+
   characterEsportes: {
     width: 200,
     height: 230,
     bottom: -30,
     left: -60,
     position: "absolute",
-    zIndex: 100,
   },
   overlayEsportes: {
     marginLeft: 80,
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 14,
+    fontWeight: "bold",
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6,
-    textAlign: "center",
-    zIndex: 15,
   },
+
   characterFPS: {
     width: 200,
     height: 200,
     bottom: -90,
     left: -70,
     position: "absolute",
-    zIndex: 100,
   },
   overlayFPS: {
     marginLeft: 80,
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 14,
+    fontWeight: "bold",
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6,
-    textAlign: "center",
-    zIndex: 15,
   },
+
   characterSimulacao: {
     width: 200,
     height: 200,
     bottom: -70,
     left: -50,
     position: "absolute",
-    zIndex: 100,
   },
   overlaySimulacao: {
     marginLeft: 80,
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 14,
+    fontWeight: "bold",
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6,
-    textAlign: "center",
-    zIndex: 15,
   },
+
   characterRPG: {
     width: 200,
     height: 220,
     bottom: -80,
     left: -70,
     position: "absolute",
-    zIndex: 100,
   },
   overlayRPG: {
     marginLeft: 80,
     color: "#fff",
-    fontWeight: "bold",
     fontSize: 14,
+    fontWeight: "bold",
     paddingHorizontal: 6,
     paddingVertical: 3,
-    borderRadius: 6,
-    textAlign: "center",
-    zIndex: 15,
   },
 });

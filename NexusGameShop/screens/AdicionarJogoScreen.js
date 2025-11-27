@@ -16,55 +16,24 @@ import { Picker } from "@react-native-picker/picker";
 import * as ImagePicker from "expo-image-picker";
 import { supabase } from "../SupabaseConfig";
 
-/*
-  INSTRUÇÕES IMPORTANTES (leia antes de rodar):
-  1) Bucket de Storage: confirme que existe um bucket chamado "jogos" no Supabase Storage.
-     - Se o bucket tiver outra nomenclatura, altere a constante BUCKET_NAME abaixo.
-  2) Enum de categorias: se o erro de enum persistir, rode no SQL editor do Supabase:
-       SELECT unnest(enum_range(NULL::categoria_enum));
-     (Substitua "categoria_enum" pelo nome real do seu tipo enum).
-     Depois, ajuste CATEGORY_MAP para mapear seus rótulos para os valores reais do enum.
-*/
-
 const BUCKET_NAME = "jogos";
 
-/**
- * Se você já sabe os valores exatos do enum no Supabase, preencha CATEGORY_MAP
- * com pareamentos ["rótulo exibido" : "valor_do_enum_exato"].
- * Exemplo: "Aventura" : "Aventura"  ou "Aventura" : "aventura" (conforme o enum).
- *
- * Se você não souber, o código tenta normalizar (remover acentos e capitalizar).
- * Caso o enum exija outra forma exata, atualize este mapa.
- */
+/*
+  Ajuste EXATO dos valores do ENUM no Supabase:
+  Substitua os valores à direita se necessário.
+*/
 const CATEGORY_MAP = {
-  // "Aventura": "Aventura", // Exemplo — ajuste conforme seu enum
-  // "Ação": "Acao", // ex: sem acento, se seu enum for assim
+  "Aventura": "Aventura",
+  "Ação": "Ação",
+  "Corrida": "Corrida",
+  "Esportes": "Esportes",
+  "Estratégia": "Estratégia",
+  "FPS": "FPS",
+  "Lego": "Lego",
+  "Luta": "Luta",
+  "RPG": "RPG",
+  "Simulação": "Simulação",
 };
-
-function removeAccents(str) {
-  if (!str) return str;
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-function toEnumCandidate(displayLabel) {
-  // Primeiro tenta mapear via CATEGORY_MAP
-  if (CATEGORY_MAP[displayLabel]) return CATEGORY_MAP[displayLabel];
-
-  // Senão, faz normalização inteligente:
-  // 1) remove acentos
-  // 2) deixa com primeira letra maiúscula e resto minúsculo (ex: "Aventura")
-  const noAccents = removeAccents(displayLabel);
-  const words = noAccents.split(/\s+/).filter(Boolean);
-  const capitalized = words
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-    .join(" ");
-  // Também retorna uma versão sem espaços, sem acento, tudo minusculo
-  // caso seu enum use 'aventura' ou 'acao'
-  const compactLower = noAccents.replace(/\s+/g, "").toLowerCase();
-
-  // prefira capitalized, mas retornamos um array de candidatos na ordem desejada
-  return [capitalized, compactLower];
-}
 
 export default function AdicionarJogoScreen() {
   const navigation = useNavigation();
@@ -91,6 +60,7 @@ export default function AdicionarJogoScreen() {
     "RPG",
     "Simulação",
   ]);
+
   const [categoriasSelecionadas, setCategoriasSelecionadas] = useState([]);
 
   useEffect(() => {
@@ -123,7 +93,6 @@ export default function AdicionarJogoScreen() {
         setIsAdmin(true);
       }
     } catch (e) {
-      console.error("Erro ao checar admin:", e);
       Alert.alert("Erro", "Falha ao verificar permissões.");
       navigation.navigate("Main");
     } finally {
@@ -135,18 +104,13 @@ export default function AdicionarJogoScreen() {
     try {
       setUploadingImage(true);
 
-      // pedir permissão
       const { status } =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          "Permissão negada",
-          "Habilite o acesso às imagens nas configurações."
-        );
+        Alert.alert("Permissão negada", "Habilite o acesso às imagens.");
         return;
       }
 
-      // abrir a galeria
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         quality: 0.8,
@@ -156,43 +120,28 @@ export default function AdicionarJogoScreen() {
       if (result.canceled) return;
 
       const uri = result.assets[0].uri;
-      // obtém extensão (fallback para jpg)
       const extMatch = /\.(\w+)$/.exec(uri);
       const fileExt = extMatch ? extMatch[1] : "jpg";
       const fileName = `jogo_${Date.now()}.${fileExt}`;
 
-      // converter para blob (necessário para supabase-js)
       const response = await fetch(uri);
       const blob = await response.blob();
 
-      // faça o upload (upsert: false evita sobrescrever por padrão)
       const { error: uploadError } = await supabase.storage
         .from(BUCKET_NAME)
         .upload(fileName, blob, { upsert: false });
 
-      if (uploadError) {
-        // algumas vezes a mensagem vem aninhada em uploadError.message
-        throw uploadError;
-      }
+      if (uploadError) throw uploadError;
 
-      // obter URL pública
       const { data: publicUrlData, error: publicUrlError } = supabase.storage
         .from(BUCKET_NAME)
         .getPublicUrl(fileName);
 
-      if (publicUrlError) {
-        throw publicUrlError;
-      }
-
-      if (!publicUrlData || !publicUrlData.publicUrl) {
-        throw new Error("Não foi possível obter a URL pública da imagem.");
-      }
+      if (publicUrlError) throw publicUrlError;
 
       setImagemUrl(publicUrlData.publicUrl);
       Alert.alert("Imagem enviada", "Imagem enviada com sucesso.");
     } catch (e) {
-      console.error("Erro no upload:", e);
-      // mostra a mensagem bruta para facilitar debugging (se necessário)
       Alert.alert("Erro no upload", e?.message || String(e));
     } finally {
       setUploadingImage(false);
@@ -209,32 +158,15 @@ export default function AdicionarJogoScreen() {
     }
   };
 
-  const prepareCategoriesForInsert = (selectedCategories) => {
-    // Mapeia cada categoria para o valor (ou candidatos) do enum.
-    // Retorna a primeira correspondência válida (string) ou o candidato principal.
-    const final = selectedCategories.map((c) => {
-      const candidate = toEnumCandidate(c);
-      // candidate pode ser array (candidatos) ou string
-      if (Array.isArray(candidate)) {
-        // preferimos candidate[0] (capitalized), mas pode ser necessário ajustar manualmente em CATEGORY_MAP
-        return candidate[0];
-      } else {
-        return candidate;
-      }
-    });
-    return final;
-  };
-
   const handleCadastrar = async () => {
     if (loading) return;
 
-    // Validações básicas
     if (!titulo.trim()) {
-      Alert.alert("Erro", "Informe o título do jogo.");
+      Alert.alert("Erro", "Informe o título.");
       return;
     }
     if (!preco.trim() || isNaN(parseFloat(preco))) {
-      Alert.alert("Erro", "Informe um preço válido (ex: 99.99).");
+      Alert.alert("Erro", "Preço inválido.");
       return;
     }
     if (categoriasSelecionadas.length === 0) {
@@ -242,15 +174,14 @@ export default function AdicionarJogoScreen() {
       return;
     }
     if (!imagemUrl) {
-      Alert.alert("Erro", "Faça o upload da imagem antes de cadastrar.");
+      Alert.alert("Erro", "Envie a imagem.");
       return;
     }
 
     setLoading(true);
 
-    // prepara categorias para o formato do enum esperado
-    const categoriasParaInserir = prepareCategoriesForInsert(
-      categoriasSelecionadas
+    const categoriasParaInserir = categoriasSelecionadas.map(
+      (c) => CATEGORY_MAP[c]
     );
 
     try {
@@ -259,34 +190,25 @@ export default function AdicionarJogoScreen() {
         .insert([
           {
             nome_jogo: titulo,
-            plataforma_jogo: [plataforma], // array
+            plataforma_jogo: [plataforma],
             preco_jogo: parseFloat(preco),
             descricao_jogo: descricao,
             foto_jogo: imagemUrl,
-            categoria_jogo: categoriasParaInserir, // array de strings que devem casar com o enum
+            categoria_jogo: categoriasParaInserir,
           },
         ])
         .select()
         .single();
 
-      if (error) {
-        // Se for erro de enum, traga a mensagem completa para o usuário
-        console.error("Erro no insert:", error);
-        throw error;
-      }
+      if (error) throw error;
 
-      // sucesso
       Alert.alert("Sucesso", `Jogo "${titulo}" cadastrado.`);
-      // limpar campos
       setTitulo("");
       setPreco("");
       setDescricao("");
       setImagemUrl("");
       setCategoriasSelecionadas([]);
     } catch (e) {
-      console.error("Erro ao cadastrar:", e);
-      // Se for um erro de enum, a mensagem do Supabase costuma mencionar 'invalid input value for enum'
-      // mostramos a mensagem completa para facilitar correção do CATEGORY_MAP
       Alert.alert("Erro ao cadastrar", e?.message || String(e));
     } finally {
       setLoading(false);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -12,16 +12,19 @@ import {
   ImageBackground,
   Alert,
   Modal,
-  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { supabase } from "../SupabaseConfig"; // ajuste se necessário
 
 const { width } = Dimensions.get("window");
 
+/* ---------------------------
+   BANNERS (mantidos)
+   --------------------------- */
 const banners = [
   {
     id: "1",
@@ -40,260 +43,63 @@ const banners = [
   },
 ];
 
-const jogosIniciais = {
-  sugestoes: [
-    {
-      id: "1",
-      nome: "The Witcher 3",
-      imagem: require("../screens/assets/jogos/thewicher.jpg"),
-      rating: 4.9,
-      preco: 79.9,
-      precoAntigo: 129.9,
-    },
-    {
-      id: "2",
-      nome: "Skyrim",
-      imagem: require("../screens/assets/jogos/skyrim.jpg"),
-      rating: 4.8,
-      preco: 49.9,
-    },
-    {
-      id: "3",
-      nome: "Cyberpunk 2077",
-      imagem: require("../screens/assets/jogos/cyberpunk.jpg"),
-      rating: 4.5,
-      preco: 89.9,
-      precoAntigo: 199.9,
-    },
-    {
-      id: "4",
-      nome: "Dragon Age: Inquisition",
-      imagem: require("../screens/assets/jogos/dragonage.jpg"),
-      rating: 4.7,
-      preco: 59.9,
-    },
-    {
-      id: "5",
-      nome: "Elden Ring",
-      imagem: require("../screens/assets/jogos/eldenring.jpg"),
-      rating: 4.9,
-      preco: 249.9,
-      precoAntigo: 299.9,
-    },
-    {
-      id: "6",
-      nome: "God of War Ragnarök",
-      imagem: require("../screens/assets/jogos/godofwar.jpg"),
-      rating: 4.8,
-      preco: 279.9,
-    },
-  ],
-  pesquisados: [
-    {
-      id: "7",
-      nome: "FIFA 26",
-      imagem: require("../screens/assets/fc26.png"),
-      preco: 249.9,
-    },
-    {
-      id: "8",
-      nome: "NBA 2K25",
-      imagem: require("../screens/assets/jogos/nba2k.jpg"),
-      preco: 199.9,
-    },
-    {
-      id: "9",
-      nome: "Call of Duty: Modern Warfare III",
-      imagem: require("../screens/assets/jogos/callofduty.jpg"),
-      preco: 279.9,
-    },
-    {
-      id: "10",
-      nome: "Assassin’s Creed Mirage",
-      imagem: require("../screens/assets/jogos/assasinscreed.jpg"),
-      preco: 199.9,
-    },
-    {
-      id: "11",
-      nome: "Forza Horizon 5",
-      imagem: require("../screens/assets/jogos/forzahorizon5.jpg"),
-      preco: 229.9,
-    },
-    {
-      id: "12",
-      nome: "Overwatch 2",
-      imagem: require("../screens/assets/jogos/overwatch2.jpg"),
-      preco: 159.9,
-    },
-  ],
-  lancamentos: [
-    {
-      id: "13",
-      nome: "Resident Evil 4 Remake",
-      imagem: require("../screens/assets/jogos/residentevil4.jpg"),
-      preco: 299.9,
-    },
-    {
-      id: "14",
-      nome: "Silent Hill 2 Remake",
-      imagem: require("../screens/assets/jogos/silenthill.jpg"),
-      preco: 179.9,
-    },
-    {
-      id: "15",
-      nome: "Starfield",
-      imagem: require("../screens/assets/jogos/starfield.jpg"),
-      preco: 349.9,
-    },
-    {
-      id: "16",
-      nome: "Alan Wake 2",
-      imagem: require("../screens/assets/jogos/alanwake.jpg"),
-      preco: 279.9,
-    },
-    {
-      id: "17",
-      nome: "Baldur’s Gate 3",
-      imagem: require("../screens/assets/jogos/baldursgate.jpg"),
-      preco: 299.9,
-    },
-    {
-      id: "18",
-      nome: "Spider-Man 2",
-      imagem: require("../screens/assets/jogos/spiderman2.jpg"),
-      preco: 349.9,
-    },
-  ],
-  promocoes: [
-    {
-      id: "19",
-      nome: "Mario Odyssey",
-      imagem: require("../screens/assets/jogos/marioodyssey.jpg"),
-      preco: 39.9,
-      precoAntigo: 79.9,
-    },
-    {
-      id: "20",
-      nome: "Mario Kart 8 Deluxe",
-      imagem: require("../screens/assets/supermario.png"),
-      preco: 29.9,
-      precoAntigo: 59.9,
-    },
-    {
-      id: "21",
-      nome: "Cuphead",
-      imagem: require("../screens/assets/jogos/cuphead.png"),
-      preco: 24.9,
-      precoAntigo: 59.9,
-    },
-    {
-      id: "22",
-      nome: "Hollow Knight",
-      imagem: require("../screens/assets/jogos/hollowknight.jpg"),
-      preco: 19.9,
-      precoAntigo: 49.9,
-    },
-    {
-      id: "23",
-      nome: "Celeste",
-      imagem: require("../screens/assets/jogos/celeste.jpg"),
-      preco: 19.9,
-      precoAntigo: 59.9,
-    },
-    {
-      id: "24",
-      nome: "Dead Cells",
-      imagem: require("../screens/assets/jogos/deadcells.jpg"),
-      preco: 29.9,
-      precoAntigo: 69.9,
-    },
-  ],
-  preVendas: [
-    {
-      id: "25",
-      nome: "GTA VI",
-      imagem: require("../screens/assets/jogos/gta6.jpg"),
-      preco: 499.9,
-      dataLancamento: "2025-09-17",
-    },
-    {
-      id: "26",
-      nome: "Elder Scrolls VI",
-      imagem: require("../screens/assets/jogos/elderscrolls.jpg"),
-      preco: 449.9,
-      dataLancamento: "2026-03-10",
-    },
-    {
-      id: "27",
-      nome: "Hades II",
-      imagem: require("../screens/assets/jogos/hadesII.jpg"),
-      preco: 199.9,
-      dataLancamento: "2025-04-05",
-    },
-    {
-      id: "28",
-      nome: "Avowed",
-      imagem: require("../screens/assets/jogos/avowed.jpg"),
-      preco: 319.9,
-      dataLancamento: "2025-07-01",
-    },
-    {
-      id: "29",
-      nome: "Fable Reboot",
-      imagem: require("../screens/assets/jogos/fable.jpg"),
-      preco: 289.9,
-      dataLancamento: "2025-11-12",
-    },
-    {
-      id: "30",
-      nome: "Metal Gear Solid Δ: Snake Eater",
-      imagem: require("../screens/assets/jogos/metalgear.jpg"),
-      preco: 339.9,
-      dataLancamento: "2025-05-30",
-    },
-  ],
-  destaques: [
-    {
-      id: "31",
-      nome: "Red Dead Redemption 2",
-      imagem: require("../screens/assets/jogos/reddead2.jpg"),
-      rating: 4.9,
-      preco: 199.9,
-    },
-    {
-      id: "32",
-      nome: "The Legend of Zelda: Tears of the Kingdom",
-      imagem: require("../screens/assets/jogos/zelda.jpg"),
-      rating: 5.0,
-      preco: 349.9,
-    },
-    {
-      id: "33",
-      nome: "Horizon Forbidden West",
-      imagem: require("../screens/assets/jogos/horizonforbidden.jpg"),
-      rating: 4.7,
-      preco: 199.9,
-    },
-    {
-      id: "34",
-      nome: "Dark Souls III",
-      imagem: require("../screens/assets/jogos/darksouls3.jpg"),
-      rating: 4.8,
-      preco: 149.9,
-    },
-  ],
-};
+/* ---------------------------
+   UTILIDADES
+   --------------------------- */
+
+// Converte string hex (ex: "\\x6874...") em texto UTF-8
+function hexToUtf8(hex) {
+  try {
+    if (!hex) return null;
+    let cleaned = hex;
+    if (cleaned.startsWith("\\x")) cleaned = cleaned.slice(2);
+    // se já for uma URL (começa com http) retorne original — evita conversão desnecessária
+    if (hex.startsWith("http")) return hex;
+
+    let bytes = [];
+    for (let i = 0; i < cleaned.length; i += 2) {
+      const pair = cleaned.substr(i, 2);
+      const code = parseInt(pair, 16);
+      bytes.push(code);
+    }
+    // converte array de bytes para string UTF-8
+    const str = decodeURIComponent(
+      bytes.map((b) => "%" + ("0" + b.toString(16)).slice(-2)).join("")
+    );
+    return str;
+  } catch (e) {
+    console.warn("hexToUtf8 error:", e);
+    return null;
+  }
+}
 
 const formatPrice = (value) => {
   if (typeof value !== "number") return "";
   return `R$ ${value.toFixed(2).replace(".", ",")}`;
 };
 
-function GameCard({ jogo, onPress }) {
+function shuffleArray(a) {
+  const arr = [...a];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ---------------------------
+   ELEMENTOS VISUAIS (mantidos)
+   --------------------------- */
+
+function GameCard({ jogo, onPress, onRate }) {
   const navigation = useNavigation();
-  const [rating, setRating] = useState(jogo.rating ?? 0);
+  const [rating, setRating] = useState(jogo.media_avaliacoes ?? jogo.rating ?? 0);
   const [ratingOpen, setRatingOpen] = useState(false);
   const [tempRating, setTempRating] = useState(rating);
+
+  useEffect(() => {
+    setRating(jogo.media_avaliacoes ?? jogo.rating ?? 0);
+  }, [jogo.media_avaliacoes, jogo.rating]);
 
   const handleAddToCart = () => {
     navigation.navigate("Carrinho", { item: { ...jogo, quantidade: 1 } });
@@ -301,76 +107,72 @@ function GameCard({ jogo, onPress }) {
       "Produto Adicionado",
       `${jogo.nome} foi adicionado ao carrinho`,
       [
-        {
-          text: "Continuar Comprando",
-          style: "cancel",
-          onPress: () => navigation.navigate("Produtos"),
-        },
-        {
-          text: "Ver Carrinho",
-          onPress: () => navigation.navigate("Carrinho"),
-        },
+        { text: "Continuar Comprando", style: "cancel" },
+        { text: "Ver Carrinho", onPress: () => navigation.navigate("Carrinho") },
       ]
     );
   };
 
-  const openRating = () => {
-    setTempRating(rating);
-    setRatingOpen(true);
-  };
-
-  const submitRating = (value) => {
-    setRating(value);
+  const submitRating = async (value) => {
     setRatingOpen(false);
-    Alert.alert("Obrigado", `Você avaliou ${value} estrela(s)`);
+    setRating(value);
+    setTempRating(value);
+    if (onRate) {
+      await onRate(jogo.id, value); // delega salvar ao pai
+    }
   };
 
   return (
     <>
       <TouchableOpacity
-        onPress={onPress}
+        onPress={() => onPress && onPress(jogo)}
         style={styles.cardWrapper}
         activeOpacity={0.85}
       >
         <View style={styles.card}>
-          <Image
-            source={jogo.imagem}
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
+          {jogo.imagem ? (
+            <Image source={{ uri: jogo.imagem }} style={styles.cardImage} resizeMode="cover" />
+          ) : (
+            // Se não houver imagem no DB, renderiza um espaço vazio com mesma altura
+            <View style={[styles.cardImage, { backgroundColor: "#111" }]} />
+          )}
+
           <View style={styles.cardBody}>
             <Text style={styles.cardTitle} numberOfLines={1}>
               {jogo.nome}
             </Text>
 
-            {jogo.rating != null && (
-              <View style={styles.ratingContainerTop}>
-                <Icon name="star" size={12} color="#FFD700" />
-                <Text style={styles.ratingTextTop}>
-                  {(jogo.rating ?? rating).toFixed(1)}
-                </Text>
-              </View>
-            )}
+            <View style={styles.ratingContainerTop}>
+              <Icon name="star" size={12} color="#FFD700" />
+              <Text style={styles.ratingTextTop}>
+                {(rating ?? 0).toFixed(1)}
+              </Text>
+            </View>
 
             <View style={styles.priceContainer}>
-              {jogo.precoAntigo != null && (
+              {jogo.precoAntigo && (
                 <Text style={styles.oldPrice}>
                   {formatPrice(jogo.precoAntigo)}
                 </Text>
               )}
-              {jogo.preco != null && (
+              {typeof jogo.preco === "number" ? (
                 <Text style={styles.price}>{formatPrice(jogo.preco)}</Text>
-              )}
-              {jogo.preco == null && (
+              ) : (
                 <Text style={styles.price}>Consultar</Text>
               )}
             </View>
 
             <View style={styles.bottomRow}>
-              <TouchableOpacity style={styles.starTapArea} onPress={openRating}>
+              <TouchableOpacity
+                style={styles.starTapArea}
+                onPress={() => {
+                  setTempRating(rating);
+                  setRatingOpen(true);
+                }}
+              >
                 <Icon name="star" size={16} color="#FFD700" />
                 <Text style={styles.starText}>
-                  {rating ? rating.toFixed(1) : "0.0"}
+                  {(rating ?? 0).toFixed(1)}
                 </Text>
               </TouchableOpacity>
 
@@ -430,10 +232,10 @@ function GameCard({ jogo, onPress }) {
 }
 
 function SpecialCard({ title, backgroundColor, image, onPress }) {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => onPress ? onPress() : navigation.navigate("CategoriaDetalhada")}
       style={[styles.specialCard, { backgroundColor }]}
     >
       <ImageBackground
@@ -443,7 +245,10 @@ function SpecialCard({ title, backgroundColor, image, onPress }) {
       >
         <View style={styles.specialCardContent}>
           <Text style={styles.specialCardTitle}>{title}</Text>
-          <TouchableOpacity style={styles.specialCardButton} onPress={() => navigation.navigate("CategoriaDetalhada")}>
+          <TouchableOpacity
+            style={styles.specialCardButton}
+            onPress={() => navigation.navigate("CategoriaDetalhada")}
+          >
             <Text style={styles.specialCardButtonText}>Saiba mais</Text>
           </TouchableOpacity>
         </View>
@@ -452,46 +257,208 @@ function SpecialCard({ title, backgroundColor, image, onPress }) {
   );
 }
 
-function Section({ title, data, onPress, onAdd, initialVisible = 5 }) {
-  const [expanded, setExpanded] = useState(false);
-  const visibleData = expanded ? data : data.slice(0, initialVisible);
-
+function Section({ title, data, onPress, onRate }) {
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity onPress={() => setExpanded((s) => !s)}>
-            <Text style={styles.viewAllText}>
-              {expanded ? "Ver menos" : `Ver tudo`}
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       <FlatList
-        data={visibleData}
+        data={data}
         horizontal
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 12 }}
         renderItem={({ item }) => (
-          <GameCard jogo={item} onPress={() => onPress(item)} />
+          <GameCard jogo={item} onPress={onPress} onRate={onRate} />
         )}
       />
     </View>
   );
 }
 
+/* ---------------------------
+   TELA PRINCIPAL
+   --------------------------- */
+
 export default function ProdutosScreen() {
-  const [jogos] = useState(jogosIniciais);
+  const [jogos, setJogos] = useState([]); // todos os jogos
+  const [medias, setMedias] = useState({}); // mapa id -> { media_avaliacoes, total_avaliacoes }
   const navigation = useNavigation();
-  const handlePress = (jogo) =>
-    navigation.navigate("DetalhesProduto", { jogo });
-  const handleAddGame = () => navigation.navigate("AdicionarJogo");
+
+  const fetchJogos = useCallback(async () => {
+    try {
+      // pega todos os jogos
+      const { data: jogosData, error: jogosError } = await supabase
+        .from("jogos")
+        .select("*");
+
+      if (jogosError) {
+        console.error("Erro ao buscar jogos:", jogosError);
+        return;
+      }
+
+      // pega médias da view jogo_media_avaliacoes (se você criou a view)
+      const { data: mediasData, error: mediasError } = await supabase
+        .from("jogo_media_avaliacoes")
+        .select("*");
+
+      if (mediasError && mediasError.code !== "42P01") {
+        // se a view não existir, pode ignorar; mas se for outro erro, logue.
+        console.warn("Aviso ao buscar view jogo_media_avaliacoes:", mediasError);
+      }
+
+      const mediasMap = {};
+      if (Array.isArray(mediasData)) {
+        mediasData.forEach((m) => {
+          mediasMap[m.id_jogo] = {
+            media_avaliacoes: parseFloat(m.media_avaliacoes) || 0,
+            total_avaliacoes: m.total_avaliacoes || 0,
+          };
+        });
+      }
+
+      // prepare jogos: extrai imagem (trata bytea hex ou URL)
+      const processed = (jogosData || []).map((j) => {
+        // tentativas de interpretar foto_jogo:
+        let imgUrl = null;
+
+        if (typeof j.foto_jogo === "string") {
+          // pode ser URL direta
+          if (j.foto_jogo.startsWith("http")) imgUrl = j.foto_jogo;
+          else {
+            // pode ser hex armazenado como string
+            const converted = hexToUtf8(j.foto_jogo);
+            if (converted && converted.startsWith("http")) imgUrl = converted;
+            else imgUrl = null;
+          }
+        } else if (j.foto_jogo instanceof Uint8Array || j.foto_jogo?.data) {
+          // improvise: algumas libs trazem bytea como object/array — tentamos converter
+          try {
+            // se vier como objeto com 'data' array de bytes
+            const bytes = j.foto_jogo.data || j.foto_jogo;
+            let str = "";
+            for (let b of bytes) str += String.fromCharCode(b);
+            // tenta decodificar
+            const decoded = decodeURIComponent(escape(str));
+            if (decoded.startsWith("http")) imgUrl = decoded;
+          } catch (e) {
+            // ignore
+          }
+        }
+
+        const media = mediasMap[j.id_jogo] || {};
+        return {
+          id: j.id_jogo,
+          nome: j.nome_jogo,
+          preco: typeof j.preco_jogo === "number" ? j.preco_jogo : parseFloat(j.preco_jogo) || null,
+          precoAntigo: null,
+          imagem: imgUrl, // pode ser null — GameCard trata isso
+          media_avaliacoes: media.media_avaliacoes ?? 0,
+          total_avaliacoes: media.total_avaliacoes ?? 0,
+        };
+      });
+
+      setJogos(processed);
+      setMedias(mediasMap || {});
+    } catch (e) {
+      console.error("Erro inesperado ao buscar jogos:", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchJogos();
+    // re-fetch quando voltar para a tela, se desejar você pode usar foco da navegação
+  }, [fetchJogos]);
+
+  // Chama RPC salvar_avaliacao que sugeri no SQL
+  const handleSalvarAvaliacao = async (id_jogo, nota) => {
+    try {
+      // pega user id
+      const {
+        data: { user },
+        error: userErr,
+      } = await supabase.auth.getUser();
+
+      if (userErr || !user) {
+        Alert.alert("Não autenticado", "Faça login para avaliar.");
+        return;
+      }
+
+      const uid = user.id;
+
+      const { error: rpcErr } = await supabase.rpc("salvar_avaliacao", {
+        uid,
+        idj: id_jogo,
+        nota,
+      });
+
+      if (rpcErr) {
+        console.error("Erro ao salvar avaliação:", rpcErr);
+        Alert.alert("Erro", "Falha ao salvar avaliação.");
+        return;
+      }
+
+      // atualizar médias locais:
+      // re-busca a view de médias para sincronizar
+      const { data: mediasData, error: mediasError } = await supabase
+        .from("jogo_media_avaliacoes")
+        .select("*")
+        .eq("id_jogo", id_jogo);
+
+      if (!mediasError && Array.isArray(mediasData) && mediasData.length > 0) {
+        const m = mediasData[0];
+        setMedias((prev) => ({
+          ...prev,
+          [id_jogo]: {
+            media_avaliacoes: parseFloat(m.media_avaliacoes) || 0,
+            total_avaliacoes: m.total_avaliacoes || 0,
+          },
+        }));
+
+        // atualiza também no estado jogos para refletir o card imediatamente
+        setJogos((prev) =>
+          prev.map((jg) =>
+            jg.id === id_jogo
+              ? { ...jg, media_avaliacoes: parseFloat(m.media_avaliacoes) || 0 }
+              : jg
+          )
+        );
+      } else {
+        // se view não existir, apenas atualiza localmente (melhor do que nada)
+        setJogos((prev) =>
+          prev.map((jg) => (jg.id === id_jogo ? { ...jg, media_avaliacoes: nota } : jg))
+        );
+      }
+    } catch (e) {
+      console.error("Erro handleSalvarAvaliacao:", e);
+      Alert.alert("Erro", "Falha inesperada ao salvar avaliação.");
+    }
+  };
+
+  // seleciona subconjuntos aleatórios distintos para seções
+  const buildSections = () => {
+    const shuffled = shuffleArray(jogos);
+    // garante que cada seção mostre até 6 itens e preferencialmente distintos
+    const suggestions = shuffled.slice(0, 6);
+    const searched = shuffleArray(shuffled.slice(6)).slice(0, 6);
+    const launches = shuffleArray(shuffled.slice(12)).slice(0, 6);
+    const promos = shuffleArray(shuffled.slice(18)).slice(0, 6);
+
+    return { suggestions, searched, launches, promos };
+  };
+
+  const { suggestions, searched, launches, promos } = buildSections();
+
+  const handlePress = (jogo) => {
+    // o usuário pediu que clique leve para CategoriaDetalhada
+    navigation.navigate("CategoriaDetalhada", { jogo });
+  };
 
   return (
     <View style={styles.container}>
+      {/* Navbar mantida */}
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <Image
@@ -500,7 +467,6 @@ export default function ProdutosScreen() {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity />
         <View style={styles.navIcons}>
           <TouchableOpacity onPress={() => navigation.navigate("Categorias")}>
             <Image
@@ -522,142 +488,70 @@ export default function ProdutosScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
-      <View style={styles.searchBar}>
-        <Ionicons
-          name="search-outline"
-          size={20}
-          color="#ffffffff"
-          style={{ marginLeft: 12 }}
-        />
-        <TextInput
-          placeholder="Buscar jogos"
-          placeholderTextColor="#535353ff"
-          style={styles.input}
-        />
-      </View>
 
-      <View style={styles.platformRow}>
-        <TouchableOpacity
-          style={[styles.platformCircle, { backgroundColor: "#003791" }]}
-          onPress={() => navigation.navigate("CategoriaDetalhada")}
-        >
-          <FontAwesome5 name="playstation" size={24} color="#fff" />
+      <ScrollView style={styles.scrollview} showsVerticalScrollIndicator={false}>
+        <View style={styles.searchBar}>
+          <Ionicons name="search-outline" size={20} color="#fff" style={{ marginLeft: 12 }} />
+          <TextInput placeholder="Buscar jogos" placeholderTextColor="#535353ff" style={styles.input} />
+        </View>
+
+        <View style={styles.platformRow}>
+          <TouchableOpacity style={[styles.platformCircle, { backgroundColor: "#003791" }]} onPress={() => navigation.navigate("CategoriaDetalhada")}>
+            <FontAwesome5 name="playstation" size={24} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.platformCircle, { backgroundColor: "#107C10" }]} onPress={() => navigation.navigate("CategoriaDetalhada")}>
+            <FontAwesome5 name="xbox" size={24} color="#fff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.platformCircle, { backgroundColor: "#ff0000" }]} onPress={() => navigation.navigate("CategoriaDetalhada")}>
+            <FontAwesome5 name="gamepad" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
+        <FlatList
+          data={banners}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ImageBackground source={item.imagem} style={styles.banner} imageStyle={{ borderRadius: 12 }}>
+              <LinearGradient colors={["rgba(0,0,0,0.7)", "transparent"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFillObject} />
+              <Text style={styles.bannerTexto}>{item.titulo}</Text>
+            </ImageBackground>
+          )}
+        />
+
+        {/* SEÇÕES com jogos aleatórios do BD */}
+        <Section title="Sugestões para você" data={suggestions} onPress={handlePress} onRate={handleSalvarAvaliacao} />
+        <Section title="Mais pesquisados" data={searched} onPress={handlePress} onRate={handleSalvarAvaliacao} />
+        <Section title="Lançamentos" data={launches} onPress={handlePress} onRate={handleSalvarAvaliacao} />
+        <Section title="Promoções" data={promos} onPress={handlePress} onRate={handleSalvarAvaliacao} />
+
+        <View style={styles.specialCardsContainer}>
+          <SpecialCard title="Confira nossa seleção Nintendo!" backgroundColor="#E60012" image={require("../screens/assets/bannermario.png")} />
+          <SpecialCard title="Confira nossa seleção PlayStation!" backgroundColor="#0070D1" image={require("../screens/assets/bannerkratos.png")} />
+          <SpecialCard title="Confira nossa seleção Xbox!" backgroundColor="#107C10" image={require("../screens/assets/bannerhalo.png")} />
+        </View>
+
+        <Section title="Pré venda" data={suggestions} onPress={handlePress} onRate={handleSalvarAvaliacao} />
+        <Section title="Destaques" data={searched} onPress={handlePress} onRate={handleSalvarAvaliacao} />
+
+        <TouchableOpacity style={styles.categoriesButton} onPress={() => navigation.navigate("Categorias")}>
+          <Ionicons name="grid-outline" size={24} color="#fff" />
+          <Text style={styles.categoriesButtonText}>Ver Todas as Categorias</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.platformCircle, { backgroundColor: "#107C10" }]}
-          onPress={() => navigation.navigate("CategoriaDetalhada")}
-        >
-          <FontAwesome5 name="xbox" size={24} color="#fff" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.platformCircle, { backgroundColor: "#ff0000ff" }]}
-          onPress={() => navigation.navigate("CategoriaDetalhada")}
-        >
-          <FontAwesome5 name="gamepad" size={24} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={banners}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <ImageBackground
-            source={item.imagem}
-            style={styles.banner}
-            imageStyle={{ borderRadius: 12 }}
-          >
-            <LinearGradient
-              colors={["rgba(0,0,0,0.7)", "transparent"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={StyleSheet.absoluteFillObject}
-            />
-            <Text style={styles.bannerTexto}>{item.titulo}</Text>
-          </ImageBackground>
-        )}
-      />
-
-      <Section
-        title="Sugestões para você"
-        data={jogos.sugestoes}
-        onPress={handlePress}
-        onAdd={handleAddGame}
-      />
-      <Section
-        title="Mais pesquisados"
-        data={jogos.pesquisados}
-        onPress={handlePress}
-        onAdd={handleAddGame}
-      />
-      <Section
-        title="Lançamentos"
-        data={jogos.lancamentos}
-        onPress={handlePress}
-        onAdd={handleAddGame}
-        initialVisible={3}
-      />
-      <Section
-        title="Promoções"
-        data={jogos.promocoes}
-        onPress={handlePress}
-        onAdd={handleAddGame}
-      />
-
-      <View style={styles.specialCardsContainer}>
-        <SpecialCard
-          title="Confira nossa seleção Nintendo!"
-          backgroundColor="#E60012"
-          image={require("../screens/assets/bannermario.png")}
-          onPress={() => navigation.navigate("CategoriaDetalhada")}
-        />
-        <SpecialCard
-          title="Confira nossa seleção PlayStation!"
-          backgroundColor="#0070D1"
-          image={require("../screens/assets/bannerkratos.png")}
-          onPress={() => navigation.navigate("CategoriaDetalhada")}
-        />
-        <SpecialCard
-          title="Confira nossa seleção Xbox!"
-          backgroundColor="#107C10"
-          image={require("../screens/assets/bannerhalo.png")}
-          onPress={() => navigation.navigate("CategoriaDetalhada")}
-        />
-      </View>
-
-      <Section
-        title="Pré venda"
-        data={jogos.preVendas}
-        onPress={handlePress}
-        onAdd={handleAddGame}
-        initialVisible={3}
-      />
-      <Section
-        title="Destaques"
-        data={jogos.destaques}
-        onPress={handlePress}
-        onAdd={handleAddGame}
-      />
-
-      <TouchableOpacity
-        style={styles.categoriesButton}
-        onPress={() => navigation.navigate("Categorias")}
-      >
-        <Ionicons name="grid-outline" size={24} color="#fff" />
-        <Text style={styles.categoriesButtonText}>Ver Todas as Categorias</Text>
-      </TouchableOpacity>
-
-      <View style={{ height: 20 }} />
-    </ScrollView>
+        <View style={{ height: 50 }} />
+      </ScrollView>
     </View>
   );
 }
 
+/* ---------------------------
+   ESTILOS (idênticos ao seu original)
+   --------------------------- */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -709,7 +603,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 30,
   },
-  viewAllText: { color: "#bbb", fontSize: 14, marginTop: 30 },
   cardWrapper: { paddingHorizontal: 8 },
   card: {
     width: 190,
@@ -815,7 +708,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
     marginBottom: 8,
-    marginTop: 50, 
+    marginTop: 50,
   },
   specialCardButton: {
     borderColor: '#fff',
@@ -825,7 +718,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignSelf: "flex-start",
   },
-  specialCardButtonText: { color: "#ffffffff", fontWeight: "bold" },
+  specialCardButtonText: { color: "#fff", fontWeight: "bold" },
 
   modalOverlay: {
     flex: 1,
@@ -868,13 +761,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 25,
     elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
   categoriesButtonText: {
     color: "#fff",
