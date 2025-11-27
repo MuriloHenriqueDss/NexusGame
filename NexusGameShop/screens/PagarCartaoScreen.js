@@ -86,7 +86,21 @@ export default function PixScreen({ navigation }) {
                         <Text style={styles.totalFinal}>R${subtotal.toFixed(2).replace(".", ",")}</Text>
                     </View>
 
-                    <TouchableOpacity style={styles.botaoConfirmar} onPress={() => Alert.alert("Obrigado!", "Compra efetuada com sucesso.")}>
+                    <TouchableOpacity
+                        style={styles.botaoConfirmar}
+                        onPress={() =>
+                            Alert.alert(
+                                "Obrigado!",
+                                "Compra efetuada com sucesso.",
+                                [
+                                    {
+                                        text: "OK",
+                                        onPress: () => navigation.navigate("Main"),
+                                    },
+                                ]
+                            )
+                        }
+                    >
                         <Text style={styles.botaoTexto}>Confirmar a compra</Text>
                     </TouchableOpacity>
                 </View>

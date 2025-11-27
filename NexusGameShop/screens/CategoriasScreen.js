@@ -16,18 +16,14 @@ import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 
 const categorias = [
-  { id: "4", nome: "Ação", imagem: require("../screens/assets/1.png") },
-  { id: "5", nome: "Corrida", imagem: require("../screens/assets/1.png") },
-  { id: "6", nome: "Aventura", imagem: require("../screens/assets/1.png") },
-  { id: "7", nome: "Estratégia", imagem: require("../screens/assets/1.png") },
-  { id: "8", nome: "Luta", imagem: require("../screens/assets/1.png") },
-  { id: "9", nome: "Esportes", imagem: require("../screens/assets/1.png") },
-  { id: "10", nome: "RPG", imagem: require("../screens/assets/1.png") },
-  { id: "11", nome: "FPS", imagem: require("../screens/assets/1.png") },
-  { id: "12", nome: "Simulação", imagem: require("../screens/assets/1.png") },
-  { id: "13", nome: "RPG", imagem: require("../screens/assets/1.png") },
-  { id: "14", nome: "FPS", imagem: require("../screens/assets/1.png") },
-  { id: "15", nome: "Simulação", imagem: require("../screens/assets/1.png") },
+  { id: "4", nome: "Ação", imagem: require("../screens/assets/jogos/godofwar.jpg") },
+  { id: "5", nome: "Corrida", imagem: require("../screens/assets/jogos/motor.avif") },
+  { id: "6", nome: "Aventura", imagem: require("../screens/assets/minecraftofer.png") },
+  { id: "8", nome: "Luta", imagem: require("../screens/assets/lutando.jpg") },
+  { id: "9", nome: "Esportes", imagem: require("../screens/assets/rematch.jpg") },
+  { id: "10", nome: "RPG", imagem: require("../screens/assets/jogos/zelda.jpg") },
+  { id: "11", nome: "FPS", imagem: require("../screens/assets/jogos/callofduty.avif") },
+  { id: "12", nome: "Simulação", imagem: require("../screens/assets/simulator.webp") },
 ];
 
 export default function CategoriasScreen() {

@@ -58,9 +58,24 @@ export default function BoletoPagarScreen({ navigation }) {
                         resizeMode="contain"
                     />
 
-                    <TouchableOpacity style={styles.botao} onPress={() => Alert.alert("Obrigado!", "Compra efetuada com sucesso.")}>
+                    <TouchableOpacity
+                        style={styles.botao}
+                        onPress={() =>
+                            Alert.alert(
+                                "Obrigado!",
+                                "Compra efetuada com sucesso.",
+                                [
+                                    {
+                                        text: "OK",
+                                        onPress: () => navigation.navigate("Main"),
+                                    },
+                                ]
+                            )
+                        }
+                    >
                         <Text style={styles.botaoTexto}>Baixar boleto</Text>
                     </TouchableOpacity>
+
 
                     <View style={styles.infoContainer}>
                         <Text style={styles.infoTexto}>

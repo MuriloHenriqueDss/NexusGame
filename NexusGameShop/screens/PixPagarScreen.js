@@ -68,7 +68,21 @@ export default function PixPagarScreen({ navigation }) {
 
                     <Text style={styles.codigoPix}>{codigoPix}</Text>
 
-                    <TouchableOpacity style={styles.botao} onPress={() => Alert.alert("Obrigado!", "Compra efetuada com sucesso.")}>
+                    <TouchableOpacity
+                        style={styles.botao}
+                        onPress={() =>
+                            Alert.alert(
+                                "Obrigado!",
+                                "Compra efetuada com sucesso.",
+                                [
+                                    {
+                                        text: "OK",
+                                        onPress: () => navigation.navigate("Main"),
+                                    },
+                                ]
+                            )
+                        }
+                    >
                         <Text style={styles.botaoTexto}>Copiar código copia e cola</Text>
                     </TouchableOpacity>
                 </View>
